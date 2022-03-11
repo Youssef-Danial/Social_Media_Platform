@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-#@zm3@9*-(6ut9o0vkxlz8r0_bj56&-elz4(#4qs^ip$(h=$e$
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-
+#AUTH_USER_MODEL = 'database.models.user'
 
 # Application definition
 
@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'database',
+    'autheno',
+    'testing',
+    'main',
     
 ]
 

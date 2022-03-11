@@ -1,0 +1,16 @@
+<form action="{% url 'autheno:login' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Log In">
+    <input type="submit" value="Register" onClick="{% url 'autheno:register' %}">
+</form>
+<p>
+    {% for message in messages %}
+    
+    <div class="alert alert-success">
+        <a class="close" href="#" data-dismiss="alert">×</a>
+           {{ message }}
+    </div>
+
+    {% endfor %}
+</p>
