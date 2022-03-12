@@ -41,12 +41,12 @@ button:hover, a:hover {
 </style>
 </head>
 <body>
-
+  {% load static %}
 <h2 style="text-align:center">User Profile Card</h2>
 
 <div class="card">
-  {% load static %}
-  <img src="{{profile|safe }}" alt="profile picture" style="width:100%">
+
+  <img src="{% static profile.pfp.file_url|safe %}" alt="profile picture" style="width:100%">
   <h1>{{user.user_name}}</h1>
   <p class="title">CEO & Founder, Example</p>
   <p>{{user.email}}</p>

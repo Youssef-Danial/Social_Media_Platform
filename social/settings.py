@@ -24,7 +24,8 @@ SECRET_KEY = 'django-insecure-#@zm3@9*-(6ut9o0vkxlz8r0_bj56&-elz4(#4qs^ip$(h=$e$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STATIC_URL = 'database/files/'
+STATIC_URL = 'database/static/files/'
+STATIC_ROOT = "database/static/files/"
 ALLOWED_HOSTS = ["*"]
 #AUTH_USER_MODEL = 'database.models.user'
 

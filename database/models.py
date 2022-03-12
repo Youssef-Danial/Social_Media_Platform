@@ -18,7 +18,7 @@ class user(models.Model):
 class file(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
-    #file_url = models.CharField(max_length=250)
+    file_url = models.CharField(max_length=250)
     is_used = models.BooleanField(default=True) # state value if true the file is in use else it is not being used
 class profile(models.Model):
     about_me = models.TextField(max_length=100)

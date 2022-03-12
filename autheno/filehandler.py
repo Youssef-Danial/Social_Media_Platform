@@ -26,10 +26,13 @@ def receive_file(request, state):
             # saving the file
             # getting user
             u = get_user(request)
-            folder_path = make_dir(u.id, state = state)
+            folder_path, access_path = make_dir(u.id, state = state)
             fs = FileSystemStorage(location=folder_path)
             file_path = os.path.join(folder_path, str(file_))
-            filesaver = file(file_name=str(file_path), uploaded_date=currentDateTime)
+            # access_path 
+            access_path = os.path.join(access_path, str(file_))
+            print(access_path)
+            filesaver = file(file_name=str(file_path), uploaded_date=currentDateTime, file_url = access_path)
             fs.save(filesaver.file_name,file_)
             filesaver.save()
             return filesaver
@@ -41,8 +44,11 @@ def receive_file(request, state):
 def make_dir(user_id, state=None):
     user_id = str(user_id)
     # this line need to be changed every time the website files be moved
-    BASE_PATH = "/mnt/d5064e14-3714-48f3-a540-4364ee86b5fe/GP_Workplace/main/gp/src/social/database/files"
-    new_path = os.path.join(BASE_PATH, user_id)
+    static_path = "database/static/files"
+    save_path = "/files"
+    base = os.getcwd()
+    all_path = os.path.join(base, static_path)
+    new_path = os.path.join(all_path, user_id)
     # creating a directory if it does not exist
     try:
         if not os.path.exists(new_path):
@@ -57,12 +63,12 @@ def make_dir(user_id, state=None):
                  os.mkdir(profile_path)
         except:
             pass
-        #new_path =  os.path.join("database/files", user_id)
-        #profile_path = os.path.join(new_path, "profile")
-        return profile_path
+        temp_path =  os.path.join(save_path, user_id)
+        access_path = os.path.join(temp_path, "profile")
+        return  profile_path, access_path
     else:
         # to be continue
-        return None
+        return None, None
     # to be continue
 
 def load_file(file_to_load):
