@@ -11,13 +11,14 @@ class profile(View):
         #user = get_user(request)
         user = get_userbyid(user_id)
         is_owner = False
-        prof = get_user_profile(user)
         #temp = "1/profile/Picture1.png"
+        prof = get_user_profile(user)
         if user != None:
             # show if the owner
             if user_equal(request, user):
                 # you are the owner of the profile page
                 is_owner = True
+                
             # show if the viewer
             return render(request, "main/profile.html", {"user":user, "is_owner":is_owner, "profile": prof})
         else:
@@ -37,3 +38,13 @@ class profile(View):
             return HttpResponseRedirect(reverse_lazy("main:profile", args = [u.id]))
         else:
             return render(request, "main/uploadfile.html", {"form":pfp, "user":u})
+    def edit_about_me(request):
+        about_me = request.POST.get("txt")
+        user = get_user(request)
+        prof = get_user_profile(user)
+        prof.about_me = about_me
+        prof.save()
+        return HttpResponseRedirect(reverse_lazy("main:profile", args = [user.id]))
+    
+    def send_friend_request(request):
+        pass

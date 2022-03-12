@@ -48,7 +48,7 @@ button:hover, a:hover {
 
   <img src="{% static profile.pfp.file_url|safe %}" alt="profile picture" style="width:100%">
   <h1>{{user.user_name}}</h1>
-  <p class="title">CEO & Founder, Example</p>
+  <p class="title">{{profile.about_me}}</p>
   <p>{{user.email}}</p>
   <div style="margin: 24px 0;">
     <a href="#"><i class="fa fa-dribbble"></i></a> 
@@ -60,7 +60,9 @@ button:hover, a:hover {
   <p><button>contact</button></p>
   {% if is_owner %}
   <p><button>You are the Owner</button></p>
-  <p><button onclick="location.href = '{% url 'main:edit_pfp'%}'">edit profile</button></p>
+  <p><button onclick="location.href = '{% url 'main:edit_pfp'%}'">Edit pfp</button></p>
+  {% comment %} <p><button onclick="location.href = '{% url 'main:edit_about_me'%}'">Edit about me</button></p> {% endcomment %}
+  {% include "main/textarea.html"%}
   {% endif %}
 </div>
 

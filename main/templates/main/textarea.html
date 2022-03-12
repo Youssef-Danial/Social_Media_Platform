@@ -1,0 +1,10 @@
+{% block content %}
+<form action="{% url 'main:edit_about_me' %}" method="post" >
+    {% csrf_token %}
+<textarea id="txtid" name="txt" rows="4" cols="30" maxlength="200">
+    nice day is a nice day.
+    Lao Tseu
+</textarea>
+<input class = "inbutton" type="submit" value="Change">
+</form>
+{% endblock %}

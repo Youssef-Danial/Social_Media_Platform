@@ -170,7 +170,7 @@ class friendship(models.Model):
     receiver = models.ForeignKey("user", on_delete=models.CASCADE, related_name="receiver_id")
     state = models.CharField(max_length=10) # can be (pending, accepted, refused)
     send_date = models.DateTimeField()
-    creation_date = models.DateTimeField(null=True) 
+    creation_date = models.DateTimeField(null=True)
 
 class follow(models.Model):
     follower = models.ForeignKey("user", on_delete=models.CASCADE, related_name="follower")
@@ -180,8 +180,7 @@ class follow(models.Model):
 class block(models.Model):
     blocker = models.ForeignKey("user", on_delete=models.CASCADE, related_name="blocker")
     blocked = models.ForeignKey("user", on_delete=models.CASCADE, related_name="blocked")
-    stopped_date = models.DateTimeField(null=True) # can be null 
-
+    creation_date = models.DateTimeField()
 
 # this is for authentication
 

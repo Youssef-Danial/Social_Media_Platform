@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-#@zm3@9*-(6ut9o0vkxlz8r0_bj56&-elz4(#4qs^ip$(h=$e$
 DEBUG = True
 STATIC_URL = 'database/static/files/'
 STATIC_ROOT = "database/static/files/"
+#CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ["*"]
 #AUTH_USER_MODEL = 'database.models.user'
 
@@ -42,6 +43,7 @@ INSTALLED_APPS = [
     'autheno',
     'testing',
     'main',
+    'chat',
     
 ]
 

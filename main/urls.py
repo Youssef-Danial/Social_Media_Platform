@@ -8,4 +8,5 @@ app_name = "main"
 urlpatterns = [
      path("profile/<int:user_id>", views.profile.as_view(), name="profile"),
      path("profile/edit", views.profile.edit_pfp, name="edit_pfp"),
+     path("proifle/edit_about", views.profile.edit_about_me, name="edit_about_me")
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
