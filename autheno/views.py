@@ -10,7 +10,7 @@ import re
 from autheno.forms import register, login_u
 from django.views.generic.edit import FormMixin
 from django.contrib import messages
-from .cipher import auth_user, is_user_auth
+from .cipher_auth import auth_user, is_user_auth, get_user
 
 # Create your views here.
 class registery(FormMixin,View):
@@ -67,15 +67,17 @@ class login(View):
                     messages.error(request, "This email is not registered")
         else:
             form = login_u()   
-            request.session["user"] = None
+            #request.session"] = None
         return render(request, "authenticate/login.html", {"form":form})
         
 def home(request):
-
+    # 
     if is_user_auth(request):
         #print("user is authenticated")
-        return HttpResponseRedirect("https://www.google.com")
-        #return render(request, "authenticate/home.html", {"user": request.session["username"]})
+        # getting the user
+        u = get_user(request)
+        #return HttpResponseRedirect("https://www.google.com")
+        return render(request, "authenticate/home.html", {"user": u})
     else:
         #print("not authenticated")
         return HttpResponseRedirect(reverse_lazy("autheno:login"))

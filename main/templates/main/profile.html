@@ -45,17 +45,23 @@ button:hover, a:hover {
 <h2 style="text-align:center">User Profile Card</h2>
 
 <div class="card">
-  <img src="/w3images/team2.jpg" alt="John" style="width:100%">
-  <h1>John Doe</h1>
+  {% load static %}
+  <img src="{{profile|safe }}" alt="profile picture" style="width:100%">
+  <h1>{{user.user_name}}</h1>
   <p class="title">CEO & Founder, Example</p>
-  <p>Harvard University</p>
+  <p>{{user.email}}</p>
   <div style="margin: 24px 0;">
+    <a href="#"><i class="fa fa-dribbble"></i></a> 
     <a href="#"><i class="fa fa-dribbble"></i></a> 
     <a href="#"><i class="fa fa-twitter"></i></a>  
     <a href="#"><i class="fa fa-linkedin"></i></a>  
     <a href="#"><i class="fa fa-facebook"></i></a> 
   </div>
-  <p><button>Contact</button></p>
+  <p><button>contact</button></p>
+  {% if is_owner %}
+  <p><button>You are the Owner</button></p>
+  <p><button onclick="location.href = '{% url 'main:edit_pfp'%}'">edit profile</button></p>
+  {% endif %}
 </div>
 
 </body>

@@ -8,16 +8,22 @@ class user(models.Model):
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     user_name = models.CharField(max_length=12)
-    email = models.EmailField(max_length=70)
+    email = models.EmailField(max_length=70, unique=True)
     password_hash = models.CharField(max_length=72)
-    phone_number = models.CharField(max_length=50)
+    phone_number = models.CharField(max_length=50) #  unique=True do not forget to make the phone number unique
     birthdate = models.DateField()
     last_login = models.DateTimeField(null=True,blank=True)
+    last_logout = models.DateTimeField(null=True,blank=True)
 
+class file(models.Model):
+    file_name = models.CharField(max_length=250)
+    uploaded_date = models.DateTimeField()
+    #file_url = models.CharField(max_length=250)
+    is_used = models.BooleanField(default=True) # state value if true the file is in use else it is not being used
 class profile(models.Model):
     about_me = models.TextField(max_length=100)
-    pic_url = models.CharField(max_length=100)
-    backpic_url = models.CharField(max_length=100)
+    pfp = models.ForeignKey("file",on_delete=models.SET_NULL,null=True, related_name="pfp")
+    pfpback = models.ForeignKey("file",on_delete=models.SET_NULL,null=True, related_name ="pfpback")
     link = models.URLField()
     user = models.OneToOneField("user", on_delete=models.CASCADE)
 

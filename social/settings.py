@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-#@zm3@9*-(6ut9o0vkxlz8r0_bj56&-elz4(#4qs^ip$(h=$e$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+STATIC_URL = 'database/files/'
 ALLOWED_HOSTS = ["*"]
 #AUTH_USER_MODEL = 'database.models.user'
 
@@ -59,7 +59,7 @@ ROOT_URLCONF = 'social.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "database/files")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

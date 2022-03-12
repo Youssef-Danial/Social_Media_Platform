@@ -1,9 +1,62 @@
+<head>
+    <style>
+        form {
+            border: 1px solid black;
+            padding: 1.5%;
+            width: 20%;
+            text-align: center;
+            display: inline-block;
+            
+        }
+        button {
+
+            /* remove default behavior */
+            appearance:none;
+            -webkit-appearance:none;
+          
+            /* usual styles */
+            padding:10px;
+            border:none;
+            background-color:#3F51B5;
+            color:#fff;
+            font-weight:600;
+            border-radius:5px;
+            width:100%;
+          
+          }
+          input {
+
+            /* remove default behavior */
+            appearance:none;
+            -webkit-appearance:none;
+          
+            /* usual styles */
+            padding:10px;
+            font-weight:600;
+            border-radius:5px;
+            width:100%;
+          
+          }
+          input.inbutton{
+            color:#fff;
+            border:none;
+            background-color:#3F51B5;
+          }
+          div.form
+          {
+              display: block;
+              text-align: center;
+          }
+    </style>
+</head>
+<div class = "form">
 <form action="{% url 'autheno:login' %}" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="submit" value="Log In">
-    <input type="submit" value="Register" onClick="{% url 'autheno:register' %}">
+    <input class = "inbutton" type="submit" value="Log In">
+    <button class = "inbutton" onclick="location.href = '{% url 'autheno:register' %}'">Register</button>
 </form>
+</div>
 <p>
     {% for message in messages %}
     

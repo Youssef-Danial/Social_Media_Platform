@@ -1,3 +1,4 @@
 <p> this is the home page </p>
-<p> your name : {{user}} </p>
-<p> check your profile <a href ="{% url 'main:profile' user.id %}"> </p>
+<p> your name : {{user.user_name}} </p>
+<p> your id : {{user.id}} </p>
+<p> check your profile <a href ="{% url 'main:profile' user.id %}">go to your profile</a> </p>
