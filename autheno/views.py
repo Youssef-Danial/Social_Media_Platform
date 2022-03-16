@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.utils import html
@@ -85,3 +85,11 @@ def home(request):
         #print("not authenticated")
         return HttpResponseRedirect(reverse_lazy("autheno:login"))
        
+def logout(request): # loging out a user
+    if is_user_auth(request):
+        # loging the user out
+        try:
+            del request.session['email']
+        except KeyError:
+            pass
+        return HttpResponse("You're logged out.")
