@@ -88,7 +88,15 @@ class register(forms.ModelForm):
             pass
         else:
             raise forms.ValidationError("Wrong Password")
-        return cleaned_data     
+        return cleaned_data 
+
+    # def clean_phone_number(self):
+    #     phonenumber = self.cleaned_data["phone_number"]
+    #     if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[@#$])[\w\d@#$]{6,12}$", phonenumber):
+    #         pass
+    #     else:
+    #         raise forms.ValidationError("Wrong Phone Number")
+    #     return phonenumber
 
 class login_u(forms.Form):
     email = EmailField()
