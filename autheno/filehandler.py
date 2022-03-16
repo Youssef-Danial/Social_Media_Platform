@@ -69,7 +69,7 @@ def make_dir(user_id, state=None):
     else:
         # to be continue
         return None, None
-    # to be continue
-
+    # to be continue (post(for the post files), )
+    
 def load_file(file_to_load):
     pass

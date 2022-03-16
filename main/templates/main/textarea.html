@@ -1,10 +1,12 @@
 {% block content %}
 <form action="{% url 'main:edit_about_me' %}" method="post" >
     {% csrf_token %}
-<textarea id="txtid" name="txt" rows="4" cols="30" maxlength="200">
-    nice day is a nice day.
-    Lao Tseu
+<textarea style="textarea {
+    background: url(images/benice.png) center center no-repeat; /* This ruins default border */
+    border: 1px solid #888; 
+  }"id="txtid" name="txt" rows="4" cols="30" maxlength="200">
+ 
 </textarea>
-<input class = "inbutton" type="submit" value="Change">
+<input  type="submit" value="Change">
 </form>
 {% endblock %}

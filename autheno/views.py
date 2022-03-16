@@ -10,7 +10,7 @@ import re
 from autheno.forms import register, login_u
 from django.views.generic.edit import FormMixin
 from django.contrib import messages
-from .cipher_auth import auth_user, is_user_auth, get_user
+from .cipher_auth import auth_user, is_user_auth, get_user, get_current_datetime
 
 # Create your views here.
 class registery(FormMixin,View):
@@ -29,6 +29,9 @@ class registery(FormMixin,View):
                 del u._state
                 # saving the user
                 user_data = u.__dict__
+                # adding the last login and the current date 
+                user_data["last_login"] = get_current_datetime()
+                user_data["created_date"] = get_current_datetime()
                 new_user = user(**user_data)
                 new_user.save()
                 # creating a profile for the user 

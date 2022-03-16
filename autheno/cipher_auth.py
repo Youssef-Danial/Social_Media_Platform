@@ -3,6 +3,7 @@ from database.models import user, profile
 from django.contrib import messages
 import datetime
 from django.utils import timezone
+currentDateTime = datetime.datetime.now(tz=timezone.utc)
 # cipher authentication part
 def auth_user(request, user_email, password):
     # adding a email to the session
@@ -12,7 +13,7 @@ def auth_user(request, user_email, password):
         if check_password(password, u.password_hash):
             request.session["email"] = user_email
             # updating the last login
-            currentDateTime = datetime.datetime.now(tz=timezone.utc)
+            
             u.last_login = currentDateTime
             u.save()
             request.session["last_login"] = str(u.last_login)
@@ -51,3 +52,13 @@ def user_equal(request, u):
 def get_user_profile(u):
     p = profile.objects.get(user = u)
     return p
+
+
+def get_verfied():
+    pass
+
+def send_verification_message():
+    pass
+
+def get_current_datetime():
+    return currentDateTime

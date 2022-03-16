@@ -1,7 +1,9 @@
 from pyexpat import model
 from django.db import models
 from sqlalchemy import null
-
+import datetime
+from django.utils import timezone
+currentDateTime = datetime.datetime.now(tz=timezone.utc)
 # Create your models here.
 class user(models.Model):
     first_name = models.CharField(max_length=50)
@@ -14,7 +16,9 @@ class user(models.Model):
     birthdate = models.DateField()
     last_login = models.DateTimeField(null=True,blank=True)
     last_logout = models.DateTimeField(null=True,blank=True)
-
+    is_verified = models.BooleanField(null=True, default=None)
+    created_date = models.DateTimeField() # this null should be removed it is added because of makemigrations
+    Lt_t_un_changed = models.DateTimeField(null=True,blank=True) # last time the username have been changed his name
 class file(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -180,7 +184,7 @@ class follow(models.Model):
 class block(models.Model):
     blocker = models.ForeignKey("user", on_delete=models.CASCADE, related_name="blocker")
     blocked = models.ForeignKey("user", on_delete=models.CASCADE, related_name="blocked")
-    creation_date = models.DateTimeField()
+    creation_date = models.DateTimeField(null=True, default=None)
 
 # this is for authentication
 
