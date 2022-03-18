@@ -62,3 +62,6 @@ def send_verification_message():
 
 def get_current_datetime():
     return currentDateTime
+
+def is_user_auth_and_verified():
+    pass

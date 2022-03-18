@@ -19,6 +19,7 @@ class user(models.Model):
     is_verified = models.BooleanField(null=True, default=None)
     created_date = models.DateTimeField() # this null should be removed it is added because of makemigrations
     Lt_t_un_changed = models.DateTimeField(null=True,blank=True) # last time the username have been changed his name
+    #profile_link = models.CharField()
 class file(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -60,23 +61,34 @@ class user_settings(models.Model):
 
 class post(models.Model):
     user = models.ForeignKey("user", on_delete=models.CASCADE)
-    date = models.DateTimeField()
+    create_date = models.DateTimeField()
+    edit_date = models.DateTimeField(null = True, blank=True)
     text_content = models.TextField()
-    pictures = models.TextField(null=True)
-    video = models.ForeignKey("video", on_delete=models.SET_NULL, null=True)
-    who_can_see = models.TextField()
-    interaction_counter = models.CharField(max_length=50)
-    post_state = models.IntegerField()
-
-class video(models.Model):
-    name=models.CharField(max_length=50)
-    video_urls = models.TextField()
-    state = models.CharField(max_length=10) # have a state censored or deleted
+    # video = models.ForeignKey("video", on_delete=models.SET_NULL, null=True)
+    who_can_see = models.TextField() # can be (followers, onlyme)
+    interaction_counter = models.CharField(max_length=50) # this should be dictionary of keys(reactiontype): values(number of reaction)
+    # post_state = models.IntegerField() #
+    post_location = models.CharField(max_length=7) # this should be (profile, page, group)
+    def get_files(self):
+        return postfile.objects.filter(post=self).values()
+    postfiles=property(get_files)
+class postfile(models.Model):
+    file_name = models.CharField(max_length=250)
+    uploaded_date = models.DateTimeField()
+    file_url = models.CharField(max_length=250)
+    is_used = models.BooleanField(default=True) # state value if true the file is in use else it is not being used
+    post = models.ForeignKey("post", on_delete=models.SET_NULL, blank=True, null=True)
+    file_extension = models.CharField(max_length=6, null=True, blank=True)
+# class video(models.Model):
+#     name=models.CharField(max_length=50)
+#     video_url = models.TextField()
+#     state = models.CharField(max_length=10) # have a state censored or deleted
+#     is_used = models.BooleanField(default=True) # state value if true the file is in use else it is not being used
 class comment(models.Model):
     user = models.ForeignKey("user", on_delete=models.CASCADE)
     post = models.ForeignKey("post", on_delete=models.CASCADE)
     content = models.TextField()
-    attach_url = models.TextField()
+    attach_url = models.ForeignKey("file",on_delete=models.SET_NULL,null=True)
     date = models.DateTimeField()
     interaction_counter = models.CharField(max_length=50)
 
@@ -135,7 +147,7 @@ class particpant(models.Model):
 class message_type(models.Model): # types can be video, text, file, picture, collection
     type = models.CharField(max_length=20)
 class message(models.Model):
-    sender = models.ForeignKey("particpant", on_delete=models.CASCADE)
+    sender = models.ForeignKey("particpant", on_delete=models.SET_NULL, null=True)
     thread = models.ForeignKey("thread", on_delete=models.CASCADE)
     content = models.TextField()
     creation_date = models.DateTimeField()
@@ -186,6 +198,17 @@ class block(models.Model):
     blocked = models.ForeignKey("user", on_delete=models.CASCADE, related_name="blocked")
     creation_date = models.DateTimeField(null=True, default=None)
 
+class user_page(models.Model):
+    page = models.ForeignKey("page", on_delete=models.CASCADE)
+    user = models.ForeignKey("user", on_delete=models.CASCADE)
+    state = models.CharField(max_length=12) # can be (moderator, normal)
+    create_date = models.DateTimeField()
+    
+class user_group(models.Model):
+    group = models.ForeignKey("group", on_delete=models.CASCADE)
+    user = models.ForeignKey("user", on_delete=models.CASCADE)
+    state = models.CharField(max_length=12) # can be (moderator, normal)
+    create_date = models.DateTimeField()
 # this is for authentication
 
 # from django.db.models.fields import IntegerField

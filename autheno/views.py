@@ -35,7 +35,7 @@ class registery(FormMixin,View):
                 new_user = user(**user_data)
                 new_user.save()
                 # creating a profile for the user 
-                p = profile(user = new_user, link = "profile/"+str(new_user))
+                p = profile(user = new_user, link = "profile/"+str(new_user.id))
                 p.save()
                 # authenticting user after registering
                 auth_user(request, new_user.email, password)

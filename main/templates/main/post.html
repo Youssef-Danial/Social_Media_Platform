@@ -1,0 +1,26 @@
+<head>
+    <style>
+        .pfppic{
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            margin:left;
+            float:left;
+        }
+        border-radius{
+            size:25px;
+        }      
+    </style>
+</head>
+{% load static %}
+{% block postcontent %}
+    <button><div><img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></div>{{post.user.user_name}}</button>
+    <p class="small">{% if post.who_can_see == "followers" %} public {%else%} {{post.who_can_see}} {% endif %}  {{post.create_date}}</p
+    <p class="title">{{post.text_content}}</p>
+    <p>{{post.user.profile.link}}</p>
+    <p>
+        {% for postfile in  post.postfiles %}
+            <img src="{% static postfile.file_url|safe %}" alt="post picture" style="width:100%">
+        {% endfor %}
+    </p>
+{% endblock %}

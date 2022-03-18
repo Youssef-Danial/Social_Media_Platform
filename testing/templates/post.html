@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<noscript>
+    Your browser have disabled the javascript you can check it 
+</noscript>
+</head>
+<body>
+<p>
+ <form onaction="{% url 'testing:createpost'%}" method="post" enctype="multipart/form-data">
+     {% csrf_token %}
+     <textarea name="text_content">
+     </textarea>
+     <select name="who_can_see" >
+        <option value="onlyme">only me</option>
+        <option value="followers" selected>followers</option>
+      </select>
+     <input type="hidden" name="post_location" value = "profile"/>
+        {{ form.file }}
+    <input class = "inbutton"type="submit" value="Submit">
+ </form>
+</p>
+</body>
+
+</html>

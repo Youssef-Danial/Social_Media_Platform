@@ -3,12 +3,27 @@
 <head>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <style>
-.card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  max-width: 300px;
-  margin: auto;
-  text-align: center;
-  font-family: arial;
+  .container{
+    width:100%;
+    display:flex;  /* for display it's child div beside each other */
+  }
+  .card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: left;
+    text-align: center;
+    font-family: arial;
+  }
+  .posts {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 800px;
+    margin: right;
+    text-align: center;
+    font-family: arial;
+  }
+.card,.posts{
+  width:50%;    /* for divide container into 2 equal divs  */
+  border: 1px solid black; /*  for border around divs     */
 }
 
 .title {
@@ -56,14 +71,17 @@ textarea {
   background: url(images/benice.png) center center no-repeat; /* This ruins default border */
   border: 1px solid #888; 
 }
+.small{
+  font-size: 12px;
+}
 </style>
 </head>
 <body>
   {% load static %}
-<h2 style="text-align:center">User Profile Card</h2>
 
+<div class="container">
 <div class="card">
-
+  <h2 style="text-align:center">User Profile Card</h2>
   <img src="{% static profile.pfp.file_url|safe %}" alt="profile picture" style="width:100%">
   <h1>{{user.user_name}}</h1>
   <p class="title">{{profile.about_me}}</p>
@@ -83,6 +101,11 @@ textarea {
   {% include "main/textarea.html"%}
   {% endif %}
 </div>
-
+<div class="posts">
+  {% for post in posts %}
+  {% include 'main/post.html' %}
+  {% endfor %}
+</div>
+</div>
 </body>
 </html>

@@ -1,5 +1,5 @@
 from autheno.cipher_auth import get_user, get_user_profile, get_userbyid
-from database.models import friendship, follow, block
+from database.models import friendship, follow, block, page, group
 import datetime
 from django.utils import timezone
 from django.db.models import Q
@@ -22,31 +22,46 @@ def friend_request(request, user_id):
 def accept_friendrequest(request, user_id):
     receiver = get_user(request)
     sender = get_userbyid(user_id)
-    friendrequest = friendship.objects.filter(sender = sender, receiver = receiver).frist()
-    friendrequest.creation_date = currentDateTime
-    friendrequest.state = "accepted"
-    # sending the friend request by saving it to the database
-    friendrequest.save()
+    try:
+        friendrequest = friendship.objects.filter(sender = sender, receiver = receiver).frist()
+        friendrequest.creation_date = currentDateTime
+        friendrequest.state = "accepted"
+        # sending the friend request by saving it to the database
+        friendrequest.save()
+    except:
+        return False
+    return True
 
 def reject_friendrequest(request, user_id):
     receiver = get_user(request)
     sender = get_userbyid(user_id)
-    friendrequest = friendship.objects.filter(sender = sender, receiver = receiver).frist()
-    friendrequest.state = "refused"
+    try:
+        friendrequest = friendship.objects.filter(sender = sender, receiver = receiver).frist()
+        friendrequest.state = "refused"
+    except:
+        return False
+    return True
 
 def follow_user(request,user_id):
     follower = get_user(request)
     followed = get_userbyid(user_id)
-    followinstance = follow(follower = follower, followed=followed)
-    followinstance.save()
+    try:
+        followinstance = follow(follower = follower, followed=followed)
+        followinstance.save()
     # to be continue to check if the user blocked this user before or not before sending the friend request or being refused more than 3 times
+    except:
+        return False
+    return True
 
 def block_user(request, user_id):
     blocker = get_user(request)
     blocked = get_userbyid(user_id)
-    blockinstance = block(blocker =blocker, blocked=blocked, creation_date=currentDateTime)
-    blockinstance.save()
-
+    try:
+        blockinstance = block(blocker =blocker, blocked=blocked, creation_date=currentDateTime)
+        blockinstance.save()
+    except:
+        return False
+    return True
 def is_friend(request, user_id):
     receiver = get_user(request)
     sender = get_userbyid(user_id)
@@ -158,20 +173,93 @@ def unfriend_request(request, user_id):
 def get_friendlist(user_id): # this function should return a list of friend objects
     user = get_userbyid(user_id)
     # seraching for the friends of this user
-    friendinstance = friendship.objects.filter(Q(sender = user_id) | Q(receiver = user_id)).values()
+    friendinstance = friendship.objects.filter(Q(sender = user) | Q(receiver = user), state="accepted").values()
     if friendinstance != None:
         return friendinstance
     else:
         return None
 
-def get_mutualfriends():    
+def get_mutualfriends(request, user_id):
+    # declaring an empty list for the mutual friends
+    mutualfriendslist = []
+    # getting the users
+    user1  = get_user(request)
+    #user2 = get_userbyid(user_id)
+    user1_friends = get_friendlist(user1.id)
+    user2_friends = get_friendlist(user_id)
+    # checking if the there is a similar friends between the two users
+    for user in user1_friends:
+        if user in user2_friends:
+            mutualfriendslist.append(user)
+    if len(mutualfriendslist) > 0: # checking if there is mutual friends in the list
+        return mutualfriendslist
+    else:
+        return False # there is no mutual friends 
+    
+
+def get_followers(user_id):
+    # checking the followers of the userid
+    user = get_userbyid(user_id)
+    followinstance = follow.objects.filter(followed = user).values()
+    # checking if the user have followers
+    if len(followinstance) > 0:
+        return followinstance
+    else:
+        return False # there is no users following the given user
+def get_blocks(request):
+    # getting user by request
+    user = get_user(request)
+    # checking the users that this user have blocked
+    blockinstance = block.objects.filter(blocker = user).values()
+    if len(blockinstance) > 0:
+        return blockinstance
+    else:
+        return False # the user is not blocking anyone
+
+def get_follows(request):
+    # getting the user
+    user = get_user(request)
+    followinstance = follow.objects.filter(follower = user).values()
+    if len(followinstance)>0:
+        return followinstance
+    else:
+        return False # there is no one this user follows
+
+def get_friendrequests(request):
+    # getting user
+    user = get_user(request)
+    friendrequestlist = friendship.objects.filter(sender = user, state = "pending").values()
+    if len(friendrequestlist)>0:
+        return friendrequestlist
+    else:
+        return False # there is not pending friend request for this user
+
+def is_user_in_group(request, group):
     pass
 
-def get_followers():
+def is_user_follow_page(request, page):
     pass
 
-def get_blocks():
+def follow_page(request, page):
     pass
 
-def get_followinglist():
+def unfollow_page(request, page):
+    pass
+
+def join_group(request, group):
+    pass
+
+def leave_group(request, group):
+    pass
+
+def is_userpage_moderator(request, page):
+    pass
+
+def is_usergroup_moderator(request, group):
+    pass
+
+def is_page_creator(request, page):
+    pass
+
+def is_group_creator(request, group):
     pass
