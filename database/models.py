@@ -207,7 +207,8 @@ class user_page(models.Model):
 class user_group(models.Model):
     group = models.ForeignKey("group", on_delete=models.CASCADE)
     user = models.ForeignKey("user", on_delete=models.CASCADE)
-    state = models.CharField(max_length=12) # can be (moderator, normal)
+    user_state = models.CharField(max_length=12) # can be (moderator, normal)
+    state = models.CharField(max_length=12) # can be (refused, accepted)
     create_date = models.DateTimeField()
 # this is for authentication
 

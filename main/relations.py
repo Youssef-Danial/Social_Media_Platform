@@ -234,11 +234,7 @@ def get_friendrequests(request):
     else:
         return False # there is not pending friend request for this user
 
-def is_user_in_group(request, group):
-    pass
 
-def is_user_follow_page(request, page):
-    pass
 
 def follow_page(request, page):
     pass
@@ -262,4 +258,7 @@ def is_page_creator(request, page):
     pass
 
 def is_group_creator(request, group):
+    pass
+
+def is_user_refused_group(request, group):
     pass

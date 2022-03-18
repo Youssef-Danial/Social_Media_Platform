@@ -65,3 +65,18 @@ def get_current_datetime():
 
 def is_user_auth_and_verified():
     pass
+
+def is_user_in_group(request, group):
+    pass
+
+def is_user_follow_page(request, page):
+    pass
+
+def get_groupbyid(group_id):
+    pass
+
+def get_group_by_creator(request):
+    pass
+
+def get_page_by_creator(request):
+    pass

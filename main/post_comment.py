@@ -36,12 +36,6 @@ def create_post(request, data, fileslist): # data should be a dictionary
     else:
         return False
 
-def load_files(posts):
-    filedictionary = {} # post is the key files are the value
-    for post in posts:
-        fileslist = postfile.objects.filter(post = post).values()
-        filedictionary[post.id] = fileslist
-    return filedictionary
 
 def load_profile_posts(request, user_id, state):
     if is_user_auth(request):
@@ -53,3 +47,25 @@ def load_profile_posts(request, user_id, state):
             profileposts = post.objects.filter(user=u,post_location="profile").order_by("-create_date")
         #filedictionary = load_files(profileposts)
         return profileposts
+    
+def load_page_posts(request, page_id, state):
+    pass
+
+def load_group_posts(request, group_id, state):
+    pass
+
+def edit_post(request):
+    pass
+
+def delete_post(request):
+    pass
+
+def create_comment(request):
+    pass
+
+def edit_comment(request):
+    pass
+
+def delete_comment(request):
+    pass
+
