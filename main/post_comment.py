@@ -10,6 +10,7 @@ from itertools import chain
 # getting current Time
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 
+
 # post
 def create_post(request, data, fileslist): # data should be a dictionary 
     # 100 percent if this function is called the user is already authenticated
@@ -24,6 +25,8 @@ def create_post(request, data, fileslist): # data should be a dictionary
         p.who_can_see = data["who_can_see"]
         p.interaction_counter = "{likes:0}"
         p.post_location = data["post_location"]
+        p.instance_id = data['instance_id']
+        p.instance_name = data["instance_name"]
         # saving the post so we can receive the files
         p.create_date = currentDateTime
         p.save()
@@ -69,3 +72,11 @@ def edit_comment(request):
 def delete_comment(request):
     pass
 
+def get_feeds(request):
+    pass
+
+def is_post_owner(request, post):
+    pass
+
+def is_comment_owner(request, post):
+    pass

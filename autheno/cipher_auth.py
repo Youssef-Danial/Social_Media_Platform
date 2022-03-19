@@ -1,5 +1,5 @@
 from django.contrib.auth.hashers import make_password, check_password
-from database.models import user, profile
+from database.models import user, profile, page, group, user_group, user_page, post, comment
 from django.contrib import messages
 import datetime
 from django.utils import timezone
@@ -54,29 +54,51 @@ def get_user_profile(u):
     return p
 
 
-def get_verfied():
-    pass
-
-def send_verification_message():
-    pass
-
 def get_current_datetime():
     return currentDateTime
+
+
+def get_groupbyid(group_id):
+    try:
+        groupinstance = group.objects.get(pk=group_id)
+        return groupinstance
+    except:
+        return None
+def get_pagebyid(page_id):
+    try:
+        pageinstance = page.objects.get(pk=page_id)
+        return pageinstance
+    except:
+        return None
+
+
+def get_group_by_creator(request):
+    try:
+        creator = get_user(request)
+        grouplist = group.objects.filter(creator = creator).values()
+        return grouplist
+    except:
+        return None
+
+def get_page_by_creator(request):
+    try:
+        creator = get_user(request)
+        pagelist = page.objects.filter(creator = creator).values()
+        return pagelist
+    except:
+        return None
+
+def get_postbyid(post_id):
+    pass
+
+def get_commentbyid(comment_id):
+    pass
 
 def is_user_auth_and_verified():
     pass
 
-def is_user_in_group(request, group):
+def get_verfied():
     pass
 
-def is_user_follow_page(request, page):
-    pass
-
-def get_groupbyid(group_id):
-    pass
-
-def get_group_by_creator(request):
-    pass
-
-def get_page_by_creator(request):
+def send_verification_message():
     pass

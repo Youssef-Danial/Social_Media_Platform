@@ -14,6 +14,7 @@
 </head>
 {% load static %}
 {% block postcontent %}
+    <a href ="{% url 'main:profile' post.user.id %}">checkPF</a>
     <button><div><img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></div>{{post.user.user_name}}</button>
     <p class="small">{% if post.who_can_see == "followers" %} public {%else%} {{post.who_can_see}} {% endif %}  {{post.create_date}}</p
     <p class="title">{{post.text_content}}</p>

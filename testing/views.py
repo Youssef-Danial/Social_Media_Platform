@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from autheno.cipher_auth import is_user_auth
+from autheno.cipher_auth import is_user_auth, get_user
 from autheno.filehandler import receive_files
 from database.models import profile
 from main.post_comment import create_post
@@ -20,8 +20,11 @@ def post(request):
     if is_user_auth(request):
         fileslist = receive_files(request, state="post")
         if request.method == "POST":
+            # getting user data
+            u = get_user(request)
             data = request.POST
-            print(type(data))
+            data["instance_name"] = u.username
+            data["instance_id"] = u.id 
             if create_post(request, data,fileslist):
                 return HttpResponse("Posted successfully")
             else:

@@ -10,6 +10,11 @@ from autheno.cipher_auth import get_user
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
+# format lists
+audiolist = []
+imagelist = []
+videolist = []
+
 # some validators
 def file_size(value): # add this to some file where you can import it from
         limit = 2 * 1024 * 1024
@@ -72,10 +77,12 @@ def receive_files(request, state, post=None):
                 folder_path, access_path = make_dir(u.id, state = state)
                 fs = FileSystemStorage(location=folder_path)
                 file_path = os.path.join(folder_path, str(file_))
+                # getting file type
+                file_type = get_file_type(get_file_extension(str(file_path)))
                 # access_path 
                 access_path = os.path.join(access_path, str(file_))
                 print(access_path)
-                filesaver = postfile(file_name=str(file_path), uploaded_date=currentDateTime, file_url = access_path, post=post)
+                filesaver = postfile(file_name=str(file_path), uploaded_date=currentDateTime, file_url = access_path, post=post, file_extension = get_file_extension(str(file_path)), file_type = file_type)
                 fs.save(filesaver.file_name,file_)
                 filesaver.save()
                 filesuploadedlist.append(filesaver)
@@ -129,5 +136,17 @@ def make_dir(user_id, state=None):
 def get_file_extension(filename):
     extension = os.path.splitext(filename)[1]
     return extension
+
+def get_file_type(extension):
+    file_type = ""
+    if file_type in imagelist:
+        file_type = "image"
+    elif file_type in videolist:
+        file_type = "video"
+    elif file_type in audiolist:
+        file_type = "audio"
+    else:
+        file_type = "unkow" # unknown
+    return file_type
 def load_file(file_to_load):
     pass

@@ -9,7 +9,7 @@ class user(models.Model):
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    user_name = models.CharField(max_length=12)
+    user_name = models.CharField(max_length=30)
     email = models.EmailField(max_length=70, unique=True)
     password_hash = models.CharField(max_length=72)
     phone_number = models.CharField(max_length=50) #  unique=True do not forget to make the phone number unique
@@ -72,6 +72,8 @@ class post(models.Model):
     def get_files(self):
         return postfile.objects.filter(post=self).values()
     postfiles=property(get_files)
+    instance_id = models.IntegerField() # can be (userid, groupid, pageid)
+    instance_name = models.CharField(max_length=30) # this should be a name of a(user, page, group)
 class postfile(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -79,6 +81,7 @@ class postfile(models.Model):
     is_used = models.BooleanField(default=True) # state value if true the file is in use else it is not being used
     post = models.ForeignKey("post", on_delete=models.SET_NULL, blank=True, null=True)
     file_extension = models.CharField(max_length=6, null=True, blank=True)
+    file_type = models.CharField(max_length = 6, blank=True, null=True) # this should be file type (audio, video, image, unkow) unknown
 # class video(models.Model):
 #     name=models.CharField(max_length=50)
 #     video_url = models.TextField()
@@ -91,12 +94,22 @@ class comment(models.Model):
     attach_url = models.ForeignKey("file",on_delete=models.SET_NULL,null=True)
     date = models.DateTimeField()
     interaction_counter = models.CharField(max_length=50)
-
+    def get_files(self):
+        return commentfile.objects.filter(comment=self).values()
+    commentfiles=property(get_files)
+class commentfile(models.Model):
+    file_name = models.CharField(max_length=250)
+    uploaded_date = models.DateTimeField()
+    file_url = models.CharField(max_length=250)
+    is_used = models.BooleanField(default=True) # state value if true the file is in use else it is not being used
+    comment = models.ForeignKey("comment", on_delete=models.SET_NULL, blank=True, null=True)
+    file_extension = models.CharField(max_length=6, null=True, blank=True)
+    file_type = models.CharField(max_length = 6,blank=True, null=True)
 class category(models.Model):
     name = models.CharField(max_length=15)
 class group(models.Model):
-    user = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=50)
+    creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
+    name = models.CharField(max_length=30)
     creation_date = models.DateTimeField()
     description = models.TextField()
     is_public = models.BooleanField()
@@ -104,7 +117,8 @@ class group(models.Model):
     state = models.CharField(max_length=10) # state (working, stopped, suspended) ex. if the creator deleted his account the group will be in stop state
     users_num = models.IntegerField() # number of users on the group
 class page(models.Model):
-    user = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
+    creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
+    page_name = models.CharField(max_length=30)
     state = models.CharField(max_length=10) # state (working, stopped, suspended) ex. if the creator deleted his account the page will be in stop state
     creation_date = models.DateTimeField()
     description = models.TextField()
@@ -119,14 +133,14 @@ class post_group(models.Model):
     post = models.ForeignKey("post", on_delete=models.CASCADE)
     group = models.ForeignKey("group", on_delete=models.CASCADE)
 
-class group_user(models.Model):
-    user = models.ForeignKey("user", on_delete=models.CASCADE)
-    group = models.ForeignKey("group", on_delete=models.CASCADE)
+# class group_user(models.Model):
+#     user = models.ForeignKey("user", on_delete=models.CASCADE)
+#     group = models.ForeignKey("group", on_delete=models.CASCADE)
 
-class post_user(models.Model):
-    user = models.ForeignKey("user", on_delete=models.CASCADE)
-    page = models.ForeignKey("page", on_delete=models.CASCADE)
-# chat section
+# class post_user(models.Model):
+#     user = models.ForeignKey("user", on_delete=models.CASCADE)
+#     page = models.ForeignKey("page", on_delete=models.CASCADE)
+# # chat section
 
 class thread(models.Model):
     subject = models.CharField(max_length=70)
@@ -207,8 +221,8 @@ class user_page(models.Model):
 class user_group(models.Model):
     group = models.ForeignKey("group", on_delete=models.CASCADE)
     user = models.ForeignKey("user", on_delete=models.CASCADE)
-    user_state = models.CharField(max_length=12) # can be (moderator, normal)
-    state = models.CharField(max_length=12) # can be (refused, accepted)
+    user_state = models.CharField(max_length=12) # can be (refused, pending, accepted)
+    state = models.CharField(max_length=12) # can be (moderator, normal)
     create_date = models.DateTimeField()
 # this is for authentication
 

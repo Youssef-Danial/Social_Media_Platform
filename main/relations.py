@@ -1,5 +1,5 @@
-from autheno.cipher_auth import get_user, get_user_profile, get_userbyid
-from database.models import friendship, follow, block, page, group
+from autheno.cipher_auth import get_user, get_user_profile, get_userbyid, get_pagebyid, get_groupbyid, get_current_datetime
+from database.models import friendship, follow, block, page, group, user_page, user_group
 import datetime
 from django.utils import timezone
 from django.db.models import Q
@@ -7,7 +7,7 @@ from django.db.models import Q
 # getting current Time
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 
-def friend_request(request, user_id):
+def send_friend_request(request, user_id):
     sender = get_user(request)
     receiver = get_userbyid(user_id)
     friendrequest = friendship(sender = sender, receiver = receiver, state="pending", send_date=currentDateTime, created_at=None)
@@ -234,31 +234,155 @@ def get_friendrequests(request):
     else:
         return False # there is not pending friend request for this user
 
+def is_user_in_group(request, group_id):
+    userinstance = get_user(request)
+    groupinstance = get_groupbyid(group_id)
+    user_group_instance = user_group.objects.filter(group= groupinstance, user= userinstance).first()
+    if user_group_instance is not None:
+        if user_group_instance.user_state == "accepted":
+            return True
+        else:
+            return False # user state is refused or pending
+    else:
+        return False
+
+def is_user_follow_page(request, page_id):
+    userinstance = get_user(request)
+    pageinstance = get_pagebyid(page_id)
+    user_page_instance = user_page.objects.filter(page = pageinstance, user= userinstance).first()
+    if user_page_instance is not None:
+        return True
+    else:
+        return False
 
 
-def follow_page(request, page):
-    pass
+def follow_page(request, page_id):
+    try:
+        follower = get_user(request)
+        pageinstance = get_pagebyid(page_id)
+        # now creating a relation with with the follower and the page
+        user_page_follow_instance = user_page(page = pageinstance, user = follower, state = "normal", create_date=get_current_datetime())
+        user_page_follow_instance.save()
+        return True
+    except:
+        return False
+def unfollow_page(request, page_id):
+    try:
+        follower = get_user(request)
+        pageinstance = get_pagebyid(page_id)
+        # now creating a relation with with the follower and the page
+        user_page_follow_instance = user_page.objects.filter(page = pageinstance, user = follower).first()
+        # checking if the user a moderator
+        if user_page_follow_instance.state == "moderator":
+            return False
+        else:
+            # deleting the user from the page
+            user_page_follow_instance.delete()
+        return True
+    except:
+        return False # the user is not in the page
+    
+# if the user trying to join a group we should check if the group is public or private 
+# if public he joins the group without any problem 
+# if private he just send a request that will be shown to the moderators of the group
+# and then they can accept or refuse the request
+def join_group(request, group_id):
+    try:
+        follower = get_user(request)
+        groupinstance = get_groupbyid(group_id)
+        # checking the privacy state of the group
+        if groupinstance.is_public and (not is_user_refused_group(request, group_id)): # true mean public false mean private
+            # now creating a relation with with the follower and the page
+            user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "accepted", create_date=get_current_datetime())
+            user_group_follow_instance.save()
+            return True # joined successfully
+        else:
+            user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "pending", create_date=get_current_datetime())
+            user_group_follow_instance.save() 
+            return True 
+    except:
+        return False
+    
 
-def unfollow_page(request, page):
-    pass
+def leave_group(request, group_id):
+    try:
+        follower = get_user(request)
+        groupinstance = get_groupbyid(group_id)
+        # now creating a relation with with the follower and the page
+        user_group_follow_instance = user_page.objects.filter(page = groupinstance, user = follower).first()
+        # checking if the user a moderator
+        if user_group_follow_instance.state == "moderator" or user_group_follow_instance.user_state == "refused":
+            return False # the user is a moderator or a refused from the page
+        else:
+            # deleting the user from the page
+            user_group_follow_instance.delete()
+            return True
+    except:
+        return False # user is not in the group
 
-def join_group(request, group):
-    pass
+def is_userpage_moderator(request, page_id):
+    try:
+        userinstance = get_user(request),
+        pageinstance = get_pagebyid(page_id)
+        user_page_instance = user_page.objects.filter(user=userinstance, page=pageinstance).first()
+        if user_page_instance.state == "moderator":
+            return True 
+        else:
+            return False
+    except:
+        return False # the user is not in the group
 
-def leave_group(request, group):
-    pass
+def is_usergroup_moderator(request, group_id):
+    try:
+        userinstance = get_user(request)
+        groupinstance = get_groupbyid(group_id)
+        user_group_instance = user_group.objects.fitler(user = userinstance, group=groupinstance).first()
+        if user_group_instance.state == "moderator":
+            return True 
+        else:
+            return False
+    except:
+        return False # the user is not in the group
 
-def is_userpage_moderator(request, page):
-    pass
+def is_page_creator(request, page_id):
+    try:
+        userinstance = get_user(request)
+        pageinstance = get_pagebyid(page_id)
+        if pageinstance.creator == userinstance:
+            return True
+        else:
+            return False
+    except:
+        return False # something wrong happened in teh page instnace
+def is_group_creator(request, group_id):
+    try:
+        userinstance = get_user(request)
+        groupinstance = get_groupbyid(group_id)
+        if groupinstance.creator == userinstance:
+            return True
+        else:
+            return False
+    except:
+        return False
 
-def is_usergroup_moderator(request, group):
-    pass
+def is_user_refused_group(request, group_id):
+    try:
+        userinstance = get_user(request)
+        groupinstance = get_groupbyid(group_id)
+        user_group_instance = user_group.objects.filter(user = userinstance, group = groupinstance).first()
+        if user_group_instance.user_state == "refused":
+            return True
+        else:
+            return False
+    except:
+        return False # the user is not in the group
 
-def is_page_creator(request, page):
-    pass
+def get_user_group_join_state(request, group_id):
+    try:
+        userinstance = get_user(request)
+        groupinstance = get_groupbyid(group_id)
+        user_group_instance = user_group.objects.filter(user = userinstance, group = groupinstance).first()
+        return user_group_instance.user_state
+    except:
+        return None # the user is not in the group
 
-def is_group_creator(request, group):
-    pass
-
-def is_user_refused_group(request, group):
-    pass
