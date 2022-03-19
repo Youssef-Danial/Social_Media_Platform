@@ -57,11 +57,42 @@ def load_page_posts(request, page_id, state):
 def load_group_posts(request, group_id, state):
     pass
 
-def edit_post(request):
+def edit_post(request, post_id, data, fileslist):
+    try:
+        if is_user_auth(request):
+            if is_post_owner(request,post_id):
+                # getting post with id 
+                postinstance = get_postbyid(post_id)
+                # post new data
+                postinstance.text_content = data["text_content"]
+                postinstance.edit_date = get_current_datetime() # updating the edit date
+                postinstance.who_can_see = data["who_can_see"]
+                # removing postfiles and receiving the files
+                if len(fileslist) > 0: # for now user have to reupload files if he wants to edit
+                    for file in postinstance.postfiles: 
+                        file.delete()
+                    if type(fileslist) is list:
+                        for file in fileslist:
+                          # marking the files to the post
+                            file.post = postinstance
+                            file.save()
+    except:     
+        pass
+
+def delete_postfile(request, post_id):
     pass
 
-def delete_post(request):
-    pass
+def delete_post(request, post_id):
+    try:
+        if is_user_auth(request):
+            if is_post_owner(request, post_id):
+                postinstance = get_postbyid(post_id)
+                postinstance.delete()
+                return True
+            return False # not the owner of the post
+        return False # not authenticated
+    except:
+        return False
 
 def create_comment(request):
     pass
@@ -75,8 +106,25 @@ def delete_comment(request):
 def get_feeds(request):
     pass
 
-def is_post_owner(request, post):
-    pass
-
-def is_comment_owner(request, post):
-    pass
+def is_post_owner(request, post_id):
+    try:
+        # checking if the user is the owner of the post
+        userinstance = get_user(request)
+        post_instance = get_postbyid(post_id)
+        if post_instance.user == userinstance:
+            return True
+        else:
+            return False
+    except:
+        return False
+def is_comment_owner(request, comment_id):
+    try:
+        userinstance = get_user(request)
+        # postinstance = get_postbyid(post_id)
+        commentinstance = get_commentbyid(comment_id)
+        if commentinstance.user == userinstance:
+            return True
+        else:
+            return False
+    except:
+        return False

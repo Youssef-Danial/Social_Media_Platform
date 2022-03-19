@@ -11,9 +11,9 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 # format lists
-audiolist = []
-imagelist = []
-videolist = []
+audiolist = ["mp3"]
+imagelist = ['jpg','png','gif','svg','jpeg','tiff']
+videolist = ["mp4","wmv","avi",'mkv']
 
 # some validators
 def file_size(value): # add this to some file where you can import it from

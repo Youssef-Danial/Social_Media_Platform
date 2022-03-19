@@ -82,6 +82,7 @@ class postfile(models.Model):
     post = models.ForeignKey("post", on_delete=models.SET_NULL, blank=True, null=True)
     file_extension = models.CharField(max_length=6, null=True, blank=True)
     file_type = models.CharField(max_length = 6, blank=True, null=True) # this should be file type (audio, video, image, unkow) unknown
+    
 # class video(models.Model):
 #     name=models.CharField(max_length=50)
 #     video_url = models.TextField()
@@ -93,6 +94,7 @@ class comment(models.Model):
     content = models.TextField()
     attach_url = models.ForeignKey("file",on_delete=models.SET_NULL,null=True)
     date = models.DateTimeField()
+    edit_date = models.DateTimeField()
     interaction_counter = models.CharField(max_length=50)
     def get_files(self):
         return commentfile.objects.filter(comment=self).values()

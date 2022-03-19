@@ -34,6 +34,7 @@ class profile(View):
                     #filesdictioanry.update(filesdictioanryonlyme)
                 #print(filesdictioanry)
                 # show if the viewer
+                print(profileposts)
                 return render(request, "main/profile.html", {"user":user, "is_owner":is_owner, "profile": prof, "posts":profileposts})
             else:
                 return HttpResponse("The User you are looking for does not Exist")

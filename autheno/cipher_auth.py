@@ -89,10 +89,18 @@ def get_page_by_creator(request):
         return None
 
 def get_postbyid(post_id):
-    pass
+    try:
+        postinstance = post.objects.get(pk=post_id)
+        return postinstance
+    except:
+        return None
 
 def get_commentbyid(comment_id):
-    pass
+    try:
+        commentinstance = comment.objects.get(pk=comment_id)
+        return commentinstance
+    except:
+        return None
 
 def is_user_auth_and_verified():
     pass

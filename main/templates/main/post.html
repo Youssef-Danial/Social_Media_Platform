@@ -15,13 +15,14 @@
 {% load static %}
 {% block postcontent %}
     <a href ="{% url 'main:profile' post.user.id %}">checkPF</a>
-    <button><div><img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></div>{{post.user.user_name}}</button>
+    <button ><div><img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></div>{{post.user.user_name}}</button>
+    <a href ="{% url 'testing:displaypost' post.id %}">
     <p class="small">{% if post.who_can_see == "followers" %} public {%else%} {{post.who_can_see}} {% endif %}  {{post.create_date}}</p
     <p class="title">{{post.text_content}}</p>
-    <p>{{post.user.profile.link}}</p>
     <p>
         {% for postfile in  post.postfiles %}
             <img src="{% static postfile.file_url|safe %}" alt="post picture" style="width:100%">
         {% endfor %}
     </p>
+</a>
 {% endblock %}
