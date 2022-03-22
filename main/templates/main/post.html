@@ -12,6 +12,7 @@
         }      
     </style>
 </head>
+<body>
 {% load static %}
 {% block postcontent %}
     <a href ="{% url 'main:profile' post.user.id %}">checkPF</a>
@@ -21,8 +22,55 @@
     <p class="title">{{post.text_content}}</p>
     <p>
         {% for postfile in  post.postfiles %}
-            <img src="{% static postfile.file_url|safe %}" alt="post picture" style="width:100%">
+            <p>{{postfile.file_type}}</p>
+            {%if postfile.file_type == "image" %}
+                <img src="{% static postfile.file_url|safe %}" alt="post picture" style="width:100%">
+            {% elif postfile.file_type == "video" %}
+                <video width="320" height="240" controls>
+                    <source src="{% static postfile.file_url|safe %}" type="video/mp4">
+                </video>
+            {% elif postfile.file_type == "audio" %}
+                <audio controls autoplay>
+                    <source src="{% static postfile.file_url|safe %}" type="audio/mpeg">
+                  Your browser does not support the audio element.
+                </audio>
+            {% else %}
+            {% endif %}
+              
+
         {% endfor %}
     </p>
 </a>
 {% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $.ajax({
+        xhr: function() {
+          var xhr = new window.XMLHttpRequest();
+      
+          xhr.upload.addEventListener("progress", function(evt) {
+            if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              percentComplete = parseInt(percentComplete * 100);
+              console.log(percentComplete);
+      
+              if (percentComplete === 100) {
+      
+              }
+      
+            }
+          }, false);
+      
+          return xhr;
+        },
+        url: posturlfile,
+        type: "POST",
+        data: JSON.stringify(fileuploaddata),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(result) {
+          console.log(result);
+        }
+      });
+</script>
+</body>
