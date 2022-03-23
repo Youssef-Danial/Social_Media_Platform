@@ -44,10 +44,14 @@ def load_profile_posts(request, user_id, state):
     if is_user_auth(request):
         # get the user_id posts
         u = get_userbyid(user_id)
-        if state != "all":
-            profileposts = post.objects.filter(user=u,post_location="profile", who_can_see = state).order_by("-create_date")
-        else:
+        profileposts = None
+        if state == "all":
             profileposts = post.objects.filter(user=u,post_location="profile").order_by("-create_date")
+        elif state == "followers":
+            print("follower")
+            profileposts = post.objects.filter(Q(who_can_see="public")|Q(who_can_see="followers"),user=u,post_location="profile").order_by("-create_date")
+        elif state == "public":
+            profileposts = post.objects.filter(user=u,post_location="profile", who_can_see = "public").order_by("-create_date")
         #filedictionary = load_files(profileposts)
         return profileposts
     

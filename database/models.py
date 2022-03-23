@@ -2,6 +2,7 @@ from pyexpat import model
 from django.db import models
 from sqlalchemy import null
 import datetime
+from django.contrib.humanize.templatetags import humanize
 from django.utils import timezone
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 # Create your models here.
@@ -65,7 +66,7 @@ class post(models.Model):
     edit_date = models.DateTimeField(null = True, blank=True)
     text_content = models.TextField()
     # video = models.ForeignKey("video", on_delete=models.SET_NULL, null=True)
-    who_can_see = models.TextField() # can be (followers, onlyme)
+    who_can_see = models.TextField() # can be (followers, public, onlyme)
     interaction_counter = models.CharField(max_length=50) # this should be dictionary of keys(reactiontype): values(number of reaction)
     # post_state = models.IntegerField() #
     post_location = models.CharField(max_length=7) # this should be (profile, page, group)
@@ -74,6 +75,8 @@ class post(models.Model):
     postfiles=property(get_files)
     instance_id = models.IntegerField() # can be (userid, groupid, pageid)
     instance_name = models.CharField(max_length=30) # this should be a name of a(user, page, group)
+    def get_timeago(self):
+        return humanize.naturaltime(self.create_date)
 class postfile(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -99,6 +102,8 @@ class comment(models.Model):
     def get_files(self):
         return commentfile.objects.filter(comment=self).values()
     commentfiles=property(get_files)
+    def get_timeago(self):
+        return humanize.naturaltime(self.create_date)
 class commentfile(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -203,7 +208,7 @@ class friendship(models.Model):
     state = models.CharField(max_length=10) # can be (pending, accepted, refused)
     send_date = models.DateTimeField()
     creation_date = models.DateTimeField(null=True)
-
+    # creating a follow instance maybe in a function here
 class follow(models.Model):
     follower = models.ForeignKey("user", on_delete=models.CASCADE, related_name="follower")
     followed = models.ForeignKey("user", on_delete=models.CASCADE, related_name="followed")

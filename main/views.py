@@ -7,6 +7,7 @@ from autheno.filehandler import receive_file
 from database.models import file, profile as profilemodel, user
 from main.post_comment import load_profile_posts
 from database.models import postfile
+from main.relations import is_follower, is_friend
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
@@ -15,6 +16,9 @@ class profile(View):
         is_owner = False
         #temp = "1/profile/Picture1.png"
         prof = None
+        # getting the data of the user states
+        is_ufollower = is_follower(request, user_id)
+        is_ufriend = is_friend(request, user_id)
         if is_user_auth(request):
             if user != None:
                 # show if the owner
@@ -26,16 +30,18 @@ class profile(View):
                 # loading profile posts that are who can see equal to followers
                 
                 # if owner it will show his all posts
-                if not is_owner:
+                if is_owner == True:
                     # loading the onlyme profile posts that who can see equal to onlyme
-                    profileposts = profile.load_profile_posts(request, user_id, state = "followers")
+                    profileposts = profile.load_profile_posts(request, user_id, state = "all")
+                # checking if the user is a follower
+                elif is_follower(request, user_id):
+                    profileposts = profile.load_profile_posts(request, user_id, state="followers")
                 else:
-                    profileposts = profile.load_profile_posts(request, user_id, state="all")
+                    profileposts = profile.load_profile_posts(request, user_id, state="public")
                     #filesdictioanry.update(filesdictioanryonlyme)
                 #print(filesdictioanry)
                 # show if the viewer
-                print(profileposts)
-                return render(request, "main/profile.html", {"user":user, "is_owner":is_owner, "profile": prof, "posts":profileposts})
+                return render(request, "main/profile.html", {"user":user, "is_owner":is_owner, "profile": prof, "posts":profileposts, "is_follower":is_ufollower, "is_friend": is_ufriend})
             else:
                 return HttpResponse("The User you are looking for does not Exist")
         else:

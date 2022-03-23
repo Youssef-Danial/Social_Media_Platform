@@ -99,6 +99,20 @@ textarea {
   <p><button onclick="location.href = '{% url 'main:edit_pfp'%}'">Edit pfp</button></p>
   {% comment %} <p><button onclick="location.href = '{% url 'main:edit_about_me'%}'">Edit about me</button></p> {% endcomment %}
   {% include "main/textarea.html"%}
+  {% elif is_follower %}
+    <button >unfollow</button>
+    {% if is_friend %}
+    <button >unfriend</button>
+    {% else %}
+    <button >add</button>
+    {% endif %}
+  {% else %}
+    <button >follow</button>
+    {% if is_friend %}
+    <button >unfriend</button>
+    {% else %}
+    <button >add</button>
+    {% endif %}
   {% endif %}
 </div>
 <div class="posts">

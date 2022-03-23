@@ -12,9 +12,10 @@
      {% csrf_token %}
      <textarea name="text_content">
      </textarea>
-     <select name="who_can_see" >
+     <select name="who_can_see" required="true">
         <option value="onlyme">only me</option>
-        <option value="followers" selected>followers</option>
+        <option value="followers">followers</option>
+        <option value="public">public</option>
       </select>
      <input type="hidden" name="post_location" value="profile"/>
         {{ form.file }}

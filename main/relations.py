@@ -3,7 +3,7 @@ from database.models import friendship, follow, block, page, group, user_page, u
 import datetime
 from django.utils import timezone
 from django.db.models import Q
-# empty commit
+
 # getting current Time
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 
@@ -266,6 +266,7 @@ def follow_page(request, page_id):
         return True
     except:
         return False
+
 def unfollow_page(request, page_id):
     try:
         follower = get_user(request)
