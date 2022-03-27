@@ -1,6 +1,6 @@
 import profile
 from django import forms
-from database.models import file, postfile
+from database.models import file, postfile, commentfile
 import datetime
 from django.utils import timezone
 from django.core.files.storage import FileSystemStorage
@@ -82,7 +82,10 @@ def receive_files(request, state, post=None):
                 # access_path 
                 access_path = os.path.join(access_path, str(file_))
                 print(access_path)
-                filesaver = postfile(file_name=str(file_path), uploaded_date=currentDateTime, file_url = access_path, post=post, file_extension = get_file_extension(str(file_path)), file_type = file_type)
+                if state == "post":
+                    filesaver = postfile(file_name=str(file_path), uploaded_date=currentDateTime, file_url = access_path, post=post, file_extension = get_file_extension(str(file_path)), file_type = file_type)
+                elif state == "comment":
+                    filesaver= commentfile(file_name=str(file_path), uploaded_date=currentDateTime, file_url = access_path, post=post, file_extension = get_file_extension(str(file_path)), file_type = file_type)
                 fs.save(filesaver.file_name,file_)
                 filesaver.save()
                 filesuploadedlist.append(filesaver)
@@ -128,6 +131,16 @@ def make_dir(user_id, state=None):
             pass
         temp_path =  os.path.join(save_path, user_id)
         access_path = os.path.join(temp_path, "post")
+        return  profile_path, access_path
+    elif state == "comment":
+        profile_path = os.path.join(new_path, "comment")
+        try:
+            if not os.path.exists(profile_path):
+                 os.mkdir(profile_path)
+        except:
+            pass
+        temp_path =  os.path.join(save_path, user_id)
+        access_path = os.path.join(temp_path, "comment")
         return  profile_path, access_path
     else:
         # to be continue

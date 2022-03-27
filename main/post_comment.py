@@ -1,12 +1,14 @@
+from sklearn.decomposition import TruncatedSVD
 from main import relations
 from autheno.cipher_auth import *
 import datetime
 from django.utils import timezone
 from django.db.models import Q
-from database.models import post, comment, postfile
+from database.models import post, comment, postfile, post_react, comment_react, commentfile, postfile
 from autheno.filehandler import receive_files
 from autheno.cipher_auth import is_user_auth
 from itertools import chain
+from main.relations import is_follower
 # getting current Time
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 
@@ -61,6 +63,20 @@ def load_page_posts(request, page_id, state):
 def load_group_posts(request, group_id, state):
     pass
 
+def load_post(request, post_id):
+    pass # here i need to check if the user is a follower or public
+    try:
+        post = get_postbyid(post_id)
+        if  post.who_can_see == "public":
+            return post
+        elif is_post_owner(request ,post_id):
+            return post
+        elif is_follower(request, post.user.id) and post.who_can_see != "onlyme":
+            return post
+        else:
+            return None
+    except:
+        return None
 def edit_post(request, post_id, data, fileslist):
     try:
         if is_user_auth(request):
@@ -98,13 +114,32 @@ def delete_post(request, post_id):
     except:
         return False
 
-def create_comment(request):
+def create_comment(request, data, fileslist,comment_position = "main"): # comment position for main and reply comments to distinguish
+    try:
+        #
+        if is_user_auth(request):
+            userinstance = get_user(request)
+            postinstance = get_postbyid(data["post"])
+            commentinstance = comment(user = userinstance, post=postinstance)
+            commentinstance.date = get_current_datetime()
+            commentinstance.content = data["content"]
+            commentinstance.save()
+            # now preparing the data
+            # if type(fileslist) is list:
+            #     for file in fileslist:
+            #         # marking the files to the post
+            #         file.comment = commentinstance
+            #         file.save()
+            # comment created
+            return True
+        return False
+    except:
+        return False
+
+def edit_comment(request, comment_id):
     pass
 
-def edit_comment(request):
-    pass
-
-def delete_comment(request):
+def delete_comment(request, comment_id):
     pass
 
 def get_feeds(request):
@@ -132,3 +167,86 @@ def is_comment_owner(request, comment_id):
             return False
     except:
         return False
+
+def add_react_post(request, post_id, react="like"): # react type for now is like
+    try:
+        # checking if the user is authenticated
+        if is_user_auth(request): # should return true if the user is authenticated
+            # first we get the user and the post 
+            userinstance  = get_user(request)
+            postinstance = get_postbyid(post_id)
+            # now adding a reaction to the post by loading the post_react model and inserting the new instance
+            post_react_instance = post_react(user = userinstance, post = postinstance) # the default is set for like for now
+            # now saving the post_react_instance to the databsae
+            post_react_instance.save()
+            return True
+        return False
+    except:
+        return False # something wrong with the user or the post or the user is not authenticated
+
+def remove_react_post(request, post_id, react="like"): # react type for now is like
+    try:
+        # checking if the user is authenticated
+        if is_user_auth(request) and is_user_reacted_post(request, post_id): # should return true if the user is authenticated and if the user is reacted to this post
+            # first we get the user and the post 
+            userinstance  = get_user(request)
+            postinstance = get_postbyid(post_id)
+            # now removing a reaction to the post by loading the post_react model and inserting the new instance
+            post_react_instance = post_react.objects.filter(user = userinstance, post = postinstance).first() # the default is set for like for now
+            # now checking if there is a reaction or not
+            post_react_instance.delete()
+            return True
+        return False # the user is not authenticated or did not react to the post at first place
+    except:
+        return False # something wrong with the user or the post
+def add_react_comment(request, comment_id, react="like"): # react type for now is like
+    try:
+        if is_user_auth(request):
+            userinstance = get_user(request)
+            commentinstance = get_commentbyid(comment_id)
+            comment_react_instance = comment_react(user = userinstance, comment = commentinstance)
+            # now saving the comment_react_instance
+            comment_react_instance.save()
+            return True
+        return False
+    except:
+        return False
+
+def remove_react_comment(request, comment_id, react="like"): # react type for now is like
+    try:
+        if is_user_auth(request) and is_user_reacted_comment(request, comment_id):
+            userinstance = get_user(request)
+            commentinstance = get_commentbyid(comment_id)
+            comment_react_instance = comment_react.objects.filter(user = userinstance, comment = commentinstance).first()
+            # now deleting the comment_react_instance
+            comment_react_instance.delete()
+            return True
+        return False
+    except:
+        return False
+
+def is_user_reacted_post(request, post_id): # to check if the user reacted or not to the post so he could not react again
+    # getting  the user and the post
+    try:
+        userinstance = get_user(request)
+        postinstance = get_postbyid(post_id)
+        post_react_instance = post_react.objects.filter(user = userinstance, post = postinstance).first() # the default is set for like for now
+        if post_react_instance != None:
+            return True # mean the user reacted to the post
+        else:
+            return False # the user did not react to the post
+    except:
+        return False # there something wrong with the user or the post maybe the do not exist
+def is_user_reacted_comment(request, comment_id):
+    try:
+        userinstance = get_user(request)
+        commentinstance = get_commentbyid(comment_id)
+        # checking in the database 
+        comment_react_instance = comment_react.objects.filter(user = userinstance, comment=commentinstance).first()
+        if comment_react_instance != None:
+            return True # mean the user reacted to the comment
+        return False # the user did not react to the comment
+    except:
+        return False # there something wrong with the user or the comment maybe the do not exist
+
+# later

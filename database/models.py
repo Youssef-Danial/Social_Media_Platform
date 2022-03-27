@@ -77,6 +77,16 @@ class post(models.Model):
     instance_name = models.CharField(max_length=30) # this should be a name of a(user, page, group)
     def get_timeago(self):
         return humanize.naturaltime(self.create_date)
+    
+    def comment_number(self): # this will return the number of comments
+        comment_instance = comment.objects.filter(post = self).values() # getting the comments
+        return len(comment_instance)
+    def get_comments(self):
+        comments = comment.objects.filter(post=self)
+        return comments
+    def get_reactions(self):
+        post_react_instance = post_react.objects.filter(post = self).values()
+        return len(post_react_instance)
 class postfile(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -85,7 +95,11 @@ class postfile(models.Model):
     post = models.ForeignKey("post", on_delete=models.SET_NULL, blank=True, null=True)
     file_extension = models.CharField(max_length=6, null=True, blank=True)
     file_type = models.CharField(max_length = 6, blank=True, null=True) # this should be file type (audio, video, image, unkow) unknown
-    
+
+class post_react(models.Model):
+    user = models.ForeignKey("user", on_delete=models.CASCADE)
+    post = models.ForeignKey("post", on_delete=models.CASCADE)
+    type = models.CharField(max_length=10, default = "like") # could be (like) this for future upgrades to the reaction between the user and the post
 # class video(models.Model):
 #     name=models.CharField(max_length=50)
 #     video_url = models.TextField()
@@ -95,15 +109,18 @@ class comment(models.Model):
     user = models.ForeignKey("user", on_delete=models.CASCADE)
     post = models.ForeignKey("post", on_delete=models.CASCADE)
     content = models.TextField()
-    attach_url = models.ForeignKey("file",on_delete=models.SET_NULL,null=True)
     date = models.DateTimeField()
-    edit_date = models.DateTimeField()
-    interaction_counter = models.CharField(max_length=50)
+    edit_date = models.DateTimeField(null=True)
+    interaction_counter = models.CharField(max_length=50, null =True)
+    comment_position = models.CharField(max_length=5, default = "main") # this can be (main, reply) this is for reply comments
     def get_files(self):
         return commentfile.objects.filter(comment=self).values()
     commentfiles=property(get_files)
     def get_timeago(self):
-        return humanize.naturaltime(self.create_date)
+        return humanize.naturaltime(self.date)
+    def get_reactions(self):
+        comment_react_instance = comment_react.objects.filter(comment = self).values()
+        return len(comment_react_instance)
 class commentfile(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -112,6 +129,10 @@ class commentfile(models.Model):
     comment = models.ForeignKey("comment", on_delete=models.SET_NULL, blank=True, null=True)
     file_extension = models.CharField(max_length=6, null=True, blank=True)
     file_type = models.CharField(max_length = 6,blank=True, null=True)
+class comment_react(models.Model):
+    user = models.ForeignKey("user", on_delete=models.CASCADE)
+    comment = models.ForeignKey("comment", on_delete=models.CASCADE)
+    type = models.CharField(max_length=10, default = "like") # could be (like) this for future upgrades to the reaction between the user and the comment
 class category(models.Model):
     name = models.CharField(max_length=15)
 class group(models.Model):
@@ -231,6 +252,13 @@ class user_group(models.Model):
     user_state = models.CharField(max_length=12) # can be (refused, pending, accepted)
     state = models.CharField(max_length=12) # can be (moderator, normal)
     create_date = models.DateTimeField()
+
+
+class comment_reply(models.Model): # maybe can do this one later
+    replied_to = models.ForeignKey("comment", on_delete=models.SET_NULL, null=True, related_name="replied_to")
+    replyer = models.ForeignKey("comment", on_delete=models.CASCADE, related_name="replyer")
+
+
 # this is for authentication
 
 # from django.db.models.fields import IntegerField

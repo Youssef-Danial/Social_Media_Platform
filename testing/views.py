@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 from autheno.cipher_auth import get_postbyid, is_user_auth, get_user
 from autheno.filehandler import receive_files
 from database.models import profile
@@ -19,13 +20,14 @@ def javascriptrender(request):
 
 class posts(View):
     def get(self, request, post_id):
-        postinstance = get_postbyid(post_id)
-        print(postinstance)
+        postinstance = load_post(request, post_id)
         if is_user_auth(request):
             data = {
                 "post": postinstance,
                 "is_owner": False
             }
+            # checking if the user is permetted to see the post
+
             if is_post_owner(request, post_id):
                 # should display edit and delete button
                 data["is_owner"] = True
@@ -71,3 +73,24 @@ class posts(View):
 
     def display_post(request, post_id):
         pass
+
+    def post(self, request, *args, **kwargs):
+        print("create comment called ==========================----=-=-=-=-")
+        print(is_user_auth(request))
+        print("create comment called ==========================----=-=-=-=-")
+        if is_user_auth(request):
+            print("the function is called")
+            fileslist = receive_files(request, state="comment")
+            if request.method == "POST":
+                # getting user data
+                request.POST._mutable = True
+                u = get_user(request)
+                data = request.POST
+                data["user"] = u
+                if create_comment(request, data,fileslist):
+                    HttpResponseRedirect(reverse("testing:displaypost", args=[int(data["post"])]))
+                else:
+                    return HttpResponse("User is not authenticated")
+            print("file should show up")
+            return HttpResponseRedirect(reverse("testing:displaypost", args=[int(data["post"])]))
+        return HttpResponse("User is not authenticated try to login")

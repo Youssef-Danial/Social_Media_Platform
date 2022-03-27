@@ -1,1 +1,22 @@
 {% include 'main/post.html' %}
+     {% comment %} commenting for the post here {% endcomment %}
+    
+        <form onaction="{% url 'testing:create_comment' post.id %}" method="post" >
+            {% csrf_token %}
+            <textarea name="content">
+            </textarea>
+            <input type="hidden" name="post" value="{{post.id}}"/>
+               
+           <input class = "inbutton"type="submit" value="Submit">
+        </form>
+    
+</p>
+<p> comments</p>
+<div>
+    {% for comment in post.get_comments %}
+    <div class = "btn btn-primary" >
+        <p> user name :{{comment.user.username}}</p><p> time : {{comment.get_timeago}}</p><p> {{comment.content}}</p>
+    </div>
+    <br>
+    {% endfor %}
+</div>
