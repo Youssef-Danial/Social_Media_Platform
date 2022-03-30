@@ -71,10 +71,8 @@ class posts(View):
                 edit_post()
                 return render(request, "testing/editpost.html", data)
 
-    def display_post(request, post_id):
-        pass
 
-    def post(self, request, *args, **kwargs):
+    def post(self,request, post_id):
         print("create comment called ==========================----=-=-=-=-")
         print(is_user_auth(request))
         print("create comment called ==========================----=-=-=-=-")
@@ -92,5 +90,5 @@ class posts(View):
                 else:
                     return HttpResponse("User is not authenticated")
             print("file should show up")
-            return HttpResponseRedirect(reverse("testing:displaypost", args=[int(data["post"])]))
+            return HttpResponseRedirect(reverse("testing:displaypost", args=[post_id]))
         return HttpResponse("User is not authenticated try to login")

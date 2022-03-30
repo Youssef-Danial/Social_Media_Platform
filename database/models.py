@@ -34,21 +34,18 @@ class profile(models.Model):
     user = models.OneToOneField("user", on_delete=models.CASCADE)
 
 
+class object(models.Model):
+    name = models.CharField(max_length=20, unique=True)
+    text = models.CharField(max_length=100)
 
-class activity_type(models.Model):
-    activity_name = models.CharField(max_length=20)
-
-class object_type(models.Model):
-    object_name = models.CharField(max_length=20)
-    object_url = models.URLField()
 class notification(models.Model):
-    receipt_id = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="receipt")
-    sender_id = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="sender")
-    activity_type = models.ForeignKey("activity_type", on_delete=models.SET_NULL, null = True)
-    object_type = models.ForeignKey("object_type", on_delete=models.SET_NULL, null = True)
+    receipt = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="receipt")
+    sender = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="sender")
+    object_type = models.ForeignKey("object", on_delete=models.SET_NULL, null = True)
+    source = models.CharField(max_length = 250, blank=True, null=True) # source id can be (comment, post, thread) 
     time_sent = models.DateTimeField()
     time_read = models.DateTimeField()
-    is_read = models.BooleanField()
+    is_read = models.BooleanField(default=False)
 
 class setting_code(models.Model):
     setting_name = models.CharField(max_length=50)

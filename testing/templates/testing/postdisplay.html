@@ -14,8 +14,10 @@
 <p> comments</p>
 <div>
     {% for comment in post.get_comments %}
-    <div class = "btn btn-primary" >
-        <p> user name :{{comment.user.username}}</p><p> time : {{comment.get_timeago}}</p><p> {{comment.content}}</p>
+    <div class = "btn" >
+        {% load static %}
+        <a href ="{% url 'main:profile' comment.post.user.id %}"><img src="{% static comment.user.profile.pfp.file_url|safe %}" alt="profile picture" style="width:20%"></a>
+        <p> {{comment.user.user_name}}</p><p> time : {{comment.get_timeago}}</p><p> {{comment.content}}</p>
     </div>
     <br>
     {% endfor %}

@@ -10,6 +10,5 @@ urlpatterns = [
     path("javascript", views.javascriptrender, name="javascriptrender"),
     path("create_post", views.posts.create_post, name="createpost"),
     path("post/<int:post_id>", views.posts.as_view(), name="displaypost"),
-  
-
+    
 ]   

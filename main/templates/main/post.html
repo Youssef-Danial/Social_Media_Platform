@@ -9,7 +9,9 @@
         }
         border-radius{
             size:25px;
-        }      
+        }
+        a {text-decoration: none;}
+            
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
@@ -19,13 +21,14 @@
     {% if post == None %}
         <p> You are not permitted to see this post </p>
     {% else %}
-    <a href ="{% url 'main:profile' post.user.id %}">checkPF</a>
-    <button ><div><img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></div>{{post.user.user_name}}</button>
-    <a href ="{% url 'testing:displaypost' post.id %}">
+    <a href ="{% url 'main:profile' post.user.id %}"> <img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></a>
+    <div></div><span>{{post.user.user_name}}</span>
+    <a href ="{% url 'testing:displaypost' post.id %}" style="text-decoration: none;">
     <p class="small">{{post.who_can_see}} {{post.get_timeago}}</p
     <p class="title">{{post.text_content}}</p>
     <p>
         {% for postfile in  post.postfiles %}
+        
             <p>{{postfile.file_type}}</p>
             {%if postfile.file_type == "image" %}
                 <img src="{% static postfile.file_url|safe %}" alt="post picture" style="width:100%">
@@ -40,31 +43,31 @@
                 </audio>
             {% else %}
             {% endif %}
-              
+            <p>---------------------</p>
 
         {% endfor %}
     </a>
         {% comment %} commenting for the post here {% endcomment %}
     
-        <form onaction="{% url 'testing:create_comment' post.id %}" method="post" >
+        {% comment %} <form onaction="{% url 'testing:create_comment' post.id %}" method="post" >
             {% csrf_token %}
             <textarea name="content">
             </textarea>
             <input type="hidden" name="post" value="{{post.id}}"/>
                
            <input class = "inbutton"type="submit" value="Submit">
-        </form>
+        </form> {% endcomment %}
     
 </p>
 <p> comments</p>
-<div>
+{% comment %} <div>
     {% for comment in post.get_comments %}
-    <div class = "btn btn-primary" >
+    <div class = "" >
         <p> user name :{{comment.user.username}}</p><p> time : {{comment.get_timeago}}</p><p> {{comment.content}}</p>
     </div>
     <br>
     {% endfor %}
-</div>
+</div> {% endcomment %}
 <!-- Bootstrap Packaged JS (Bundle) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

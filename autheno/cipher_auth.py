@@ -1,9 +1,9 @@
 from django.contrib.auth.hashers import make_password, check_password
-from database.models import user, profile, page, group, user_group, user_page, post, comment
+from database.models import user, profile, page, group, user_group, user_page, post, comment, notification
 from django.contrib import messages
 import datetime
 from django.utils import timezone
-currentDateTime = datetime.datetime.now(tz=timezone.utc)
+
 # cipher authentication part
 def auth_user(request, user_email, password):
     # adding a email to the session
@@ -14,7 +14,7 @@ def auth_user(request, user_email, password):
             request.session["email"] = user_email
             # updating the last login
             
-            u.last_login = currentDateTime
+            u.last_login = get_current_datetime()
             u.save()
             request.session["last_login"] = str(u.last_login)
         else:
@@ -55,6 +55,7 @@ def get_user_profile(u):
 
 
 def get_current_datetime():
+    currentDateTime = datetime.datetime.now(tz=timezone.utc)
     return currentDateTime
 
 
@@ -99,6 +100,13 @@ def get_commentbyid(comment_id):
     try:
         commentinstance = comment.objects.get(pk=comment_id)
         return commentinstance
+    except:
+        return None
+
+def get_notificationbyid(notification_id):
+    try:
+        notification_instance = notification.objects.get(pk=notification_id)
+        return notification_instance
     except:
         return None
 
