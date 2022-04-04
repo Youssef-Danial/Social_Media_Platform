@@ -1,5 +1,5 @@
 from django.contrib.auth.hashers import make_password, check_password
-from database.models import user, profile, page, group, user_group, user_page, post, comment, notification
+from database.models import particpant, user, profile, page, group, user_group, user_page, post, comment, notification, thread
 from django.contrib import messages
 import datetime
 from django.utils import timezone
@@ -109,7 +109,19 @@ def get_notificationbyid(notification_id):
         return notification_instance
     except:
         return None
-
+def get_threadbyid(thread_id):
+    try:
+        thread_instance = thread.objects.get(pk=thread_id)
+        return thread_instance
+    except:
+        return None
+    
+def get_particpantbyid(participant_id):
+    try:
+        particpant_instance = particpant.objects.get(pk=participant_id)
+        return particpant_instance
+    except:
+        return None
 def is_user_auth_and_verified():
     pass
 

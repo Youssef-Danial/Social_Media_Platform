@@ -169,19 +169,26 @@ class post_group(models.Model):
 
 class thread(models.Model):
     subject = models.CharField(max_length=70)
+    thread_creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
     creation_date = models.DateTimeField()
-    update_date = models.DateTimeField()
-    delete_date = models.DateTimeField()
-    encrypted_key = models.CharField(max_length=50)
+    update_date = models.DateTimeField(blank=True)
+    delete_date = models.DateTimeField(blank=True)
+    encrypted_key = models.CharField(max_length=50, blank=True)
     seed = models.CharField(max_length=10)
-
+    type = models.CharField(max_length=80) # could be (direct, group)
+    def get_particpants(self):
+        particpants = particpant.objects.filter(thread=self)
+        return particpants
+    def get_messages(self):
+        messages = message.objects.filter(thread=self)
+        return messages
 class particpant(models.Model):
     thread = models.ForeignKey("thread", on_delete=models.CASCADE)
     user = models.ForeignKey("user", on_delete=models.CASCADE)
     creation_date = models.DateTimeField()
-    delete_date = models.DateTimeField()
-    last_read = models.DateTimeField()
-    is_active = models.BooleanField()
+    delete_date = models.DateTimeField(null=True, blank=True)
+    last_read = models.DateTimeField(blank=True)
+    is_active = models.BooleanField(blank=True)
 
 class message_type(models.Model): # types can be video, text, file, picture, collection
     type = models.CharField(max_length=20)
