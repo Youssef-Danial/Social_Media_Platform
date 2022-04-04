@@ -48,26 +48,26 @@
         {% endfor %}
     </a>
         {% comment %} commenting for the post here {% endcomment %}
-    
-        {% comment %} <form onaction="{% url 'testing:create_comment' post.id %}" method="post" >
+   
+         <form id="formid" method="post" >
             {% csrf_token %}
-            <textarea name="content">
+            <textarea name="content" id="content">
             </textarea>
-            <input type="hidden" name="post" value="{{post.id}}"/>
+            <input type="hidden" name="post" id="post" value="{{post.id}}"/>
                
            <input class = "inbutton"type="submit" value="Submit">
-        </form> {% endcomment %}
+        </form> 
     
 </p>
 <p> comments</p>
-{% comment %} <div>
+<div>
     {% for comment in post.get_comments %}
     <div class = "" >
         <p> user name :{{comment.user.username}}</p><p> time : {{comment.get_timeago}}</p><p> {{comment.content}}</p>
     </div>
     <br>
     {% endfor %}
-</div> {% endcomment %}
+</div>  
 <!-- Bootstrap Packaged JS (Bundle) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -75,7 +75,30 @@
 {% endif %}
 {% endblock %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-        
-</script>
+ {% comment %} script should be here {% endcomment %}
+   <script>
+    $(document).ready(function(){
+        console.log("testing")
+        $("#createcomment").click(function(){    
+            console.log("testing")
+                $.ajax({
+                    type:"POST",
+                    url: "{% url 'testing:create_comment' %}",
+                    data: {
+                         content:$("#content").val(),
+                         post:$("#post").val(),
+                         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                        console.log("request sent")
+                        document.getElementById("formid").reset();
+                        
+                    }
+                    
+                });
+                
+        })
+    })
+    
+   </script>
 </body>

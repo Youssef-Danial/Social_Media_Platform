@@ -31,6 +31,67 @@ $(document).ready(function(){
         });
     }, 1000);
 })
+$(document).on('submit', '#formid',function(e){    
+    e.preventDefault();
+    $.ajax({
+        type:"POST",
+        url: "{% url 'testing:create_comment' %}",
+        data: {
+             content:$("#content").val(),
+             post:$("#post").val(),
+             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(response){
+            console.log("request sent")
+        },
+        error: function(response){
+            alert("Error occurred")
+        }
+    });
+})
+$(document).ready(function(){
+    $("#createcomment").onclick(function(){    
+        
+            $.ajax({
+                type:"POST",
+                url: "{% url 'testing:create_comment' %}",
+                data: {
+                     content:$("#content").val(),
+                     post:$("#post").val(),
+                     csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(response){
+                    console.log("request sent")
+                    alert(response)
+                }
+                
+            });
+            
+    })
+})
+$(document).ready(function(){
+    console.log("testing")
+    $("#createcomment").click(function(){    
+        
+        console.log("testing")
+            $.ajax({
+                type:"POST",
+                url: "{% url 'testing:create_comment' %}",
+                data: {
+                     content:$("#content").val(),
+                     post:$("#post").val(),
+                     csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(response){
+                    document.getElementById("formid").reset();
+                    console.log("request sent")
+                    alert(response)
+                }
+                
+            });
+            
+    })
+})
 </script>
 </body>
 </html>

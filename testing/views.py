@@ -72,7 +72,28 @@ class posts(View):
                 return render(request, "testing/editpost.html", data)
 
 
-    def post(self,request, post_id):
+    # def post(self,request, post_id):
+    #     print("create comment called ==========================----=-=-=-=-")
+    #     print(is_user_auth(request))
+    #     print("create comment called ==========================----=-=-=-=-")
+    #     if is_user_auth(request):
+    #         print("the function is called")
+    #         fileslist = receive_files(request, state="comment")
+    #         if request.method == "POST":
+    #             # getting user data
+    #             request.POST._mutable = True
+    #             u = get_user(request)
+    #             data = request.POST
+    #             data["user"] = u
+    #             if create_comment(request, data,fileslist):
+    #                 HttpResponseRedirect(reverse("testing:displaypost", args=[int(data["post"])]))
+    #             else:
+    #                 return HttpResponse("User is not authenticated")
+    #         print("file should show up")
+    #         return HttpResponseRedirect(reverse("testing:displaypost", args=[post_id]))
+    #     return HttpResponse("User is not authenticated try to login")
+    
+    def post(self,request):
         print("create comment called ==========================----=-=-=-=-")
         print(is_user_auth(request))
         print("create comment called ==========================----=-=-=-=-")
@@ -86,9 +107,10 @@ class posts(View):
                 data = request.POST
                 data["user"] = u
                 if create_comment(request, data,fileslist):
-                    HttpResponseRedirect(reverse("testing:displaypost", args=[int(data["post"])]))
+                    # return HttpResponse("success")
+                    return JsonResponse({"nothing":None},status=200)
                 else:
                     return HttpResponse("User is not authenticated")
             print("file should show up")
-            return HttpResponseRedirect(reverse("testing:displaypost", args=[post_id]))
+            return HttpResponseRedirect(reverse("testing:displaypost", args=[int(data["post"])]))
         return HttpResponse("User is not authenticated try to login")

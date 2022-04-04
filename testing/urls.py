@@ -4,7 +4,7 @@ from . import views
 
 app_name ="testing"
 urlpatterns = [
-    path("post/<int:post_id>/create_comment", views.posts.as_view(), name="create_comment"),
+    path("post/create_comment", views.posts.as_view(), name="create_comment"),
     path("ajaxtest", views.ajax_test, name = "ajaxtest"),
     path("ajax", views.ajax, name="ajax"),
     path("javascript", views.javascriptrender, name="javascriptrender"),

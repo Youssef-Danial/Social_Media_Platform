@@ -1,24 +1,55 @@
 {% include 'main/post.html' %}
      {% comment %} commenting for the post here {% endcomment %}
     
-        <form onaction="{% url 'testing:create_comment' post.id %}" method="post" >
-            {% csrf_token %}
-            <textarea name="content">
-            </textarea>
-            <input type="hidden" name="post" value="{{post.id}}"/>
-               
-           <input class = "inbutton"type="submit" value="Submit">
-        </form>
-    
+
 </p>
 <p> comments</p>
 <div>
-    {% for comment in post.get_comments %}
-    <div class = "btn" >
-        {% load static %}
-        <a href ="{% url 'main:profile' comment.post.user.id %}"><img src="{% static comment.user.profile.pfp.file_url|safe %}" alt="profile picture" style="width:20%"></a>
-        <p> {{comment.user.user_name}}</p><p> time : {{comment.get_timeago}}</p><p> {{comment.content}}</p>
-    </div>
-    <br>
-    {% endfor %}
+{% for comment in post.get_comments %}
+<div class = "" >
+    <p> {{comment.user.user_name}}</p><p> time : {{comment.get_timeago}}</p><p> {{comment.content}}</p>
 </div>
+<br>
+
+{% endfor %}
+<form id="formid" method="post" >
+    {% csrf_token %}
+    <textarea name="content" id="content">
+    </textarea>
+    <input type="hidden" name="post" id="post" value="{{post.id}}"/>
+       
+   <button type="button" id="createcomment" >comment<button>
+</form> 
+</div> 
+<!-- Bootstrap Packaged JS (Bundle) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+    console.log("testing")
+    
+    $("#createcomment").click(function(){    
+        
+        console.log("testing")
+            $.ajax({
+                type:"POST",
+                url: "{% url 'testing:create_comment' %}",
+                data: {
+                     content:$("#content").val(),
+                     post:$("#post").val(),
+                     csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(response){
+                    console.log("request sent")
+                    document.getElementById("formid").reset();
+                    
+                }
+                
+            });
+            
+    })
+})
+
+</script>
