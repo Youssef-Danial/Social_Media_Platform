@@ -16,7 +16,7 @@ def create_notification(sender_id, receipt_id, objecttype, source=None):
         sender = get_userbyid(sender_id)
         receipt = get_userbyid(receipt_id)
         object_type = object.objects.filter(object_type = objecttype)
-        # creating a notification instance 
+        # creating a notification instance
         notification_instance = notification(sender = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source)
         notification_instance.save()
         return True
@@ -40,7 +40,7 @@ def get_user_notifications(request, state="unread"):
         # now searching and getting all the notifications that have been sent to this user
         if state =="unread":
             notifications = notification.objects.filter(receipt = userinstance, is_read = False).order_by("-time_sent")
-            return notifications            
+            return notifications
         elif state == "read":
             notifications = notification.objects.filter(receipt = userinstance, is_read = True).order_by("-time_sent")
             return notifications

@@ -32,6 +32,7 @@ def leave_thread(request, thread_id):
             return False
     except:
         return False
+        
 def create_thread(request, subject="default", type = "direct"):
     try:
         if is_user_auth(request):
@@ -104,6 +105,7 @@ def get_user_threads(request):
             return None
     except:
         return None
+        
 def generate_encryption_key(request):
     pass
 

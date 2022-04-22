@@ -194,8 +194,8 @@ def get_mutualfriends(request, user_id):
     if len(mutualfriendslist) > 0: # checking if there is mutual friends in the list
         return mutualfriendslist
     else:
-        return False # there is no mutual friends 
-    
+        return False # there is no mutual friends
+
 
 def get_followers(user_id):
     # checking the followers of the userid
@@ -282,9 +282,9 @@ def unfollow_page(request, page_id):
         return True
     except:
         return False # the user is not in the page
-    
-# if the user trying to join a group we should check if the group is public or private 
-# if public he joins the group without any problem 
+
+# if the user trying to join a group we should check if the group is public or private
+# if public he joins the group without any problem
 # if private he just send a request that will be shown to the moderators of the group
 # and then they can accept or refuse the request
 def join_group(request, group_id):
@@ -299,11 +299,11 @@ def join_group(request, group_id):
             return True # joined successfully
         else:
             user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "pending", create_date=get_current_datetime())
-            user_group_follow_instance.save() 
-            return True 
+            user_group_follow_instance.save()
+            return True
     except:
         return False
-    
+
 
 def leave_group(request, group_id):
     try:
@@ -327,7 +327,7 @@ def is_userpage_moderator(request, page_id):
         pageinstance = get_pagebyid(page_id)
         user_page_instance = user_page.objects.filter(user=userinstance, page=pageinstance).first()
         if user_page_instance.state == "moderator":
-            return True 
+            return True
         else:
             return False
     except:
@@ -339,7 +339,7 @@ def is_usergroup_moderator(request, group_id):
         groupinstance = get_groupbyid(group_id)
         user_group_instance = user_group.objects.fitler(user = userinstance, group=groupinstance).first()
         if user_group_instance.state == "moderator":
-            return True 
+            return True
         else:
             return False
     except:
@@ -377,7 +377,17 @@ def is_user_refused_group(request, group_id):
             return False
     except:
         return False # the user is not in the group
-
+def is_user_refused_groupbyid(user_id, group_id):
+    try:
+        userinstance = get_userbyid(user_id)
+        groupinstance = get_groupbyid(group_id)
+        user_group_instance = user_group.objects.filter(user = userinstance, group = groupinstance).first()
+        if user_group_instance.user_state == "refused":
+            return True
+        else:
+            return False
+    except:
+        return False
 def get_user_group_join_state(request, group_id):
     try:
         userinstance = get_user(request)
@@ -386,4 +396,3 @@ def get_user_group_join_state(request, group_id):
         return user_group_instance.user_state
     except:
         return None # the user is not in the group
-

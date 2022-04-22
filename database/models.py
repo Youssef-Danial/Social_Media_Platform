@@ -42,7 +42,7 @@ class notification(models.Model):
     receipt = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="receipt")
     sender = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="sender")
     object_type = models.ForeignKey("object", on_delete=models.SET_NULL, null = True)
-    source = models.CharField(max_length = 250, blank=True, null=True) # source id can be (comment, post, thread) 
+    source = models.CharField(max_length = 250, blank=True, null=True) # source id can be (group, comment, post, thread)
     time_sent = models.DateTimeField()
     time_read = models.DateTimeField()
     is_read = models.BooleanField(default=False)
@@ -74,7 +74,7 @@ class post(models.Model):
     instance_name = models.CharField(max_length=30) # this should be a name of a(user, page, group)
     def get_timeago(self):
         return humanize.naturaltime(self.create_date)
-    
+
     def comment_number(self): # this will return the number of comments
         comment_instance = comment.objects.filter(post = self).values() # getting the comments
         return len(comment_instance)
@@ -138,16 +138,16 @@ class group(models.Model):
     creation_date = models.DateTimeField()
     description = models.TextField()
     is_public = models.BooleanField()
-    moderators = models.TextField() # can have a list of user ids who are moderators and default value would be the creator only
+    # moderators = models.TextField(blank=True) # can have a list of user ids who are moderators and default value would be the creator only
     state = models.CharField(max_length=10) # state (working, stopped, suspended) ex. if the creator deleted his account the group will be in stop state
-    users_num = models.IntegerField() # number of users on the group
+    users_num = models.IntegerField(blank=True) # number of users on the group
 class page(models.Model):
     creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
     page_name = models.CharField(max_length=30)
     state = models.CharField(max_length=10) # state (working, stopped, suspended) ex. if the creator deleted his account the page will be in stop state
     creation_date = models.DateTimeField()
     description = models.TextField()
-    moderators = models.TextField() # can have a list of user ids who are moderators and default value would be the creator only
+    # moderators = models.TextField() # can have a list of user ids who are moderators and default value would be the creator only
     category = models.ForeignKey("category", on_delete=models.SET_NULL, null=True)
     users_num = models.IntegerField() # number of the users who follow the page
 class post_page(models.Model):
@@ -173,7 +173,7 @@ class thread(models.Model):
     creation_date = models.DateTimeField()
     update_date = models.DateTimeField(blank=True)
     delete_date = models.DateTimeField(blank=True)
-    encrypted_key = models.CharField(max_length=50, blank=True)
+    #encrypted_key = models.CharField(max_length=50, blank=True)
     seed = models.CharField(max_length=10)
     type = models.CharField(max_length=80) # could be (direct, group)
     def get_particpants(self):
@@ -207,11 +207,11 @@ class message(models.Model):
 
 class admin_level(models.Model):
     level = models.CharField(max_length=10) # can be in a certain range of levels
-    abilities = models.TextField() # list of actions from the admin_actions 
+    abilities = models.TextField() # list of actions from the admin_actions
 
 class admin_actions(models.Model): # actions that the admin can do
     name = models.CharField(max_length=40)
-class admin(models.Model):  
+class admin(models.Model):
     user = models.ForeignKey("user", on_delete=models.CASCADE)
     creation_date = models.DateTimeField()
     delete_date = models.DateTimeField()
@@ -249,7 +249,7 @@ class user_page(models.Model):
     user = models.ForeignKey("user", on_delete=models.CASCADE)
     state = models.CharField(max_length=12) # can be (moderator, normal)
     create_date = models.DateTimeField()
-    
+
 class user_group(models.Model):
     group = models.ForeignKey("group", on_delete=models.CASCADE)
     user = models.ForeignKey("user", on_delete=models.CASCADE)
