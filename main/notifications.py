@@ -17,7 +17,7 @@ def create_notification(sender_id, receipt_id, objecttype, source=None):
         receipt = get_userbyid(receipt_id)
         object_type = object.objects.filter(object_type = objecttype)
         # creating a notification instance
-        notification_instance = notification(sender = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source)
+        notification_instance = notification(senderr = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source)
         notification_instance.save()
         return True
     except:

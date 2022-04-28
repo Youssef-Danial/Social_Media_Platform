@@ -1,0 +1,144 @@
+body{
+	margin: 0;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 120vh;
+	font-family: 'Jost', sans-serif;
+	background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+}
+.main{
+	margin-top: -55px;
+	margin-bottom: -70px;
+	width: 400px;
+	height: 1000px;
+	background: red;
+	overflow: hidden;
+	background: url("https://doc-08-2c-docs.googleusercontent.com/docs/securesc/68c90smiglihng9534mvqmq1946dmis5/fo0picsp1nhiucmc0l25s29respgpr4j/1631524275000/03522360960922298374/03522360960922298374/1Sx0jhdpEpnNIydS4rnN4kHSJtU1EyWka?e=view&authuser=0&nonce=gcrocepgbb17m&user=03522360960922298374&hash=tfhgbs86ka6divo3llbvp93mg4csvb38") no-repeat center/ cover;
+	border-radius: 10px;
+	box-shadow: 5px 20px 50px #6f8be6;
+}
+#chk{
+	display: none;
+}
+.signup{
+	position: relative;
+}
+#imgg{
+	margin-top: -20px;
+	margin-bottom: -60px;
+	width: 140px;
+	height: 120px;
+	margin-left: 80px;
+}
+label{
+	margin-top: 100px;
+	color: #fff;
+	font-size: 2.3em;
+	justify-content: center;
+	display: flex;
+	margin: 0px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: .5s ease-in-out;
+}
+input{
+	width: 60%;
+	height: 20px;
+	background: #e0dede;
+	justify-content: center;
+	display: flex;
+	margin: 20px auto;
+	padding: 10px;
+	border: none;
+	outline: none;
+	border-radius: 5px;
+}
+.gen{
+	font-size: 20px;
+	margin-left: 20px;
+}
+
+.bd{
+	font-size: 10px;
+	margin-bottom: -10px;
+	margin-top: 20px;
+}
+.bdc{
+	margin-bottom: 3px;
+	margin-top: -5px;
+}
+button{
+	width: 60%;
+	height: 20px;
+	margin: 10px auto;
+	justify-content: center;
+	display: block;
+	color: #fff;
+	background: #573b8a;
+	font-size: 1em;
+	font-weight: bold;
+	margin-top: 10px;
+	outline: none;
+	border: none;
+	border-radius: 1px;
+	transition: .2s ease-in;
+	cursor: pointer;
+}
+button:hover{
+	background: #6d44b8;
+}
+.login{
+	margin-top: 90px;
+	height: 950px;
+	background: #eee;
+	border-radius: 60% / 10%;
+	transform: translateY(-80px);
+	transition: .8s ease-in-out;
+}
+.part{
+	margin-top: 60px;
+}
+.login label{
+	color: #573b8a;
+	font-size: 50px;
+	transform: scale(.6);
+}
+#chk:checked ~ .login{
+	transform: translateY(-730px);
+}
+#chk:checked ~ .login label{
+	transform: scale(1);	
+}
+#chk:checked ~ .signup label{
+	transform: scale(.6);
+}
+
+/* cyrillic */
+@font-face {
+	font-family: 'Jost';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url(https://fonts.gstatic.com/s/jost/v12/92zPtBhPNqw79Ij1E865zBUv7myRJTVFNIg8mg.woff2) format('woff2');
+	unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+  }
+  /* latin-ext */
+  @font-face {
+	font-family: 'Jost';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url(https://fonts.gstatic.com/s/jost/v12/92zPtBhPNqw79Ij1E865zBUv7myRJTVPNIg8mg.woff2) format('woff2');
+	unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  /* latin */
+  @font-face {
+	font-family: 'Jost';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url(https://fonts.gstatic.com/s/jost/v12/92zPtBhPNqw79Ij1E865zBUv7myRJTVBNIg.woff2) format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }

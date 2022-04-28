@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load static %}
+	<title>SignUp</title>
+	<link rel="stylesheet" type="text/css" href="{% static 'css/suStyle.css'|safe %}">
+	{% comment %} <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet"> {% endcomment %}
+
+</head>
+<body>
+	{% load static %}
+	<div class="main">  	
+		<input type="checkbox" id="chk" aria-hidden="true">
+			<div class="signup">
+					<img id="imgg" src="{% static 'images/logo3.png'|safe %}">
+					<label for="chk" aria-hidden="true">Sign up</label>
+
+					<form action="{% url 'autheno:register' %}" method="post">
+						{% csrf_token %}
+						{{ register_form.as_p }}
+						{% comment %} <input type="submit" value="Sign Up"> {% endcomment %}
+						<button type="submit">Sign Up</button>
+					</form>
+			</div>
+
+			<div class="login">
+				<form action="{% url 'autheno:login' %}" method="post">
+					<label for="chk" aria-hidden="true">Login</label>
+					<div class="part">
+					{% csrf_token %}
+					{{ login_form.as_p }}
+					</div>
+					{% comment %} <input type="submit" value="Log In"> {% endcomment %}
+					<button type="submit">Login</button
+				</form>
+			</div>
+	</div>
+	<p>
+		{% for message in messages %}
+		<div class="alert alert-success">
+			<a class="close" href="#" data-dismiss="alert">×</a>
+			   {{ message }}
+		</div>
+		{% endfor %}
+	</p>
+</body>
+</html>

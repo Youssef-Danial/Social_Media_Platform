@@ -79,7 +79,8 @@ a {text-decoration: none;}
 </head>
 <body>
   {% load static %}
-
+  {% csrf_token %}
+  <input type="hidden" id ="userid" value="{{profile.user.id}}" />
 <div class="container">
 <div class="card">
   <h2 style="text-align:center">User Profile Card</h2>
@@ -105,16 +106,18 @@ a {text-decoration: none;}
     {% if is_friend %}
     <button >unfriend</button>
     {% else %}
-    <button >add</button>
+    <button id="add" value="{{profile.user}}" class ="add">add</button>
     {% endif %}
   {% else %}
     <button >follow</button>
     {% if is_friend %}
-    <button >unfriend</button>
+    <button id="unfriend" value="{{profile.user.id}}" class = "unfriend">unfriend</button>
     {% else %}
-    <button >add</button>
+    <button id="add" value="{{profile.user.id}}" class = "add">add</button>
     {% endif %}
   {% endif %}
+{% comment %} doing javascript work here {% endcomment %}
+
 </div>
 <div class="posts">
   {% for post in posts %}
@@ -123,4 +126,87 @@ a {text-decoration: none;}
 </div>
 </div>
 </body>
+
+<!-- Bootstrap Packaged JS (Bundle) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    console.log("testing")
+    
+    $("#add").click(function(){
+          
+      var fbtn = $(this);
+      if (fbtn.hasClass('add')) {
+        console.log("add")
+        $.ajax({
+          type:"POST",
+          url: "{% url 'main:add-friend' %}",
+          data: {
+               user:$("#userid").val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("request sent")  
+          }
+      });
+        fbtn.removeClass('add').addClass('unfriend');
+        fbtn.text('unfriend');
+      } else {
+        console.log("unfriend")
+        $.ajax({
+            type:"POST",
+            url: "{% url 'main:un-friend' %}",
+            data: {
+                 user:$("#userid").val(),
+                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(response){
+                console.log("friend request have been removed")
+            }
+        });  
+        fbtn.removeClass('unfriend').addClass('add');
+        fbtn.text('add');
+      } 
+      
+    })
+    $("#unfriend").click(function(){    
+      var fbtn = $(this);
+      if (fbtn.hasClass('add')) {
+        console.log("add")
+        $.ajax({
+          type:"POST",
+          url: "{% url 'main:add-friend' %}",
+          data: {
+               user:$("#userid").val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("request sent")  
+          }
+      });
+        fbtn.removeClass('add').addClass('unfriend');
+        fbtn.text('unfriend');
+      } else {
+        console.log("unfriend")
+        $.ajax({
+            type:"POST",
+            url: "{% url 'main:un-friend' %}",
+            data: {
+                 user:$("#userid").val(),
+                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(response){
+                console.log("friend request have been removed")
+            }
+        });  
+        fbtn.removeClass('unfriend').addClass('add');
+        fbtn.text('add');
+      } 
+       
+    })
+
+})
+
+</script>
 </html>

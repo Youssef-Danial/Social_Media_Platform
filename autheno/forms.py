@@ -1,4 +1,4 @@
-from django.forms import CharField, DateInput, EmailField, ModelForm,PasswordInput, DateField
+from django.forms import CharField, DateInput, EmailField, EmailInput, ModelForm,PasswordInput, DateField
 from database.models import user
 from django import forms
 from database.models import user
@@ -8,27 +8,35 @@ import datetime
 
 class register(forms.ModelForm):
 
-    user_name = CharField(required=True, min_length=3, max_length=50)
-    first_name = CharField(required=True, min_length=3, max_length=50)
-    middle_name = CharField(required=True, min_length=3, max_length=50)
-    last_name = CharField(required=True, min_length=3, max_length=50)
-    password = CharField(required=True, min_length=8,max_length=50,label="Password", widget=forms.PasswordInput)
-    passwordconfirm = CharField(required=True, min_length=8,max_length=50, label="Confirm Password", widget=forms.PasswordInput)
-    email = EmailField(required=True, min_length=3, max_length=250)
-    birthdate= DateField(widget=DateInput(attrs={'type': 'date'}))
+    user_name = CharField(required=True, min_length=3,label="", max_length=50, 
+                    widget=forms.TextInput(attrs={'placeholder': 'User Name'}))
+    first_name = CharField(required=True, min_length=3,label="", max_length=50, 
+                    widget=forms.TextInput(attrs={'placeholder': 'First Name'}))
+    middle_name = CharField(required=True, min_length=3,label="", max_length=50, 
+                    widget=forms.TextInput(attrs={'placeholder': 'Middle Name'}))
+    last_name = CharField(required=True, min_length=3,label="", max_length=50, 
+                    widget=forms.TextInput(attrs={'placeholder': 'Last Name'}))
+    password = CharField(required=True, min_length=8,max_length=50,label="", widget=forms.PasswordInput(attrs={'placeholder': 'password'}))
+    passwordconfirm = CharField(required=True, min_length=8,max_length=50, label="", widget=forms.PasswordInput(attrs={'placeholder': 'Confirm password'}))
+    email = EmailField(required=True, min_length=3,label="", max_length=250, 
+                    widget=forms.TextInput(attrs={'placeholder': 'Email'}) )
+    birthdate= DateField(label="",widget=DateInput(attrs={'type': 'date', 'placeholder':"Date"}))
 
     class Meta:
         model = user
-        fields = ['user_name', "first_name", "middle_name", "last_name", "email", "phone_number", "birthdate"]
+        fields = ['user_name', "first_name", "middle_name", "last_name", "email", "birthdate"] #, "phone_number"
+        # widgets = {
+        #     'password': forms.TextInput(attrs={'placeholder': 'password'}),
+        #     'passwordconfirm': forms.TextInput(attrs={'placeholder': 'password confirm'}),
+        # }
         labels={
-            "user_name": "User Name",
-            "first_name": "First Name",
-            "middle_name": "Middle Name",
-            "last_name": "Last Name",
-            "email":"Email Address",
-            "birthdate": "Birth Date",
-            "phone_number": "Phone Number",
-
+            "user_name": "",
+            "first_name": "",
+            "middle_name": "",
+            "last_name": "",
+            "email":"",
+            "birthdate": "",
+            "phone_number": "",
         }
 
 
@@ -99,5 +107,5 @@ class register(forms.ModelForm):
     #     return phonenumber
 
 class login_u(forms.Form):
-    email = EmailField()
-    password = CharField(widget=PasswordInput)
+    email = EmailField(widget=EmailInput(attrs={'placeholder':'Email'}),label="")
+    password = CharField(widget=PasswordInput(attrs={'placeholder':'Password'}),label="")

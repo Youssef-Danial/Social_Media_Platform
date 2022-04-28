@@ -5,25 +5,32 @@ from django.utils import timezone
 from django.db.models import Q
 
 # getting current Time
-currentDateTime = datetime.datetime.now(tz=timezone.utc)
+
 
 def send_friend_request(request, user_id):
     sender = get_user(request)
     receiver = get_userbyid(user_id)
-    friendrequest = friendship(sender = sender, receiver = receiver, state="pending", send_date=currentDateTime, created_at=None)
-    if is_blocked(sender, receiver):
-        del friendrequest
-        return False
-    else : # sending the friend request by saving it to the database
-        friendrequest.save()
-        return True
+    currentDateTime = get_current_datetime()
+    if sender!= None and receiver != None:
+        friendrequest = friendship(sender_id = sender.id, receiver_id = receiver.id, state="pending", send_date=currentDateTime,creation_date = None)
+        if not is_blocked(request, user_id):
+            del friendrequest
+            return False
+        else : # sending the friend request by saving it to the database
+            friendrequest.save()
+            return True
+    else:
+        print(sender)
+        print(receiver)
+        print("errorrrrrrrrrrrrrrrrrrrrrrrr=================+=====++++")
     # to be continue to check if the user blocked this user before or not before sending the friend request or being refused more than 3 times
 
 def accept_friendrequest(request, user_id):
     receiver = get_user(request)
     sender = get_userbyid(user_id)
+    currentDateTime = get_current_datetime()
     try:
-        friendrequest = friendship.objects.filter(sender = sender, receiver = receiver).frist()
+        friendrequest = friendship.objects.filter(sender_id = sender, receiver_id = receiver).frist()
         friendrequest.creation_date = currentDateTime
         friendrequest.state = "accepted"
         # sending the friend request by saving it to the database
@@ -36,7 +43,7 @@ def reject_friendrequest(request, user_id):
     receiver = get_user(request)
     sender = get_userbyid(user_id)
     try:
-        friendrequest = friendship.objects.filter(sender = sender, receiver = receiver).frist()
+        friendrequest = friendship.objects.filter(sender_id = sender, receiver_id = receiver).frist()
         friendrequest.state = "refused"
     except:
         return False
@@ -56,6 +63,7 @@ def follow_user(request,user_id):
 def block_user(request, user_id):
     blocker = get_user(request)
     blocked = get_userbyid(user_id)
+    currentDateTime = get_current_datetime()
     try:
         blockinstance = block(blocker =blocker, blocked=blocked, creation_date=currentDateTime)
         blockinstance.save()
@@ -65,10 +73,15 @@ def block_user(request, user_id):
 def is_friend(request, user_id):
     receiver = get_user(request)
     sender = get_userbyid(user_id)
-    friendinstancereceiver = friendship.objects.filter(sender = sender, receiver=receiver).first()
-    friendinstancesender   = friendship.objects.filter(sender = receiver, receiver=sender).first()
-    if friendinstancereceiver != None or friendinstancesender != None:
-            if friendinstancesender.state == "accepted" or friendinstancereceiver.state == "accepted":
+    friendinstancereceiver = friendship.objects.filter(sender_id = sender, receiver_id=receiver).first()
+    friendinstancesender   = friendship.objects.filter(sender_id = receiver, receiver_id=sender).first()
+    print(friendinstancereceiver)
+    print(friendinstancesender)
+    if friendinstancereceiver != None :
+            if friendinstancereceiver.state == "accepted" or friendinstancereceiver.state == "accepted" or friendinstancereceiver.state == "pending":
+                return True
+    elif friendinstancesender != None:
+         if friendinstancesender.state == "accepted" or friendinstancesender.state == "accepted" or friendinstancesender.state == "pending":
                 return True
     else:
         return False
@@ -139,18 +152,19 @@ def unfollow(request, user_id):
         return False # you did not follow the user to unfollow
 
 def unfriend(request, user_id):
+    print("called")
     sender = get_user(request)
     receiver = get_userbyid(user_id)
     if(is_friend(request, user_id)):
         # getting friendship instance and deleting it
-        friendinstancesender = friendship.objects.filter(sender = sender, receiver = receiver).first()
-        friendinstancereceiver = friendship.objects.filter(sender = receiver, receiver = sender).first()
-        if friendinstancesender != None or friendinstancereceiver != None:
-            try:
-                friendinstancesender.delete()
-                friendinstancereceiver.delete()
-            except:
-                return False
+        friendinstancesender = friendship.objects.filter(sender_id = sender, receiver_id = receiver)
+        friendinstancereceiver = friendship.objects.filter(sender_id = receiver, receiver_id = sender)
+        if friendinstancesender != None:
+            friendinstancesender.delete()
+            # return False
+            return True
+        elif friendinstancereceiver != None:
+            friendinstancereceiver.delete()
             return True
         else:
             return False
@@ -160,7 +174,7 @@ def unfriend_request(request, user_id):
     receiver = get_userbyid(user_id)
     if(is_friend_requested(request, user_id)):
         # getting friendship instance and deleting it
-        friendinstance = friendship.objects.filter(sender = sender, receiver = receiver).first()
+        friendinstance = friendship.objects.filter(sender_id = sender, receiver_id = receiver).first()
         if friendinstance != None:
             try:
                 friendinstance.delete()
@@ -173,7 +187,7 @@ def unfriend_request(request, user_id):
 def get_friendlist(user_id): # this function should return a list of friend objects
     user = get_userbyid(user_id)
     # seraching for the friends of this user
-    friendinstance = friendship.objects.filter(Q(sender = user) | Q(receiver = user), state="accepted").values()
+    friendinstance = friendship.objects.filter(Q(sender_id = user) | Q(receiver_id = user), state="accepted").values()
     if friendinstance != None:
         return friendinstance
     else:
@@ -228,7 +242,7 @@ def get_follows(request):
 def get_friendrequests(request):
     # getting user
     user = get_user(request)
-    friendrequestlist = friendship.objects.filter(sender = user, state = "pending").values()
+    friendrequestlist = friendship.objects.filter(sender_id = user, state = "pending").values()
     if len(friendrequestlist)>0:
         return friendrequestlist
     else:

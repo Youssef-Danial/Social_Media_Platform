@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from django.views.generic import View
 from autheno.cipher_auth import get_user, get_userbyid, is_user_auth, user_equal, get_user_profile
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,7 +8,7 @@ from autheno.filehandler import receive_file
 from database.models import file, profile as profilemodel, user
 from main.post_comment import load_profile_posts
 from database.models import postfile
-from main.relations import is_follower, is_friend
+from main.relations import *
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
@@ -76,3 +77,21 @@ class profile(View):
         return profileposts
     def send_friend_request(request):
         pass
+
+def add_friend(request):
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            # now receiving the post data
+            userid = request.POST["user"]
+            send_friend_request(request, userid)
+        return JsonResponse({"nothing":None},status=200)
+
+def un_friend(request):
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            # now receiving the post data
+            userid = request.POST["user"]
+            unfriend(request, userid)
+        return JsonResponse({"nothing":None},status=200)

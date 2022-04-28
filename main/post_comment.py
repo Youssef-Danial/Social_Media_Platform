@@ -30,7 +30,7 @@ def create_post(request, data, fileslist): # data should be a dictionary
         p.instance_id = data['instance_id']
         p.instance_name = data["instance_name"]
         # saving the post so we can receive the files
-        p.create_date = currentDateTime
+        p.create_date = get_current_datetime()
         p.save()
         if type(fileslist) is list:
             for file in fileslist:

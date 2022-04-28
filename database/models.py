@@ -39,8 +39,8 @@ class object(models.Model):
     text = models.CharField(max_length=100)
 
 class notification(models.Model):
-    receipt = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="receipt")
-    sender = models.ForeignKey("user", on_delete=models.SET_NULL, null = True, related_name="sender")
+    receipt = models.ForeignKey("user", on_delete=models.SET_NULL,blank=True, null = True, related_name="receipt")
+    sender = models.ForeignKey("user", on_delete=models.SET_NULL,blank=True, null = True, related_name="senderr")
     object_type = models.ForeignKey("object", on_delete=models.SET_NULL, null = True)
     source = models.CharField(max_length = 250, blank=True, null=True) # source id can be (group, comment, post, thread)
     time_sent = models.DateTimeField()
@@ -228,8 +228,8 @@ class user_admin(models.Model):
 
 # user relations
 class friendship(models.Model):
-    sender = models.ForeignKey("user", on_delete=models.CASCADE, related_name="sender_id")
-    receiver = models.ForeignKey("user", on_delete=models.CASCADE, related_name="receiver_id")
+    sender = models.ForeignKey("user", on_delete=models.CASCADE,blank=True, related_name="sender_id")
+    receiver = models.ForeignKey("user", on_delete=models.CASCADE,blank=True, related_name="receiver_id")
     state = models.CharField(max_length=10) # can be (pending, accepted, refused)
     send_date = models.DateTimeField()
     creation_date = models.DateTimeField(null=True)
