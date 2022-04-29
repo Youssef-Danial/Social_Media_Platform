@@ -1,5 +1,6 @@
 from django.contrib.auth.hashers import make_password, check_password
 from database.models import particpant, user, profile, page, group, user_group, user_page, post, comment, notification, thread
+from database.models import *
 from django.contrib import messages
 import datetime
 from django.utils import timezone

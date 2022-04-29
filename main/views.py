@@ -9,6 +9,7 @@ from database.models import file, profile as profilemodel, user
 from main.post_comment import load_profile_posts
 from database.models import postfile
 from main.relations import *
+from main.notifications import *
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
@@ -78,6 +79,24 @@ class profile(View):
     def send_friend_request(request):
         pass
 
+def follow_friend(request):
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            # now receiving the post data
+            userid = request.POST["user"]
+            follow_user(request, userid)
+        return JsonResponse({"nothing":None},status=200)
+
+def unfollow_friend(request):
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            # now receiving the post data
+            userid = request.POST["user"]
+            unfollow(request, userid)
+        return JsonResponse({"nothing":None},status=200)
+
 def add_friend(request):
     if (is_user_auth(request)):
         # now sending the friend request
@@ -94,4 +113,46 @@ def un_friend(request):
             # now receiving the post data
             userid = request.POST["user"]
             unfriend(request, userid)
+        return JsonResponse({"nothing":None},status=200)
+
+def show_notifications(request):
+    # first we load the notifications
+    print("request from view {}".format(request))
+    notifs =  get_user_notifications(request, state="unread")
+    print("notifications are ----------({})---------".format(len(notifs)))
+    return render(request, "main/notification_s.html", {"notifs":notifs})
+
+def notif_markread(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called mark read notification")
+            # now receiving the post data
+            notif_id = request.POST["notif_id"]
+            make_notification_read(request, notif_id)
+        return JsonResponse({"nothing":None},status=200)
+
+def accept_friend(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called accept friend request")
+            # now receiving the post data
+            user_id = request.POST["user_id"]
+            accept_friendrequest(request, user_id)
+            print("-----------{}----------accept".format(user_id))
+        return JsonResponse({"nothing":None},status=200)
+
+def reject_friend(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called reject friend request")
+            # now receiving the post data
+            user_id = request.POST["user_id"]
+            print("-----------{}----------reject".format(user_id))
+            reject_friendrequest(request, user_id)
         return JsonResponse({"nothing":None},status=200)

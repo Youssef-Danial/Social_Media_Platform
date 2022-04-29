@@ -3,6 +3,7 @@ from database.models import friendship, follow, block, page, group, user_page, u
 import datetime
 from django.utils import timezone
 from django.db.models import Q
+from main.notifications import *
 
 # getting current Time
 
@@ -11,6 +12,7 @@ def send_friend_request(request, user_id):
     sender = get_user(request)
     receiver = get_userbyid(user_id)
     currentDateTime = get_current_datetime()
+    create_notification(sender.id, receiver.id,'friendrequest', source=sender.id, source_name = "user")
     if sender!= None and receiver != None:
         friendrequest = friendship(sender_id = sender.id, receiver_id = receiver.id, state="pending", send_date=currentDateTime,creation_date = None)
         if not is_blocked(request, user_id):
@@ -22,39 +24,44 @@ def send_friend_request(request, user_id):
     else:
         print(sender)
         print(receiver)
-        print("errorrrrrrrrrrrrrrrrrrrrrrrr=================+=====++++")
     # to be continue to check if the user blocked this user before or not before sending the friend request or being refused more than 3 times
 
 def accept_friendrequest(request, user_id):
-    receiver = get_user(request)
-    sender = get_userbyid(user_id)
-    currentDateTime = get_current_datetime()
-    try:
-        friendrequest = friendship.objects.filter(sender_id = sender, receiver_id = receiver).frist()
+        receiver = get_user(request)
+        sender = get_userbyid(user_id)
+        currentDateTime = get_current_datetime()
+    # try:
+        friendrequest = friendship.objects.filter(sender_id = sender, receiver_id = receiver).first()
+        print("===================="+str(friendrequest))
         friendrequest.creation_date = currentDateTime
         friendrequest.state = "accepted"
         # sending the friend request by saving it to the database
         friendrequest.save()
-    except:
-        return False
-    return True
+        create_notification(receiver.id, sender.id,'friendacccepted', source=receiver.id, source_name = "user")
+        print("done==============================")
+    # except:
+    #     return False
+    # return True
 
 def reject_friendrequest(request, user_id):
     receiver = get_user(request)
     sender = get_userbyid(user_id)
     try:
-        friendrequest = friendship.objects.filter(sender_id = sender, receiver_id = receiver).frist()
+        friendrequest = friendship.objects.filter(sender_id = sender, receiver_id = receiver).first()
         friendrequest.state = "refused"
+        create_notification(receiver.id, sender.id,'friendrefused', source=receiver.id, source_name = "user")
     except:
         return False
     return True
 
 def follow_user(request,user_id):
+    # follow notification name
     follower = get_user(request)
     followed = get_userbyid(user_id)
     try:
         followinstance = follow(follower = follower, followed=followed)
         followinstance.save()
+        create_notification(follower.id, followed.id,'follow', source=follower.id, source_name = "user")
     # to be continue to check if the user blocked this user before or not before sending the friend request or being refused more than 3 times
     except:
         return False

@@ -42,10 +42,18 @@ class notification(models.Model):
     receipt = models.ForeignKey("user", on_delete=models.SET_NULL,blank=True, null = True, related_name="receipt")
     sender = models.ForeignKey("user", on_delete=models.SET_NULL,blank=True, null = True, related_name="senderr")
     object_type = models.ForeignKey("object", on_delete=models.SET_NULL, null = True)
-    source = models.CharField(max_length = 250, blank=True, null=True) # source id can be (group, comment, post, thread)
-    time_sent = models.DateTimeField()
-    time_read = models.DateTimeField()
+    source = models.CharField(max_length = 250, blank=True, null=True) # source id can be (group, comment, post, thread, user)
+    source_name = models.CharField(max_length = 250, blank=True, null=True)
+    time_sent = models.DateTimeField(blank=True,null=True)
+    time_read = models.DateTimeField(blank=True,null=True)
     is_read = models.BooleanField(default=False)
+    def get_source(self):
+        if self.source_name == "user":
+            try:
+                u = user.objects.get(pk=int(self.source))
+                return u
+            except:
+                return None
 
 class setting_code(models.Model):
     setting_name = models.CharField(max_length=50)

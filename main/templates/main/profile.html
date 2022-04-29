@@ -102,14 +102,14 @@ a {text-decoration: none;}
   {% comment %} <p><button onclick="location.href = '{% url 'main:edit_about_me'%}'">Edit about me</button></p> {% endcomment %}
   {% include "main/textarea.html"%}
   {% elif is_follower %}
-    <button >unfollow</button>
+    <button id="unfollow" value="{{profile.user.id}}" class = "unfollow" >unfollow</button>
     {% if is_friend %}
     <button >unfriend</button>
     {% else %}
     <button id="add" value="{{profile.user}}" class ="add">add</button>
     {% endif %}
   {% else %}
-    <button >follow</button>
+    <button id="follow" value="{{profile.user.id}}" class = "follow">follow</button>
     {% if is_friend %}
     <button id="unfriend" value="{{profile.user.id}}" class = "unfriend">unfriend</button>
     {% else %}
@@ -128,7 +128,7 @@ a {text-decoration: none;}
 </body>
 
 <!-- Bootstrap Packaged JS (Bundle) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> {% endcomment %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
   $(document).ready(function(){
@@ -204,6 +204,77 @@ a {text-decoration: none;}
         fbtn.text('add');
       } 
        
+    })
+  
+    $("#follow").click(function(){
+          
+      var fbtn = $(this);
+      if (fbtn.hasClass('follow')) {
+        console.log("follow")
+        $.ajax({
+          type:"POST",
+          url: "{% url 'main:follow-friend' %}",
+          data: {
+               user:$("#userid").val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("follow success")  
+          }
+      });
+        fbtn.removeClass('follow').addClass('unfollow');
+        fbtn.text('unfollow');
+      } else {
+        console.log("unfollow")
+        $.ajax({
+            type:"POST",
+            url: "{% url 'main:unfollow-friend' %}",
+            data: {
+                 user:$("#userid").val(),
+                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(response){
+                console.log("unfollow success")
+            }
+        });  
+        fbtn.removeClass('unfollow').addClass('follow');
+        fbtn.text('follow');
+      } 
+      
+    })
+    $("#unfollow").click(function(){    
+      var fbtn = $(this);
+      if (fbtn.hasClass('follow')) {
+        console.log("follow")
+        $.ajax({
+          type:"POST",
+          url: "{% url 'main:follow-friend' %}",
+          data: {
+               user:$("#userid").val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("follow success")  
+          }
+      });
+        fbtn.removeClass('follow').addClass('unfollow');
+        fbtn.text('unfollow');
+      } else {
+        console.log("unfollow")
+        $.ajax({
+            type:"POST",
+            url: "{% url 'main:unfollow-friend' %}",
+            data: {
+                 user:$("#userid").val(),
+                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(response){
+                console.log("unfollow success")
+            }
+        });  
+        fbtn.removeClass('unfollow').addClass('follow');
+        fbtn.text('follow');
+      } 
     })
 
 })

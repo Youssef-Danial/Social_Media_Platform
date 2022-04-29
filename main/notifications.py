@@ -1,4 +1,4 @@
-from autheno.cipher_auth import get_current_datetime, get_userbyid, get_notificationbyid
+from autheno.cipher_auth import get_current_datetime, get_user, get_userbyid, get_notificationbyid
 from database.models import notification, object
 
 def create_object(name, text): # this is for admins
@@ -9,19 +9,21 @@ def create_object(name, text): # this is for admins
     except:
         return False
 
-def create_notification(sender_id, receipt_id, objecttype, source=None):
-    try:
+def create_notification(sender_id, receipt_id, objecttype, source=None, source_name=None):
+    # try:
         # creating notification
         time_sent = get_current_datetime()
         sender = get_userbyid(sender_id)
         receipt = get_userbyid(receipt_id)
-        object_type = object.objects.filter(object_type = objecttype)
+        object_type = object.objects.filter(name = objecttype).first()
         # creating a notification instance
-        notification_instance = notification(senderr = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source)
+        notification_instance = notification(sender = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source, source_name=source_name, is_read=False)
         notification_instance.save()
+        print("notification created ========================")
         return True
-    except:
-        return False
+    # except:
+    #     return False
+    
 
 def make_notification_read(request, notification_id):
     try:
@@ -35,8 +37,8 @@ def make_notification_read(request, notification_id):
         return False
 
 def get_user_notifications(request, state="unread"):
-    try:
-        userinstance = get_userbyid(request)
+    # try:
+        userinstance = get_user(request)
         # now searching and getting all the notifications that have been sent to this user
         if state =="unread":
             notifications = notification.objects.filter(receipt = userinstance, is_read = False).order_by("-time_sent")
@@ -45,10 +47,11 @@ def get_user_notifications(request, state="unread"):
             notifications = notification.objects.filter(receipt = userinstance, is_read = True).order_by("-time_sent")
             return notifications
         else: # this mean all the notifications
+            print(userinstance.id)
             notifications = notification.objects.filter(receipt = userinstance).order_by('-time_sent')
             return notifications
-    except:
-        return None
+    # except:
+    #     return None
 
 # name = "commentpost"
 # text = "commented on you post"
@@ -68,3 +71,5 @@ def get_user_notifications(request, state="unread"):
 # name = "block"
 # text = "blocked you"
 # create_object(name, text)
+# (name="friendacccepted", text="accepted your friend request")
+# (name="friendrefused", text="refused your friend request")

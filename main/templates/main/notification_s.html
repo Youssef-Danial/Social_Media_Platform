@@ -1,0 +1,290 @@
+<!doctype html>
+                        <html>
+                            <head>
+                                <meta charset='utf-8'>
+                                <meta name='viewport' content='width=device-width, initial-scale=1'>
+                                <title>Notifications</title>
+                                <link href='' rel='stylesheet'>
+                                <link href='https://use.fontawesome.com/releases/v5.7.2/css/all.css' rel='stylesheet'>
+                                <script type='text/javascript' src=''></script>
+                                <style>* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    border: none;
+    font-family: "Poppins", sans-serif;
+    font-size: 14px
+}
+
+body {
+    background-color: #f9f9f9
+}
+
+.wrapper {
+    width: 480px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%
+}
+
+.toast {
+    width: 100%;
+    height: 80px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 7px;
+    display: grid;
+    grid-template-columns: 1.3fr 6fr 0.5fr;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08)
+}
+
+.success {
+    border-left: 3px solid #47D764
+}
+
+.error {
+    border-left: 3px solid #ff355b
+}
+
+.info {
+    border-left: 3px solid #2F86EB
+}
+
+.warning {
+    border-left: 3px solid #FFC021
+}
+
+.error i {
+    color: #ff355b
+}
+
+.info i {
+    color: #2F86EB
+}
+
+.warning i {
+    color: #FFC021
+}
+
+.toast:not(:last-child) {
+    margin-bottom: 20px
+}
+
+.outer-container,
+.inner-container {
+    align-self: center;
+    overflow:hidden;
+}
+
+.outer-container i {
+    font-size: 35px
+}
+
+.success i {
+    color: #47D764
+}
+
+.inner-container p:first-child {
+    color: #101020;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.inner-container p:last-child {
+    font-size: 12px;
+    font-weight: 400;
+    color: #656565
+}
+
+.toast button {
+    align-self: flex-start;
+    background-color: transparent;
+    font-size: 20px;
+    color: #656565;
+    line-height: 0;
+    cursor: pointer;
+    margin-right: -30px
+}
+
+.pfppic{
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin:left;
+    float:left;
+}
+#small-btn-remove {
+    width: 40px;
+    height: 10px;
+    margin: 2px;
+    font-size: 8px;
+    padding: 0;
+border: none;
+background: none;
+}
+#small-btn-accept {
+    width: 40px;
+    height: 10px;
+    margin: 2px;
+    font-size: 8px;
+    padding: 0;border: none;background: none;
+}
+#small-btn:click {
+    padding: 0;
+    border: none;
+    background: none;
+}
+</style>
+    </head>
+    {% load static %}
+    {% csrf_token %}
+        <body oncontextmenu='return false' class='snippet-body'>
+            <div class="wrapper">
+                {% for notif in notifs %}
+                <div class="toast info" id="{{notif.id}}">
+                    {% if notif.source_name == "user" and notif.object_type.name == "friendrequest" %}
+                    <div class="outer-container"> <a href ="{% url 'main:profile' notif.get_source.id %}"> <img class = "pfppic" src="{% static notif.get_source.profile.pfp.file_url|safe %}" alt="profile picture"></a> </div>
+                    <div class="inner-container" >
+                        
+                        <div>
+                        <p>{{notif.get_source.user_name}}</p>
+                        <p>{{notif.object_type.text}}</p>
+                        <p>{{notif.time_sent}}</p>
+                        </div>
+                        
+                    </div> 
+                    <div id = "parent{{notif.id}}">
+                        <button class="s" style = "width: 40px;height: 10px;margin: 2px;font-size: 8px;padding: 0;border: none;background: none;" id="small-btn-accept{{notif.id}}" value="{{notif.get_source.id}}">
+                            <span class="glyphicon glyphicon-ok"></span>  
+                          </button>
+                          
+                          <button  class="s" style = "width: 40px;height: 10px;margin: 2px;font-size: 8px;padding: 0;border: none;background: none;" id="small-btn-remove{{notif.id}}" value="{{notif.get_source.id}}">
+                            <span class="glyphicon glyphicon-remove"></span>  
+                          </button>
+                    </div>
+                    <input type="hidden"  id="small-btn-accept{{notif.id}}" value = "{{notif.id}}"/>
+                    {% elif notif.source_name == "user" and notif.object_type.name != "friendrequest" %}
+                    <div class="outer-container"> <a href ="{% url 'main:profile' notif.get_source.id %}"> <img class = "pfppic" src="{% static notif.get_source.profile.pfp.file_url|safe %}" alt="profile picture"></a> </div>
+                    <div class="inner-container">
+                        <p>{{notif.get_source.user_name}}</p>
+                        <p>{{notif.object_type.text}}</p>
+                        <p>{{notif.time_sent}}</p>
+                    </div>
+                    {% else %}
+                    
+                    
+                    {% endif %}
+                    <div>
+                    <button id="markread{{notif.id}}" class = "buttonmark" value="{{notif.id}}">&times;</button>
+                    </div>
+                </div>
+                {% endfor %}
+    {% comment %} </div>
+    <div class="toast error">
+        <div class="outer-container"> <i class="fas fa-times-circle"></i> </div>
+        <div class="inner-container">
+            <p>Error</p>
+            <p>Error has occured while saving changes.</p>
+        </div> <button>&times;</button>
+    </div>
+    <div class="toast info">
+        <div class="outer-container"> <i class="fas fa-info-circle"></i> </div>
+        <div class="inner-container">
+            <p>Info</p>
+            <p>New settings available on your account.</p>
+        </div> <button>&times;</button>
+    </div>
+    <div class="toast warning">
+        <div class="outer-container"> <i class="fas fa-exclamation-circle"></i> </div>
+        <div class="inner-container">
+            <p>Warning</p>
+            <p>Username you have entered is invalid.</p>
+        </div> <button>&times;</button>
+    </div> {% endcomment %}
+</div>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    
+    $(document).ready(function(){
+        $('.buttonmark').click(function(){
+            var button_id = $(this).attr('id');
+            $('#'+button_id).click(function(){
+              // your function here
+              console.log("entered button")
+              $.ajax({
+                  type:"POST",
+                  url: "{% url 'main:notif_markread' %}",
+                  data: {
+                       notif_id:$("#"+button_id).val(),
+                       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                  },
+                  success: function(response){
+                      var element = document.getElementById($("#"+button_id).val());
+                      element.parentNode.removeChild(element);
+                  }
+              });
+            });
+        });
+        // accept and reject buttons
+        $('.s').click(function(){
+            console.log("entered class")
+            var button_id = $(this).attr('id');
+            if(button_id.includes("accept")){
+                $('#'+button_id).click(function(){
+                    console.log("entered button accept"+button_id)
+                    $.ajax({
+                        type:"POST",
+                        url: "{% url 'main:accept-friend' %}",
+                        data: {
+                             user_id:$("#"+button_id).val(),
+                             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                        },
+                        success: function(response){
+                            element_id = button_id.match(/\d+/)[0]
+                            //var element = document.getElementById(element_id);
+                            //element.parentNode.removeChild(element);
+                            // mark as read
+                            markread = "markread"+element_id
+                            $('.buttonmark').click()
+                            $('#'+markread).click()
+                            var element = document.getElementById(element_id);
+                            element.parentNode.removeChild(element);
+                        }
+                    });
+                  });
+            }else if(button_id.includes("remove")){
+                $('#'+button_id).click(function(){
+                    // your function here
+                    console.log("entered button reject")
+                    $.ajax({
+                        type:"POST",
+                        url: "{% url 'main:reject-friend' %}",
+                        data: {
+                             user_id:$("#"+button_id).val(),
+                             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                        },
+                        success: function(response){
+                            element_id = button_id.match(/\d+/)[0]
+                            //var element = document.getElementById(element_id);
+                            //element.parentNode.removeChild(element);
+                            // mark as read
+                            markread = "markread"+element_id
+                            $('.buttonmark').click()
+                            $('#'+markread).click()
+                            var element = document.getElementById(element_id);
+                            element.parentNode.removeChild(element);
+                        }
+                    });
+                  });
+            }
+ 
+        });
+    })
+</script>
+                                <script type='text/javascript' src=''></script>
+                                </body>
+                            </html>
