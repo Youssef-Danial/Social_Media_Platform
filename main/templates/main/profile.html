@@ -193,9 +193,16 @@
                 </div>
                 <hr class="my-4">
 								{% if is_owner %}
-								<div class="tweet">
-                <p>{% include "main/textarea.html" %}</p>
-							</div>
+                <div class="container">
+                  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">edit about me</button>
+                  <div id="demo" class="collapse">
+                    <!-- expand here -->
+                    <div id = "demo" class="tweet">
+                      <p>{% include "main/textarea.html" %}</p>
+                    </div>
+                  </div>
+                </div>
+								
 							{% endif %}
               </div>
             </div>
