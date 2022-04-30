@@ -11,6 +11,8 @@ from database.models import postfile
 from main.relations import *
 from main.notifications import *
 from main.post_comment import *
+import re
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your views here.
 class profile(View):
@@ -201,12 +203,143 @@ def remove_like_post(request):
             remove_react_post(request, post_id)
         return JsonResponse({"nothing":None},status=200)
 
-def edit_profile_info(request):
+def show_settings(request):
     if (is_user_auth(request)):
-        # now sending the friend request
+        # code 
+        # getting the user
+        u = get_user(request)
+        return render(request, "main/settings.html",{"user":u})
+
+def clean_email(email):
+    data = email
+    if re.match(r"(?:^|\s)[\w!#$%&'*+/=?^`{|}~-](\.?[\w!#$%&'*+/=?^`{|}~-]+)*@\w+[.-]?\w*\.[a-zA-Z]{2,3}\b", data):
+        pass
+    else:
+        return None
+    # checking if the email already in the database
+    u = user.objects.filter(email=data).first()
+    if u == None:
+        pass
+    else:
+        return None
+    return data
+
+def change_email(request):
+    print("change email called")
+    if is_user_auth(request):
+        # now we get the user
+        userinstance = get_user(request)
         if request.method == 'POST':
-            print("called reject friend request")
-            # now receiving the post data
-            post_id = request.POST["post_id"]
-            # here should be the edit profile function
-        return JsonResponse({"nothing":None},status=200)
+            new_email = clean_email(request.POST["email"])
+            if new_email is not None:
+                userinstance.email = new_email
+                # saving the new email and returning success to the front
+                userinstance.save()
+                # authenticating the new email
+                auth_user(request, userinstance.email, userinstance.password_hash)
+                return JsonResponse({"feedback":"success"},status=200)
+            else:
+                # something wrong with the email returning error
+                return JsonResponse({"feedback":"Wrong"},status=200)
+    return JsonResponse({"feedback":"Nothing"},status=200)
+
+def clean_username(username):
+        data = username
+        if re.match(r"^([ \u00c0-\u01ffa-zA-Z'\-])+$", data):
+            pass
+        else:
+            return None
+        # checking if there user with the same username in the database
+        u = user.objects.filter(user_name=data).first()
+        if u == None:
+            pass
+        else:
+            raise None
+        return data
+
+def change_username(request):
+    print("change username called")
+    if is_user_auth(request):
+        # now we get the user
+        userinstance = get_user(request)
+        if request.method == 'POST':
+            new_username = clean_username(request.POST["username"])
+            if new_username is not None:
+                userinstance.user_name = new_username
+                # saving the new email and returning success to the front
+                userinstance.save()
+                # authenticating the new email
+                auth_user(request, userinstance.email, userinstance.password_hash)
+                return JsonResponse({"feedback":"success"},status=200)
+            else:
+                # something wrong with the email returning error
+                return JsonResponse({"feedback":"Wrong"},status=200)
+    return JsonResponse({"feedback":"Nothing"},status=200)
+
+def clean_phonenumber(phonenumber):
+    # for the future
+    return phonenumber
+
+def change_phonenumber(request):
+    print("change phonenumber called")
+    if is_user_auth(request):
+        # now we get the user
+        userinstance = get_user(request)
+        if request.method == 'POST':
+            new_phonenumber = clean_phonenumber(request.POST["phonenumber"])
+            if new_phonenumber is not None:
+                userinstance.phone_number = new_phonenumber
+                # saving the new email and returning success to the front
+                userinstance.save()
+                # authenticating the new email
+                auth_user(request, userinstance.email, userinstance.password_hash)
+                return JsonResponse({"feedback":"success"},status=200)
+            else:
+                # something wrong with the email returning error
+                return JsonResponse({"feedback":"Wrong"},status=200)
+    return JsonResponse({"feedback":"Nothing"},status=200)
+
+def clean_password(password):
+        cleaned_data = password
+        # first checking if the password matchs
+        # password = cleaned_data["password"]
+        # passwordcon = cleaned_data["passwordconfirm"]
+        # if password != passwordcon:
+        #     raise forms.ValidationError(
+        #         "password and confirm password does not match"
+        #     )
+        # checking the password if it is match the requirements
+        if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[@#$])[\w\d@#$]{6,12}$", password):
+            pass
+        else:
+            return None
+        return cleaned_data 
+
+def change_password(request):
+    print("change password called")
+    if is_user_auth(request):
+        # now we get the user
+        userinstance = get_user(request)
+        if request.method == 'POST':
+            new_password = clean_password(request.POST["newpassword"])
+            old_password = request.POST["oldpassword"]
+            if new_password is not None and check_password(old_password, userinstance.password_hash):
+                userinstance.password_hash = make_password(new_password)
+                # saving the new email and returning success to the front
+                userinstance.save()
+                # authenticating the new email
+                auth_user(request, userinstance.email, userinstance.password_hash)
+                return JsonResponse({"feedback":"success"},status=200)
+            else:
+                # something wrong with the email returning error
+                return JsonResponse({"feedback":"Wrong"},status=200)
+    return JsonResponse({"feedback":"Nothing"},status=200)
+
+def edit_settings(request):
+     # now sending the friend request
+    if request.method == 'POST':
+        print("called reject friend request")
+        # now receiving the post data
+        post_id = request.POST["post_id"]
+        # here should be the edit profile function
+    return JsonResponse({"nothing":None},status=200)

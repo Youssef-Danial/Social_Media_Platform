@@ -135,6 +135,7 @@
 		{% comment %}<p><button>You are the Owner</button></p> {% endcomment %}
 		<p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_pfp'%}'">Edit pfp</button></p>
     <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_backpfp'%}'">Edit bpf</button></p>
+    <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:settings'%}'">Settings</button></p>
 		{% comment %} <p><button onclick="location.href = '{% url 'main:edit_about_me'%}'">Edit about me</button></p> {% endcomment %}
 		{% elif is_follower %}
 			<button id="unfollow" value="{{profile.user.id}}" class = "btn btn-info unfollow" >unfollow</button>

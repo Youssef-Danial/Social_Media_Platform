@@ -20,4 +20,11 @@ urlpatterns = [
      path("rejectfriend", views.reject_friend , name="reject-friend"),
      path("like_post", views.like_post, name="like_post"),
      path("remove_like_post", views.remove_like_post, name="remove_like_post"),
+     path("settings", views.show_settings, name="settings"),
+     path("change_email", views.change_email, name="change_email"),
+     path("change_username", views.change_username, name="change_username"),
+     path("change_phonenumber", views.change_phonenumber, name="change_phonenumber"),
+     path("change_password", views.change_password, name="change_password"),
+     
+     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
