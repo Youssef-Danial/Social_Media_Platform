@@ -10,10 +10,14 @@ from main.post_comment import load_profile_posts
 from database.models import postfile
 from main.relations import *
 from main.notifications import *
+from main.post_comment import *
+
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
         #user = get_user(request)
+        viewer = get_user(request)
+        mutual = get_mutualfriends(request, user_id)
         user = get_userbyid(user_id)
         is_owner = False
         #temp = "1/profile/Picture1.png"
@@ -43,7 +47,7 @@ class profile(View):
                     #filesdictioanry.update(filesdictioanryonlyme)
                 #print(filesdictioanry)
                 # show if the viewer
-                return render(request, "main/profile.html", {"user":user, "is_owner":is_owner, "profile": prof, "posts":profileposts, "is_follower":is_ufollower, "is_friend": is_ufriend})
+                return render(request, "main/profile.html", {"user":viewer, "is_owner":is_owner, "profile": prof, "posts":profileposts, "is_follower":is_ufollower, "is_friend": is_ufriend, "mutual_friends":mutual, "viewer":viewer.id})
             else:
                 return HttpResponse("The User you are looking for does not Exist")
         else:
@@ -64,7 +68,21 @@ class profile(View):
             return HttpResponseRedirect(reverse_lazy("main:profile", args = [u.id]))
         else:
             return render(request, "main/uploadfile.html", {"form":pfp, "user":u})
-    
+    def edit_backpfp(request):
+        # creating a form for the profile picture
+        pfpback = receive_file(request, state="profile")
+        u = get_user(request)
+        if type(pfpback) is file:
+            # linking the file to the profile of the user
+            p = profilemodel.objects.filter(user=u).first()
+            # linking the profile pictre to the profile of the user
+            p.pfpback = pfpback
+            p.save()
+            # chaging the state of the pfp
+            return HttpResponseRedirect(reverse_lazy("main:profile", args = [u.id]))
+        else:
+            return render(request, "main/uploadfile.html", {"form":pfpback, "user":u})
+
     def edit_about_me(request):
         about_me = request.POST.get("txt")
         user = get_user(request)
@@ -103,6 +121,7 @@ def add_friend(request):
         if request.method == 'POST':
             # now receiving the post data
             userid = request.POST["user"]
+            print("you are wrong")
             send_friend_request(request, userid)
         return JsonResponse({"nothing":None},status=200)
 
@@ -112,15 +131,18 @@ def un_friend(request):
         if request.method == 'POST':
             # now receiving the post data
             userid = request.POST["user"]
-            unfriend(request, userid)
+            print("userid : {}".format(userid))
+            print("userid : {}".format(get_user(request).id))
+            print(unfriend(request, userid))
         return JsonResponse({"nothing":None},status=200)
 
 def show_notifications(request):
     # first we load the notifications
+    user = get_user(request)
     print("request from view {}".format(request))
     notifs =  get_user_notifications(request, state="unread")
     print("notifications are ----------({})---------".format(len(notifs)))
-    return render(request, "main/notification_s.html", {"notifs":notifs})
+    return render(request, "main/notification_s.html", {"notifs":notifs, "user":user})
 
 def notif_markread(request):
     # we mark the notification as read
@@ -155,4 +177,36 @@ def reject_friend(request):
             user_id = request.POST["user_id"]
             print("-----------{}----------reject".format(user_id))
             reject_friendrequest(request, user_id)
+        return JsonResponse({"nothing":None},status=200)
+
+def like_post(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called reject friend request")
+            # now receiving the post data
+            post_id = request.POST["post_id"]
+            add_react_post(request, post_id)
+        return JsonResponse({"nothing":None},status=200)
+
+def remove_like_post(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called reject friend request")
+            # now receiving the post data
+            post_id = request.POST["post_id"]
+            remove_react_post(request, post_id)
+        return JsonResponse({"nothing":None},status=200)
+
+def edit_profile_info(request):
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called reject friend request")
+            # now receiving the post data
+            post_id = request.POST["post_id"]
+            # here should be the edit profile function
         return JsonResponse({"nothing":None},status=200)

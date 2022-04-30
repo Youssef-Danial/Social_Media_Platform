@@ -26,7 +26,7 @@ def file_size(value): # add this to some file where you can import it from
 class file_receiver(forms.Form):
     file = forms.ImageField(validators=[file_size, ])
 class file_receiver_multi(forms.Form):
-    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}), required=False, validators=[file_size,FileExtensionValidator(allowed_extensions=['jpg','png','gif','svg','jpeg','tiff',"mp3","mp4","wmv","avi",'mkv'])])
+    file = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True, "class":"btn btn-sm btn-info mr-4", "id":"myFile"}), required=False, validators=[file_size,FileExtensionValidator(allowed_extensions=['jpg','png','gif','svg','jpeg','tiff',"mp3","mp4","wmv","avi",'mkv'])])
 # also should create file receiver for only audio files
     
 def receive_file(request, state):

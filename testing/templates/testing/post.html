@@ -1,27 +1,26 @@
-<!DOCTYPE html>
-<html>
-<head>
-
-<noscript>
-    Your browser have disabled the javascript you can check it 
-</noscript>
-</head>
-<body>
-<p>
- <form onaction="{% url 'testing:createpost' %}" method="post" enctype="multipart/form-data">
+<style>
+   select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;       /* Remove default arrow */
+      background-image: url(...);   /* Add custom arrow */
+      background:#11C9EA;
+      border:None;
+      color:white;
+   }
+</style>
+<div class >
+ <form id="form-post" style="display:absolute;" onaction="{% url 'testing:createpost' %}" method="post" enctype="multipart/form-data">
      {% csrf_token %}
-     <textarea name="text_content">
-     </textarea>
-     <select name="who_can_see" required="true">
+     <textarea id="text-content" rows="4" class = "tarea" placeholder="How do you feel ..?" name="text_content"></textarea>
+     <select id="who-can-see" class ="btn btn-info" aria-label="who can see" name="who_can_see" required="true">
         <option value="onlyme">only me</option>
         <option value="followers">followers</option>
         <option value="public">public</option>
       </select>
-     <input type="hidden" name="post_location" value="profile"/>
-        {{ form.file }}
-    <input class = "inbutton"type="submit" value="Submit">
+     <input id="who-can-see" type="hidden" name="post_location" value="profile"/>
+    {{ formfile.file }}
+    <input class ="btn btn-info" style="margin-left: 120px;" type="submit" value="Submit">
  </form>
-</p>
-</body>
+</div>
 
-</html>

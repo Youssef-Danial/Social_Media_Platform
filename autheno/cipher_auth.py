@@ -1,10 +1,8 @@
 from django.contrib.auth.hashers import make_password, check_password
-from database.models import particpant, user, profile, page, group, user_group, user_page, post, comment, notification, thread
-from database.models import *
 from django.contrib import messages
 import datetime
 from django.utils import timezone
-
+from database.models import particpant, user, profile, page, group, user_group, user_page, post, comment, notification, thread
 # cipher authentication part
 def auth_user(request, user_email, password):
     # adding a email to the session
@@ -123,6 +121,7 @@ def get_particpantbyid(participant_id):
         return particpant_instance
     except:
         return None
+
 def is_user_auth_and_verified():
     pass
 

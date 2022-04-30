@@ -4,8 +4,55 @@ from sqlalchemy import null
 import datetime
 from django.contrib.humanize.templatetags import humanize
 from django.utils import timezone
+from django.db.models import Q
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 # Create your models here.
+import datetime
+
+
+# some code
+def get_postbyid(post_id):
+    try:
+        postinstance = post.objects.get(pk=post_id)
+        return postinstance
+    except:
+        return None
+
+
+def get_user(request):
+    user_email = request.session.get('email')
+    u = user.objects.filter(email=user_email).first()
+    return u
+    
+
+def get_userbyid(user_id):
+    try:
+        u = user.objects.get(pk=user_id)
+        return u
+    except:
+        return None
+
+
+
+def get_friendlist(user_id): # this function should return a list of friend objects
+    user = get_userbyid(user_id)
+    # seraching for the friends of this user
+    friendinstance = friendship.objects.filter(Q(sender_id = user) | Q(receiver_id = user), state="accepted").values()
+    if friendinstance != None:
+        return friendinstance
+    else:
+        return ""
+
+def get_followers(user_id):
+    # checking the followers of the userid
+    user = get_userbyid(user_id)
+    followinstance = follow.objects.filter(followed = user).values()
+    # checking if the user have followers
+    if len(followinstance) > 0:
+        return followinstance
+    else:
+        return "" # there is no users following the given user
+# model classes
 class user(models.Model):
     first_name = models.CharField(max_length=50)
     middle_name = models.CharField(max_length=50)
@@ -21,6 +68,7 @@ class user(models.Model):
     created_date = models.DateTimeField() # this null should be removed it is added because of makemigrations
     Lt_t_un_changed = models.DateTimeField(null=True,blank=True) # last time the username have been changed his name
     #profile_link = models.CharField()
+
 class file(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -32,7 +80,12 @@ class profile(models.Model):
     pfpback = models.ForeignKey("file",on_delete=models.SET_NULL,null=True, related_name ="pfpback")
     link = models.URLField()
     user = models.OneToOneField("user", on_delete=models.CASCADE)
-
+    def get_friends_num(self):
+        friend_list = get_friendlist(self.user.id)
+        return len(friend_list)
+    def get_followers_num(self):
+        followers_list = get_followers(self.user.id)
+        return len(followers_list)
 
 class object(models.Model):
     name = models.CharField(max_length=20, unique=True)
@@ -88,7 +141,7 @@ class post(models.Model):
         return len(comment_instance)
     def get_comments(self):
         comments = comment.objects.filter(post=self)
-        return comments
+        return len(comments)
     def get_reactions(self):
         post_react_instance = post_react.objects.filter(post = self).values()
         return len(post_react_instance)

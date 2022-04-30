@@ -49,6 +49,7 @@ def reject_friendrequest(request, user_id):
     try:
         friendrequest = friendship.objects.filter(sender_id = sender, receiver_id = receiver).first()
         friendrequest.state = "refused"
+        friendrequest.save()
         create_notification(receiver.id, sender.id,'friendrefused', source=receiver.id, source_name = "user")
     except:
         return False
@@ -85,11 +86,11 @@ def is_friend(request, user_id):
     print(friendinstancereceiver)
     print(friendinstancesender)
     if friendinstancereceiver != None :
-            if friendinstancereceiver.state == "accepted" or friendinstancereceiver.state == "accepted" or friendinstancereceiver.state == "pending":
-                return True
+        if friendinstancereceiver.state == "accepted" or friendinstancereceiver.state == "accepted" or friendinstancereceiver.state == "pending":
+            return True
     elif friendinstancesender != None:
-         if friendinstancesender.state == "accepted" or friendinstancesender.state == "accepted" or friendinstancesender.state == "pending":
-                return True
+        if friendinstancesender.state == "accepted" or friendinstancesender.state == "accepted" or friendinstancesender.state == "pending":
+            return True
     else:
         return False
 def is_friend_requested(request, user_id):
@@ -168,20 +169,23 @@ def unfriend(request, user_id):
         friendinstancereceiver = friendship.objects.filter(sender_id = receiver, receiver_id = sender)
         if friendinstancesender != None:
             friendinstancesender.delete()
+            print("true--------- sender")
             # return False
             return True
-        elif friendinstancereceiver != None:
+        if friendinstancereceiver != None:
             friendinstancereceiver.delete()
+            print("true---------")
             return True
         else:
             return False
-
+    else:
+        return False
 def unfriend_request(request, user_id):
     sender = get_user(request)
     receiver = get_userbyid(user_id)
     if(is_friend_requested(request, user_id)):
         # getting friendship instance and deleting it
-        friendinstance = friendship.objects.filter(sender_id = sender, receiver_id = receiver).first()
+        friendinstance = friendship.objects.filter(sender_id = sender, receiver_id = receiver)
         if friendinstance != None:
             try:
                 friendinstance.delete()
@@ -194,11 +198,11 @@ def unfriend_request(request, user_id):
 def get_friendlist(user_id): # this function should return a list of friend objects
     user = get_userbyid(user_id)
     # seraching for the friends of this user
-    friendinstance = friendship.objects.filter(Q(sender_id = user) | Q(receiver_id = user), state="accepted").values()
+    friendinstance = friendship.objects.filter(Q(sender_id = user) | Q(receiver_id = user), state="accepted")
     if friendinstance != None:
         return friendinstance
     else:
-        return None
+        return friendinstance
 
 def get_mutualfriends(request, user_id):
     # declaring an empty list for the mutual friends
@@ -212,10 +216,11 @@ def get_mutualfriends(request, user_id):
     for user in user1_friends:
         if user in user2_friends:
             mutualfriendslist.append(user)
-    if len(mutualfriendslist) > 0: # checking if there is mutual friends in the list
-        return mutualfriendslist
+    if len(mutualfriendslist) > 1: # checking if there is mutual friends in the list
+        return len(mutualfriendslist) - 1
+
     else:
-        return False # there is no mutual friends
+        return 0 # there is no mutual friends
 
 
 def get_followers(user_id):
@@ -240,11 +245,11 @@ def get_blocks(request):
 def get_follows(request):
     # getting the user
     user = get_user(request)
-    followinstance = follow.objects.filter(follower = user).values()
+    followinstance = follow.objects.filter(follower = user)
     if len(followinstance)>0:
         return followinstance
-    else:
-        return False # there is no one this user follows
+    else:   
+        return followinstance # there is no one this user follows
 
 def get_friendrequests(request):
     # getting user

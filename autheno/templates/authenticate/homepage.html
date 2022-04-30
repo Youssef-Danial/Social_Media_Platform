@@ -1,197 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet"href="{% static 'css/homepage.css'|safe %}">
-    <script type="text/javascript" src="js.js"></script>
-    <title>Document</title>
-   
-</head>
-<body>
-    <header>
-        <nav class="navbar">
-            <!-- <span Class="logo" ><i>Space Share </i>   </span> -->
-            <img src ="{% static "images/logoo.jpeg"|safe %}" class="brand-img" alt="spaceshare">
-            <input type="text" data-testid="SearchIcon" placeholder="search">
-            <a href="file:///E:/Space%20Share%20code/page1.html">
-                <i class="material-icons">
-                    home  </i>
-            </a>
-            <a href="">
-                <i class="material-icons">
-                    chat </i>
-            </a>
-            <a href="">
-                <i class="material-icons">
-                    group  </i>
-            </a>
-            <a href="{% url 'main:notifications' %}">
-                <i class="material-icons">
-                    notifications </i>
-            </a>
-            <a href="{% url 'main:profile' user.id %}">
-            <img src ="{% static user.profile.pfp.file_url|safe %}" class="m-img" alt="spaceshare">
-            </a>
-        </nav>
-
-    </header>
+    <head>
+        {% load static %}
+       {% csrf_token %}
+         <input type="hidden" id ="userid" value="{{profile.user.id}}" />
+        <title>Profile</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+      <link rel="icon" href="images/logo.png" type="image/icon type">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/prof.css'|safe %}">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static "images/profile/logo.png"|safe %}" type="image/x-icon">
+        <link rel="stylesheet" href="{% static 'css/sec.css'|safe %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <script src="https://kit.fontawesome.com/c4254e24a8.js"
+        crossorigin="anonymous"></script>
     
-        <div class="main_">
-           
-            <div class="main_feld">
-
-                <div class="new_post">
-                    <a href="{% url 'main:profile' user.id %}">
-                        <img src ="{% static user.profile.pfp.file_url|safe %}" class="m-img" alt="spaceshare">
-                        </a>        
-                        <text class="pop"onclick="document.getElementById('id01').style.display='block'" style="width:auto;" >   &nbsp&nbsp
-                            Share your memories..   &nbsp</text>&nbsp&nbsp&nbsp 
-                            
-                            <div id="id01" class="modal">
-                                  <form class="modal-content" onaction="{% url 'testing:createpost' %}" method="post" enctype="multipart/form-data">
-                                   <!-- pop up create post form  -->
-                                   {% csrf_token %}
-                                    <div class="postnav">
-                                        <a href="#" style="color: beige;"><i  class="material-icons" onclick="document.getElementById('id01').style.display='none'">  backspace  </i> </a>
-                                        <h4>create a new post</h4>
-                                        <button class="btwn">post</button>
-                                    </div>
-                                    <div class="nnpost">
-                                        <a href="#">
-                                            
-                                            <img src ="main.jpg" class="m-img" alt="spaceshare"> 
-                                            
-                                        </a>
-                                        <text style="margin-left: 17px; font-weight: 600;">
-                                            kerols shafik
-                                        </text>
-                                        
-                                    </div>
-                                        <textarea name="text_content" style="margin-left: 35px; outline: none; border: none; position: static;
-                                        width: 80%; height: 100px; font-size: medium;" type="" placeholder="write here.." name="uname"> </textarea>
-                                        
-                                        <a class="linkpp"  href="#">
-                                            <label for="filein">
-                                            <i style="padding-left: 20%;" class="material-icons">
-                                                image</i> </label>photo
-                                                <input  style="display: none;" type="file" id="filein">
-                                          
-                                        </a>
-                                        <select name="who_can_see" required="true">
-                                            <option value="onlyme">only me</option>
-                                            <option value="followers">followers</option>
-                                            <option value="public">public</option>
-                                          </select>                        
-                                    <input type="hidden" name="post_location" value="profile"/>
-                                       {{ formfile.file }}
-                                    <input class = "inbutton"type="submit" value="Submit">
-                                </form>
-                                {% comment %} <form class="modal-content" onaction="{% url 'testing:createpost' %}" method="post" enctype="multipart/form-data">
-                                    
-                                    <textarea name="text_content">
-                                    </textarea>
-                                    <select name="who_can_see" required="true">
-                                       <option value="onlyme">only me</option>
-                                       <option value="followers">followers</option>
-                                       <option value="public">public</option>
-                                     </select>
-                                   
-                                </form> {% endcomment %}
-                            </div>
-
-                        <i  style="  margin-left: auto;color:rgba(165, 69, 189, 0.682);" class="material-icons">  photo  </i> 
-                </div>
-                  
-                 <div class="post">
-                    <img class="m-img" src="photo_2022-04-01_14-17-09.jpg" >
-                    <text style="font-weight: 600;">    kerolsshafik <text></text>
-                    <div class="post_deta">
-                        
-                    
-                        <span  style="font-weight: 320;">    time:  </span>
-                    </div>
-                    <!-- <div class="post-text"> -->
-                        <p style="padding: 5px; font-weight: 500;"> Egypt
-                        </p>
-                    
-                        <img class="img_post"   src="photo_2022-04-01_14-17-56.jpg" id="">
-                    <!-- </div> -->
-                    
-                    <div class="post_icons">
-                    <button style="border: none; background-color: #fff;"> 
-                        <img style="width: 30px;" src="heart.png" class="heart" onclick="likebutton()" >
-                        </i>
-                    </button>
-                    <text  id="likes" onclick="document.getElementById('i1').style.display='block'" style="width:auto;" >
-                    5 </text>likes
-
-                    <i onclick="document.getElementById('i2').style.display='block'" style="width:auto;" class="material-icons">
-                        comment
-                    </i>
-                    <tex id > 2 comment</tex>
-                    
-                    </div>
-
-
-
-                </div>
-                <!-- pop up love -->
-                
-                <div id="i1" class="modal">
-
-                    <div class="commemt_modal">
-                        <div class="commentnav">
-                            <a href="#" ><i  class="material-icons" onclick="document.getElementById('i1').style.display='none'">  backspace  </i> </a>
-                            <h3 style="margin-left: 10%;"> show likes</h3>
-                        </div>
-                    </div>
-                </div>
-                <!-- opo up comment  -->
-                <div id="i2" class="modal">
-                    <div class="commemt_modal">
-                        <div class="commentnav">
-                            <a href="#" ><i  class="material-icons" onclick="document.getElementById('i2').style.display='none'">  backspace  </i> </a>
-                            <h3 style="margin-left: 10%;">create a comment</h3>
-                        </div>
-                        <div id="add_com" class="post">
-                            <a href="#">
-                                <img src ="main.jpg" class="m-img" alt="spaceshare"> 
-                            </a>
-                            <text style="margin-left: 17px; font-weight: 600;">
-                                kerols shafik
-                            </text><br>
-                            <p id ="ad" style="margin-left:40px ;" >sdfasgagg</p>
-
-                        </div>
-        
-             
-                        <div class="">
-                            <a href="#">
-                                <img src ="main.jpg" class="m-img" alt="spaceshare"> 
-                            </a>
-                            <input id="datacomment" style="border-radius: 10px; width: 60%; " type="text" placeholder="add commet" > 
-                            <button  id="combutton" style="border: none; background-color: #fff;"> <i style="width:auto;" class="material-icons">
-                                send
-                                </i></button>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="side_feld">
-
-            </div>
-
-        </div>
-
-
+    </head><link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+<header>
+    <nav class="navo">
+      <img id="logotop" src="{% static "images/profile/logo3.png"|safe %}">
+      <input class="form-control" placeholder="Search" type="text" style="width:200px;">
+          <!--   src="{% static profile.pfp.file_url|safe %}"  -->
+      <a href="{% url 'autheno:home' %}">
+        <i class="material-icons">
+            home  </i>
+    </a>
+    <a href="">
+        <i class="material-icons">
+            chat </i>
+    </a>
+    <a href="">
+        <i class="material-icons">
+            group  </i>
+    </a>
+    <a href="{% url 'main:notifications' %}">
+        <i class="material-icons">
+            notifications </i>
+    </a>
+  
+    <a href="{% url 'main:profile' user.id %}"> <img src="{% static user.profile.pfp.file_url|safe %}" class="k-img" alt="Profile"> </a>
+    </nav>
+  </header>
+<body>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <div class="tweet">
+    {% include 'testing/post.html' %}
+    </div>
+    <hr>
+    <br>
+    {% for post in posts %}
+    {% include 'main/post.html' %}
+    {% endfor %}
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    {% comment %} $(document).on('submit', '#form-post',function(e){    
+        e.preventDefault();
+        $.ajax({
+            type:"POST",
+            url: "{% url 'testing:create_post' %}",
+            data: {
+                 content:$("#content").val(),
+                 post:$("#post").val(),
+                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(response){
+                console.log("request sent")
+            },
+            error: function(response){
+                alert("Error occurred")
+            }
+        });
+    }) {% endcomment %}
+    $("#form-post").submit(function(e) {
+        e.preventDefault();    
+        var formData = new FormData(this);
+    
+        $.ajax({
+            url: "{% url 'testing:createpost' %}",
+            type: 'POST',
+            data: formData,
+            success: function (data) {
+                alert(data)
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+    });
+</script>
+<script>
+    // script concerned with posts
+    $(".like").click(function(){
+      var fbtn = $(this);
+      if (fbtn.hasClass('like')) {
+        console.log("like")
+        $.ajax({
+          type:"POST",
+          url: "{% url 'main:like_post' %}",
+          data: {
+               post_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("request sent")
+          }
+      });
+        fbtn.removeClass('like').addClass('unlike');
+        fbtn.html('<span id="like{{post.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:#11C9EA">');
+        var element = document.getElementById("num"+fbtn.val())
+        var oldvalue = parseInt(element.innerHTML)
+        element.innerHTML = oldvalue + 1
+      } else {
+        console.log("unlike")
+        $.ajax({
+            type:"POST",
+            url: "{% url 'main:remove_like_post' %}",
+            data: {
+                 post_id:fbtn.val(),
+                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(response){
+                console.log("friend request have been removed")
+                fbtn.removeClass('unlike').addClass('like');
+                fbtn.html('<span id="like{{post.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:None">');
+                var element = document.getElementById("num"+fbtn.val())
+                var oldvalue = parseInt(element.innerHTML)
+                console.log(oldvalue)
+                element.innerHTML = oldvalue - 1
+                
+            }
+        });
+        
+      }
+  
+    })
+    $(".unlike").click(function(){
+      var fbtn = $(this);
+      if (fbtn.hasClass('unlike')) {
+        console.log("unlike")
+        $.ajax({
+          type:"POST",
+          url: "{% url 'main:remove_like_post' %}",
+          data: {
+               post_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("request sent")
+          }
+      });
+      fbtn.removeClass('unlike').addClass('like');
+      fbtn.html('<span id="like{{post.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:None">');
+      var element = document.getElementById("num"+fbtn.val())
+      var oldvalue = parseInt(element.innerHTML)
+      console.log(oldvalue)
+      element.innerHTML = oldvalue -1
+      } else {
+        console.log("unfriend")
+        $.ajax({
+            type:"POST",
+            url: "{% url 'main:like_post' %}",
+            data: {
+                 post_id:fbtn.val(),
+                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(response){
+              fbtn.removeClass('like').addClass('unlike');
+              fbtn.html('<span id="like{{post.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:#11C9EA">');
+              var element = document.getElementById("num"+fbtn.val())
+              var oldvalue = parseInt(element.innerHTML)
+              console.log(oldvalue)
+              element.innerHTML = oldvalue + 1
+            }
+        });
+        
+      }
+  
+    })
+  </script>
 </html>

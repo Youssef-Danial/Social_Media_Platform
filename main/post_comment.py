@@ -8,7 +8,8 @@ from database.models import post, comment, postfile, post_react, comment_react, 
 from autheno.filehandler import receive_files
 from autheno.cipher_auth import is_user_auth
 from itertools import chain
-from main.relations import is_follower
+from main.relations import is_follower, get_follows, get_friendlist
+from main.notifications import create_notification
 # getting current Time
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 
@@ -142,9 +143,44 @@ def edit_comment(request, comment_id):
 def delete_comment(request, comment_id):
     pass
 
-def get_feeds(request):
+def get_user_related(request):
+    # this function should have the first part of the get_feeds function
     pass
 
+def get_feeds(request):
+    #try:
+        userinstance = get_user(request)
+        # getting follows
+        follows = get_follows(request)
+        # getting friends 
+        friends = get_friendlist(userinstance.id)
+        # getting the users from the friends and follows
+        userslist = []
+        for followinstance in follows:
+            userslist.append(followinstance.followed)
+        
+        for friendinstance in friends:
+            if friendinstance.sender != userinstance:
+                userslist.append(friendinstance.sender)
+            else:
+                userslist.append(friendinstance.receiver)
+        # now getting the posts that these users have made
+        postslist = []
+        for userins in userslist:
+            # not getting user posts
+            userposts = load_profile_posts(request, userins.id, state="followers")
+            postslist.append(userposts)
+        # now loading the user itself posts
+        userposts = load_profile_posts(request, userinstance.id, state="followers")
+        # now combining the posts and sorting it with date
+        total_posts = userposts
+        for posts in postslist:
+            total_posts = total_posts | posts
+        # ordering the posts
+        total_posts = total_posts.order_by("-create_date")
+        return total_posts
+    #except:
+    #   return False
 def is_post_owner(request, post_id):
     try:
         # checking if the user is the owner of the post
@@ -174,11 +210,15 @@ def add_react_post(request, post_id, react="like"): # react type for now is like
         if is_user_auth(request): # should return true if the user is authenticated
             # first we get the user and the post 
             userinstance  = get_user(request)
+            
             postinstance = get_postbyid(post_id)
+            print("===================")
+            print(postinstance.user)
             # now adding a reaction to the post by loading the post_react model and inserting the new instance
             post_react_instance = post_react(user = userinstance, post = postinstance) # the default is set for like for now
             # now saving the post_react_instance to the databsae
             post_react_instance.save()
+            create_notification(userinstance.id, postinstance.user.id,'postlike', source=userinstance.id, source_name = "user")
             return True
         return False
     except:
@@ -248,5 +288,11 @@ def is_user_reacted_comment(request, comment_id):
         return False # the user did not react to the comment
     except:
         return False # there something wrong with the user or the comment maybe the do not exist
+
+def num_reacts(request, post_id):
+    userinstance  = get_user(request)
+    postinstance = get_postbyid(post_id)
+    post_react_instance = post_react.objects.filter(post = postinstance).values() # the default is set for like for now
+    return len(post_react_instance)
 
 # later

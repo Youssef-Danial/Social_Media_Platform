@@ -1,12 +1,23 @@
 <!doctype html>
                         <html>
                             <head>
+                                {% load static %}
+                                {% csrf_token %}
+                                <input type="hidden" id ="userid" value="{{user.id}}" />
                                 <meta charset='utf-8'>
                                 <meta name='viewport' content='width=device-width, initial-scale=1'>
                                 <title>Notifications</title>
                                 <link href='' rel='stylesheet'>
                                 <link href='https://use.fontawesome.com/releases/v5.7.2/css/all.css' rel='stylesheet'>
-                                <script type='text/javascript' src=''></script>
+                                <link rel="icon" href="images/logo.png" type="image/icon type">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/prof.css'|safe %}">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+<link rel="shortcut icon" href="{% static "images/profile/logo.png"|safe %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/sec.css'|safe %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://kit.fontawesome.com/c4254e24a8.js"
+    crossorigin="anonymous"></script>
                                 <style>* {
     padding: 0;
     margin: 0;
@@ -137,8 +148,31 @@ background: none;
 }
 </style>
     </head>
-    {% load static %}
-    {% csrf_token %}
+    <header>
+        <nav class="navo">
+          <img id="logotop" src="{% static "images/profile/logo3.png"|safe %}">
+          <input class="form-control" placeholder="Search" type="text" style="width:200px;">
+              <!--   src="{% static profile.pfp.file_url|safe %}"  -->
+          <a href="{% url 'autheno:home' %}">
+            <i class="material-icons">
+                home  </i>
+        </a>
+        <a href="">
+            <i class="material-icons">
+                chat </i>
+        </a>
+        <a href="">
+            <i class="material-icons">
+                group  </i>
+        </a>
+        <a href="{% url 'main:notifications' %}">
+            <i class="material-icons">
+                notifications </i>
+        </a>
+      
+        <a href="{% url 'main:profile' user.id %}"> <img src="{% static user.profile.pfp.file_url|safe %}" class="k-img" alt="Profile"> </a>
+        </nav>
+      </header>
         <body oncontextmenu='return false' class='snippet-body'>
             <div class="wrapper">
                 {% for notif in notifs %}

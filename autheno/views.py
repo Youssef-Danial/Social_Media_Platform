@@ -95,6 +95,9 @@ def create_poste(request):
 
    
 def home(request):
+    # loading feeds for this user
+    userposts = get_feeds(request)
+    viewer = get_user(request)
     # reciving the file
     formfile = create_poste(request)
     if is_user_auth(request):
@@ -102,7 +105,7 @@ def home(request):
         # getting the user
         u = get_user(request)
         #return HttpResponseRedirect("https://www.google.com")
-        return render(request, "authenticate/homepage.html", {"user": u, "formfile":formfile})
+        return render(request, "authenticate/homepage.html", {"user": u, "formfile":formfile, "posts":userposts, "viewer":viewer.id})
     else:
         #print("not authenticated")
         return HttpResponseRedirect(reverse_lazy("autheno:login"))
@@ -165,6 +168,7 @@ def login_register(request):
     register_form = registere(request)
     login_form = logine(request)
     return render(request, "authenticate/login-register.html", {"login_form":login_form, "register_form":register_form})
+
 def logout(request): # loging out a user
     if is_user_auth(request):
         # loging the user out
@@ -174,10 +178,5 @@ def logout(request): # loging out a user
             pass
         return HttpResponse("You're logged out.")
 
-def add_friend(request):
-    if (is_user_auth(request)):
-        # now sending the friend request
-        if request.method == 'POST':
-            # now receiving the post data
-            userid = request.POST["user"]
-            send_friend_request(request, userid)
+
+
