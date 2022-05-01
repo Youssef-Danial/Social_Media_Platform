@@ -1,7 +1,7 @@
 {% block content %}
 <form action="{% url 'main:edit_about_me' %}" method="post" >
     {% csrf_token %}
-<textarea  class="tarea" id="txtid" name="txt" rows="4" cols="30" maxlength="200"></textarea>
+<textarea  class="tarea" id="txtid" name="txt" rows="4" cols="30" placeholder="Express yourself" maxlength="200"></textarea>
 <input class = "btn btn-info" type="submit" value="Change">
 </form>
 {% endblock %}

@@ -4,7 +4,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.utils import html
 from django.contrib.auth.mixins import LoginRequiredMixin
-from database.models import user, profile
+from database.models import user, profile, file
 from django.contrib.auth.hashers import make_password,check_password
 import re
 from main.relations import *
@@ -38,6 +38,8 @@ class registery(FormMixin,View):
                 new_user.save()
                 # creating a profile for the user 
                 p = profile(user = new_user, link = "main/profile/"+str(new_user.id))
+                f = file.objects.get(pk=10) # 10 the new user profile picture
+                p.pfp = f
                 p.save()
                 # authenticting user after registering
                 auth_user(request, new_user.email, password)
@@ -95,12 +97,13 @@ def create_poste(request):
 
    
 def home(request):
-    # loading feeds for this user
-    userposts = get_feeds(request)
-    viewer = get_user(request)
-    # reciving the file
-    formfile = create_poste(request)
+   
     if is_user_auth(request):
+        # loading feeds for this user
+        userposts = get_feeds(request)
+        viewer = get_user(request)
+        # reciving the file
+        formfile = create_poste(request)
         #print("user is authenticated")
         # getting the user
         u = get_user(request)

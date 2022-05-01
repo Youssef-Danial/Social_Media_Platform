@@ -12,7 +12,7 @@
 <div class >
  <form id="form-post" style="display:absolute;" onaction="{% url 'testing:createpost' %}" method="post" enctype="multipart/form-data">
      {% csrf_token %}
-     <textarea id="text-content" rows="4" class = "tarea" placeholder="How do you feel ..?" name="text_content"></textarea>
+     <textarea id="text-content" rows="4" class = "tarea" placeholder="How do you feel ..?" name="text_content" val=""></textarea>
      <select id="who-can-see" class ="btn btn-info" aria-label="who can see" name="who_can_see" required="true">
         <option value="onlyme">only me</option>
         <option value="followers">followers</option>

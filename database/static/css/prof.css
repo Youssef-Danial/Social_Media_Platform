@@ -1355,7 +1355,7 @@
       page-break-after: avoid;
     }
   
-    @ page {
+    @page {
       size: a3;
     }
   
@@ -1393,11 +1393,11 @@
   }
   
   .bg-gradient-default {
-    background: linear-gradient(87deg, #ffffff 0, #ffffff 100%) !important;
+    background: linear-gradient(87deg, #172b4d 0, #1a174d 100%) !important;
   }
   
   .bg-gradient-default {
-    background: linear-gradient(87deg, #ffffff 0, #ffffff 100%) !important;
+    background: linear-gradient(87deg, #172b4d 0, #1a174d 100%) !important;
   }
   
   @keyframes floating-lg {
@@ -1929,7 +1929,7 @@
       left: auto;
     }
   
-    @ keyframes show-navbar-dropdown {
+    @keyframes show-navbar-dropdown {
       0% {
         transition: visibility .25s, opacity .25s, transform .25s;
         transform: translate(0, 10px) perspective(200px) rotateX(-2deg);
@@ -2398,7 +2398,6 @@ a{
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
 .tarea{
