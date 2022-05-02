@@ -125,6 +125,7 @@ def create_comment(request, data, fileslist,comment_position = "main"): # commen
             commentinstance.date = get_current_datetime()
             commentinstance.content = data["content"]
             commentinstance.save()
+            create_notification(userinstance.id, postinstance.user.id,'commentpost', source=userinstance.id, source_name = "user")
             # now preparing the data
             # if type(fileslist) is list:
             #     for file in fileslist:
@@ -141,7 +142,17 @@ def edit_comment(request, comment_id):
     pass
 
 def delete_comment(request, comment_id):
-    pass
+    try:
+        if is_user_auth(request):
+            if is_comment_owner(request, comment_id):
+                print(f"delete the comment called --------------del")
+                commentinstance = get_commentbyid(comment_id)
+                commentinstance.delete()
+                return True
+            return False # not the owner of the post
+        return False # not authenticated
+    except:
+        return False
 
 def get_user_related(request):
     # this function should have the first part of the get_feeds function
@@ -247,6 +258,7 @@ def add_react_comment(request, comment_id, react="like"): # react type for now i
             comment_react_instance = comment_react(user = userinstance, comment = commentinstance)
             # now saving the comment_react_instance
             comment_react_instance.save()
+            create_notification(userinstance.id, commentinstance.user.id,'commentlike', source=userinstance.id, source_name = "user")
             return True
         return False
     except:

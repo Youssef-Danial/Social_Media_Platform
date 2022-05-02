@@ -141,7 +141,7 @@ class post(models.Model):
         return len(comment_instance)
     def get_comments(self):
         comments = comment.objects.filter(post=self)
-        return len(comments)
+        return comments
     def get_reactions(self):
         post_react_instance = post_react.objects.filter(post = self).values()
         return len(post_react_instance)

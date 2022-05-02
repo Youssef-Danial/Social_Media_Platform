@@ -22,7 +22,7 @@ from autheno.views import home
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("database/", include('database.urls')),
-    path("testing/", include("testing.urls")),
+    path("home/", include("testing.urls")),
     path("autheno/", include("autheno.urls")),
     path("main/", include("main.urls")),
     path("", home) # the home page

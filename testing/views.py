@@ -26,6 +26,11 @@ def get_user_last_post(request):
     postinstance = post.objects.filter(user=userinstance).last()
     return postinstance
 
+def get_user_last_comment(request):
+    userinstance = get_user(request)
+    commentinstance = comment.objects.filter(user=userinstance).last()
+    return commentinstance
+
 # def create_post(postinstance):
 #     postobject = f"""<div class="post-container">
 #         <div class="post-row">
@@ -51,11 +56,14 @@ def get_user_last_post(request):
 #      </div>"""
 class posts(View):
     def get(self, request, post_id):
+        userinstance = get_user(request)
         postinstance = load_post(request, post_id)
         if is_user_auth(request):
             data = {
                 "post": postinstance,
-                "is_owner": False
+                "is_owner": False,
+                "user": userinstance,
+                "viewer":userinstance.id,
             }
             # checking if the user is permetted to see the post
 
@@ -64,7 +72,7 @@ class posts(View):
                 data["is_owner"] = True
             # else it should display the post data
 
-            return render(request,"testing/postdisplay.html",data)
+            return render(request,"main/display_post.html",data)
         else:
             return HttpResponse("You are authenticated try loging in") 
    
@@ -90,23 +98,23 @@ class posts(View):
             return render(request, "testing/post.html",{"form":fileslist})
         return HttpResponse("User is not authenticated try to login")
 
-    def disply_edit_post(request, post_id):
-        if is_user_auth(request):
-            if is_post_owner(request, post_id):
-                # now he can edit the post
-                # getting the post 
-                postinstance = get_postbyid(post_id)
-                data={
-                    "post":postinstance
-                }
-                return render(request, "testing/editpost.html", data)
-    def editpost(request, post_id):
-        if is_user_auth(request):
-            if is_post_owner(request, post_id):
-                # now he can edit the post
-                data = request.POST
-                edit_post()
-                return render(request, "testing/editpost.html", data)
+    # def disply_edit_post(request, post_id):
+    #     if is_user_auth(request):
+    #         if is_post_owner(request, post_id):
+    #             # now he can edit the post
+    #             # getting the post 
+    #             postinstance = get_postbyid(post_id)
+    #             data={
+    #                 "post":postinstance
+    #             }
+    #             return render(request, "testing/editpost.html", data)
+    # def editpost(request, post_id):
+    #     if is_user_auth(request):
+    #         if is_post_owner(request, post_id):
+    #             # now he can edit the post
+    #             data = request.POST
+    #             edit_post()
+    #             return render(request, "testing/editpost.html", data)
 
 
     # def post(self,request, post_id):
@@ -129,7 +137,7 @@ class posts(View):
     #         print("file should show up")
     #         return HttpResponseRedirect(reverse("testing:displaypost", args=[post_id]))
     #     return HttpResponse("User is not authenticated try to login")
-    
+
     def post(self,request):
         print("create comment called ==========================----=-=-=-=-")
         print(is_user_auth(request))
@@ -144,8 +152,10 @@ class posts(View):
                 data = request.POST
                 data["user"] = u
                 if create_comment(request, data,fileslist):
-                    # return HttpResponse("success")
-                    return JsonResponse({"nothing":None},status=200)
+                    commentinstance = get_user_last_comment(request)
+                    rendered = render_to_string('main/comment.html', { 'comment': commentinstance,"viewer":u.id })
+                    response = {"newcomment":rendered}
+                    return JsonResponse(response,status=200)
                 else:
                     return HttpResponse("User is not authenticated")
             print("file should show up")

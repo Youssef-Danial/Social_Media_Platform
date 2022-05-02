@@ -190,12 +190,35 @@ def reject_friend(request):
             reject_friendrequest(request, user_id)
         return JsonResponse({"nothing":None},status=200)
 
+def like_comment(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called like comment")
+            # now receiving the post data
+            comment_id = request.POST["comment_id"]
+            add_react_comment(request, comment_id)
+        return JsonResponse({"nothing":None},status=200)
+
+def remove_like_comment(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called remove like comment")
+            # now receiving the post data
+            comment_id  = request.POST["comment_id"]
+            remove_react_comment(request, comment_id )
+        return JsonResponse({"nothing":None},status=200)
+
+
 def like_post(request):
     # we mark the notification as read
     if (is_user_auth(request)):
         # now sending the friend request
         if request.method == 'POST':
-            print("called reject friend request")
+            print("called like post")
             # now receiving the post data
             post_id = request.POST["post_id"]
             add_react_post(request, post_id)
@@ -206,7 +229,7 @@ def remove_like_post(request):
     if (is_user_auth(request)):
         # now sending the friend request
         if request.method == 'POST':
-            print("called reject friend request")
+            print("called remove like post")
             # now receiving the post data
             post_id = request.POST["post_id"]
             remove_react_post(request, post_id)
@@ -355,6 +378,20 @@ def remove_post(request):
             print("-----------{}----------remove post".format(post_id))
             delete_post(request, post_id)
         return JsonResponse({"nothing":None},status=200)
+
+def remove_comment(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            comment_id = request.POST["comment_id"]
+            print("-----------{}----------remove comment".format(comment_id))
+            delete_comment(request, comment_id)
+        return JsonResponse({"nothing":None},status=200)
+
+
 def block_friend(request):
     # we mark the notification as read
     if (is_user_auth(request)):

@@ -28,6 +28,8 @@ urlpatterns = [
      path("remove_post", views.remove_post, name="remove-post"),
      path("block_friend", views.block_friend, name="block-friend"),
      path("unblock_friend", views.unblock_friend, name="unblock-friend"),
-     
+     path("remove_comment", views.remove_comment, name="remove-comment"),
+     path("like_comment", views.like_comment, name="like_comment"),
+     path("remove_like_comment", views.remove_like_comment, name="remove_like_comment"),
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

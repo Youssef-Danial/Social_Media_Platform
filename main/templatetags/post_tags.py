@@ -1,8 +1,10 @@
 from django import template
 from autheno.cipher_auth import *
-from database.models import post_react, block
+from database.models import post_react, block, comment_react
 
 register = template.Library()
+
+
 @register.simple_tag
 def is_user_reacted_post(user_id, post_id): # to check if the user reacted or not to the post so he could not react again
     # getting  the user and the post
@@ -17,6 +19,24 @@ def is_user_reacted_post(user_id, post_id): # to check if the user reacted or no
             return False # the user did not react to the post
     except:
         return False # there something wrong with the user or the post maybe the do not exist
+
+
+@register.simple_tag
+def is_user_reacted_comment(user_id, comment_id): # to check if the user reacted or not to the post so he could not react again
+    # getting  the user and the post
+    try:
+        userinstance = get_userbyid(user_id)
+        commentinstance = get_commentbyid(comment_id)
+        comment_react_instance = comment_react.objects.filter(user = userinstance, comment = commentinstance).first() # the default is set for like for now
+        
+        if comment_react_instance != None:
+            return True # mean the user reacted to the post
+        else:
+            return False # the user did not react to the post
+    except:
+        return False # there something wrong with the user or the post maybe the do not exist
+
+
 @register.simple_tag
 def test_tag():
     return 12
@@ -44,4 +64,17 @@ def is_blockr(blocker_id, blocked_id):
     if blockinstance != None:
         return True
     else:
+        return False
+
+@register.simple_tag
+def is_comment_owner(user_id, comment_id):
+    try:
+        userinstance = get_userbyid(user_id)
+        # postinstance = get_postbyid(post_id)
+        commentinstance = get_commentbyid(comment_id)
+        if commentinstance.user == userinstance:
+            return True
+        else:
+            return False
+    except:
         return False

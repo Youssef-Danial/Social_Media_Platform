@@ -5,7 +5,7 @@
    {% csrf_token %}
    {% load post_tags %}
 	 <input type="hidden" id ="userid" value="{{profile.user.id}}" />
-	<title>Profile</title>
+	<title>Post</title>
   <!-- the this section is concerned with posts-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -96,7 +96,7 @@
 </header>
 
 <body>
-  <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+  
   <div>
     <ul class="navbar-nav align-items-center d-none d-md-flex">
       <li class="nav-item dropdown">
@@ -136,7 +136,7 @@
     <br>
     <br>
     <br>
-    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px;  background-image: url({% static  profile.pfpback.file_url|safe %}); background-size: 70%; background-repeat: no-repeat; background-position: center top;">
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 120px;  background-image: url({% static  profile.pfpback.file_url|safe %}); background-size: 70%; background-repeat: no-repeat; background-position: center top;">
       <!-- Mask -->
        <span class="mask bg-gradient-default" style="opacity:0.5;"></span>
       <!-- Header container -->
@@ -149,8 +149,9 @@
         </div>
       </div>
     </div>
+    <button class="btn btn-info" type = "button" onclick="history.back()">Back</button>
     <!-- Page content -->
-    <div class="container-fluid mt--7">
+    {% comment %} <div class="container-fluid mt--7">
       <div class="row">
         <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
           <div class="card card-profile shadow">
@@ -166,88 +167,10 @@
             </div>
             <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
               <div class="d-flex justify-content-between">
-								<div style = "airflow:absolute;">
-    {% is_blockr viewer profile.user.id as is_blocker %}
-		{% if is_owner %}
-		{% comment %}<p><button>You are the Owner</button></p> {% endcomment %}
-		<p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_pfp'%}'">Edit pfp</button></p>
-    <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_backpfp'%}'">Edit bpf</button></p>
-    <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:settings'%}'">Settings</button></p>
-		{% comment %} <p><button onclick="location.href = '{% url 'main:edit_about_me'%}'">Edit about me</button></p> {% endcomment %}
-    
-    {% elif is_blocker %}
-    <p>{{is_block}}here is the thing</p>
-    <p><button class = "btn btn-info unblock" id = "unblock">unblock</button></p>
-    {% elif is_follower %}
-			<button id="unfollow" value="{{profile.user.id}}" class = "btn btn-info unfollow" >unfollow</button></p>
-			{% if is_friend %}
-			<p><button id="unfriend" value="{{profile.user.id}}" class = "btn btn-info unfriend">unfriend</button></p>
-			{% else %}
-			<p><button id="add" value="{{profile.user}}" class ="btn btn-info add">add</button></p>
-			{% endif %}
-		{% else %}
-    <p><button id="follow" value="{{profile.user.id}}" class = "btn btn-info follow">follow</button></p>
-			{% if is_friend %}
-			<p><button id="unfriend" value="{{profile.user.id}}" class = "btn btn-info unfriend">unfriend</button></p>
-			{% else %}
-			<p><button id="add" value="{{profile.user.id}}" class = "btn btn-info add">add</button></p>
-      <p><button class = "btn btn-info block" id = "block">block</button></p>
-			{% endif %}
-		{% endif %}
-    
-							</div>
-							<div>
-
-							</div>
-                <a href="#" class="btn btn-sm btn-default float-right">Message</a>
-              </div>
-            </div>
-            <div class="card-body pt-0 pt-md-4">
-              <div class="row">
-                <div class="col">
-                  <div class="card-profile-stats d-flex justify-content-center mt-md-5">
-                    <div>
-                      <span class="heading">{{profile.get_friends_num}}</span>
-                      <span class="description">Friends</span>
-                    </div>
-                    <div>
-                      <span class="heading">{{profile.get_followers_num}}</span>
-                      <span class="description">Followers</span>
-                    </div>
-                    <div>
-                      <span class="heading">{{mutual_friends}}</span>
-                      <span class="description">Mutual Friends</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="text-center">
-                <h3>
-                  <span class="font-weight-light">Bio.</span>
-                </h3>
-                {% comment %} <div class="h5 font-weight-300">
-                  <i class="ni location_pin mr-2"></i>#
-                </div>
-                <div class="h5 mt-4">
-                  <i class="ni business_briefcase-24 mr-2"></i>#
-                </div> {% endcomment %}
-                <div>
-                  <i class="ni education_hat mr-2"></i>{{profile.about_me}}
-                </div>
-                <hr class="my-4">
-								{% if is_owner %}
-                <div class="container">
-        
-                    <!-- expand here -->
-                    <div id = "demo" class="tweet">
-                      <p>{% include "main/textarea.html" %}</p>
-                    </div>
-                </div>
-							{% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
+		<div style = "airflow:absolute;"> {% endcomment %}
+    {% is_blockr viewer user.id as is_blocker %}
+		
+							
 
                     <div class="col-lg-4">
 
@@ -281,239 +204,208 @@
 
 
 		 <!--thi is the post -->
-		 {% for post in posts %}
+     <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
   {% include 'main/post.html' %}
-  {% endfor %}
+   <!-- comments section -->
+  <div id="comments">
+    {% for comment in post.get_comments %}
+    <div class = "post-container" id="comment-container{{comment.id}}">
+      <div class="post-row">
+      
+      <div class="user-profile">
+        <a href ="{% url 'main:profile' comment.user.id %}"> <img class = "pfppic" src="{% static comment.user.profile.pfp.file_url|safe %}" alt="profile picture"></a>
+          <div>
+             <p>{{comment.user.user_name}}</p>
+             <a href = "{% url 'testing:displaypost' post.id %}" >
+             <span>{{comment.get_timeago}}</span></a>
+          </div>
+          
+         
+        </div>
+        {% is_comment_owner viewer comment.id as is_ownerr %}
+            {% if is_ownerr %}
+            <!-- Button trigger modal -->
+            {% comment %} <p>{{post.id}}</p> {% endcomment %}
+            <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#exampleModalCenter{{comment.id}}" style="float: right;">Del</button>
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModalCenter{{comment.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete this comment
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" id="close-{{comment.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="delete-comment{{comment.id}}" class="deletecomment" value="{{comment.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Delete</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+      </div>
+     
+      <div>
+        <p class="post-text"> {{comment.content}}</p>
+        
+          {% is_user_reacted_comment viewer comment.id as is_likedcomment %}
+          {% if is_likedcomment %}
+          <button class="cunlike" id="clike{{comment.id}}" value="{{comment.id}}"  title="dislike" style="padding: 0;border: none;background: none;font-size: 20px;" > <span  id="clike{{comment.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:#11C9EA"></button><p id="num{{post.id}}">{{comment.get_reactions}}</p></div>
+          {% else %} 
+          <button class="clike" id="clike{{comment.id}}" value="{{comment.id}}" style="padding: 0;border: none;background: none;font-size: 20px;" > <span  id="clike{{comment.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:None"></button><p id="num{{comment.id}}">{{comment.get_reactions}}</p></div>
+          {% endif %}
+        
+      </div>
+    
+      <br id = "comment-footer{{comment.id}}">
+  
+      </div>
+      {% endfor %}
+  </div>
+  
+    <div>
+    <form class = "post-container" id="formid" method="post" >
+      {% csrf_token %}
+      <textarea class="tarea" name="content" placeholder="Engage with the Post" id="content"></textarea>
+      <input type="hidden" name="post" id="post" value="{{post.id}}">
+     <button type="button" class="btn btn-info" id="createcomment" style="float: right;">comment</button>
+  </form>
+    </div> 
+    
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
-  $(document).ready(function(){
-    console.log("testing")
-
-    $("#add").click(function(){
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info add')) {
-        console.log("add")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:add-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("request sent")
-          }
-      });
-        fbtn.removeClass('btn btn-info add').addClass('btn btn-info unfriend');
-        fbtn.text('unfriend');
-      } else {
-        console.log("unfriend")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:un-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("friend request have been removed")
-            }
-        });
-        fbtn.removeClass('btn btn-info unfriend').addClass('btn btn-info add');
-        fbtn.text('add');
-      }
-
-    })
-    $("#unfriend").click(function(){
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info add')) {
-        console.log("add")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:add-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("request sent")
-          }
-      });
-        fbtn.removeClass('btn btn-info add').addClass('btn btn-info unfriend');
-        fbtn.text('unfriend');
-      } else {
-        console.log("unfriend")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:un-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("friend request have been removed")
-                fbtn.removeClass('btn btn-info unfriend').addClass('btn btn-info add');
-                fbtn.text('add');
-            }
-        });
-        
-      }
-
-    })
-
-    $("#follow").click(function(){
-
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info follow')) {
-        console.log("follow")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:follow-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("follow success")
-          }
-      });
-        fbtn.removeClass('btn btn-info follow').addClass('btn btn-info unfollow');
-        fbtn.text('unfollow');
-      } else {
-        console.log("unfollow")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:unfollow-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("unfollow success")
-            }
-        });
-        fbtn.removeClass('btn btn-info unfollow').addClass('btn btn-info follow');
-        fbtn.text('follow');
-      }
-
-    })
-    $("#unfollow").click(function(){
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info follow')) {
-        console.log("follow")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:follow-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("follow success")
-          }
-      });
-        fbtn.removeClass('btn btn-info follow').addClass('btn btn-info unfollow');
-        fbtn.text('unfollow');
-      } else {
-        console.log("unfollow")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:unfollow-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("unfollow success")
-            }
-        });
-        fbtn.removeClass('btn btn-info unfollow').addClass('btn btn-info follow');
-        fbtn.text('follow');
-      }
-    })
-
-})
-
-// blocking 
-
-$("#block").click(function(){
-
-  var fbtn = $(this);
-  if (fbtn.hasClass('btn btn-info block')) {
-    console.log("block")
-    $.ajax({
-      type:"POST",
-      url: "{% url 'main:block-friend' %}",
-      data: {
-           user_id:$("#userid").val(),
-           csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-      },
-      success: function(response){
-          console.log("block success")
-      }
-  });
-    fbtn.removeClass('btn btn-info block').addClass('btn btn-info unblock');
-    fbtn.text('unblock');
-  } else {
-    console.log("unblock")
-    $.ajax({
-        type:"POST",
-        url: "{% url 'main:unblock-friend' %}",
-        data: {
-             user_id:$("#userid").val(),
-             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function(response){
-            console.log("unblock success")
-        }
-    });
-    fbtn.removeClass('btn btn-info unblock').addClass('btn btn-info block');
-    fbtn.text('block');
-  }
-
-})
-$("#unblock").click(function(){
   
-  var fbtn = $(this);
-  if (fbtn.hasClass('btn btn-info block')) {
-    console.log("block")
-    $.ajax({
-      type:"POST",
-      url: "{% url 'main:block-friend' %}",
-      data: {
-           user_id:$("#userid").val(),
-           csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-      },
-      success: function(response){
-          console.log("block success")
-      }
-  });
-    fbtn.removeClass('btn btn-info block').addClass('btn btn-info unblock');
-    fbtn.text('unblock');
-  } else {
-    console.log("unblock")
-    $.ajax({
-        type:"POST",
-        url: "{% url 'main:unblock-friend' %}",
-        data: {
-             user_id:$("#userid").val(),
-             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function(response){
-            console.log("unblock success")
-        }
-    });
-    fbtn.removeClass('btn btn-info unblock').addClass('btn btn-info block');
-    fbtn.text('block');
-  }
-})
-
-
 
 </script>
+
 <script>
+  // comment liking
+  $(".clike").click(function(){
+    var fbtn = $(this);
+    if (fbtn.hasClass('clike')) {
+      console.log("clike")
+      $.ajax({
+        type:"POST",
+        url: "{% url 'main:like_comment' %}",
+        data: {
+             comment_id:fbtn.val(),
+             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(response){
+            console.log("request sent")
+        }
+    });
+      fbtn.removeClass('clike').addClass('cunlike');
+      fbtn.html('<span id="like{{comment.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:#11C9EA">');
+      var element = document.getElementById("num"+fbtn.val())
+      var oldvalue = parseInt(element.innerHTML)
+      element.innerHTML = oldvalue + 1
+    } else {
+      console.log("cunlike")
+      $.ajax({
+          type:"POST",
+          url: "{% url 'main:remove_like_comment' %}",
+          data: {
+               comment_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("friend request have been removed")
+              fbtn.removeClass('cunlike').addClass('clike');
+              fbtn.html('<span id="like{{comment.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:None">');
+              var element = document.getElementById("num"+fbtn.val())
+              var oldvalue = parseInt(element.innerHTML)
+              console.log(oldvalue)
+              element.innerHTML = oldvalue - 1
+              
+          }
+      });
+      
+    }
+
+  })
+  $(".cunlike").click(function(){
+    var fbtn = $(this);
+    if (fbtn.hasClass('cunlike')) {
+      console.log("cunlike")
+      $.ajax({
+        type:"POST",
+        url: "{% url 'main:remove_like_comment' %}",
+        data: {
+             comment_id:fbtn.val(),
+             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(response){
+            console.log("request sent")
+        }
+    });
+    fbtn.removeClass('cunlike').addClass('clike');
+    fbtn.html('<span id="like{{post.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:None">');
+    var element = document.getElementById("num"+fbtn.val())
+    var oldvalue = parseInt(element.innerHTML)
+    console.log(oldvalue)
+    element.innerHTML = oldvalue -1
+    } else {
+      console.log("like")
+      $.ajax({
+          type:"POST",
+          url: "{% url 'main:like_comment' %}",
+          data: {
+               post_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+            fbtn.removeClass('clike').addClass('cunlike');
+            fbtn.html('<span id="like{{post.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:#11C9EA">');
+            var element = document.getElementById("num"+fbtn.val())
+            var oldvalue = parseInt(element.innerHTML)
+            console.log(oldvalue)
+            element.innerHTML = oldvalue + 1
+          }
+      });
+      
+    }
+
+  })
+
+
+
+  // end comment liking
+
+  // auto increment when commenting
+  {% comment %} $("#form-post").submit(function(e) {
+    e.preventDefault();    
+    var formData = new FormData(this);
+    if($("#text-content").val()!=""){
+      $.ajax({
+        url: "{% url 'testing:createpost' %}",
+        type: 'POST',
+        data: formData,
+        success: function (data) {
+          toastr["success"]("Posted Successfully");
+          var feeds = document.getElementById("feeds")
+          document.getElementById("form-post").reset();
+          $("#feeds").prepend(data["newpost"])
+          //work(); // this is causing the multi post problem when submit
+        },
+        cache: false,
+        contentType: false,
+        processData: false
+    });
+    }else{
+      toastr["error"]("Posting Failed Empty Post");
+    }  
+}); {% endcomment %}
   // script concerned with posts
   $(".delete").click(function(){
     console.log("is called delete")
@@ -531,6 +423,30 @@ $("#unblock").click(function(){
               console.log("remove post request"+fbtn.val())
               var element = document.getElementById("post-container"+fbtn.val())
               var elementfooter = document.getElementById("post-footer"+fbtn.val())
+              var elementclose = document.getElementById("close-"+fbtn.val())
+              elementclose.click()
+              element.parentNode.removeChild(element);
+              elementfooter.parentNode.removeChild(elementfooter)
+          }
+        });
+      });
+  });
+  $(".deletecomment").click(function(){
+    console.log("is called delete comment")
+    var fbtn = $(this);
+    $(fbtn).click(function(){
+        console.log("remove-post ajax called")
+        $.ajax({
+          type:"POST",
+          url: "{% url 'main:remove-comment' %}",
+          data: {
+               comment_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("remove post request"+fbtn.val())
+              var element = document.getElementById("comment-container"+fbtn.val())
+              var elementfooter = document.getElementById("comment-footer"+fbtn.val())
               var elementclose = document.getElementById("close-"+fbtn.val())
               elementclose.click()
               element.parentNode.removeChild(element);
@@ -626,7 +542,36 @@ $("#unblock").click(function(){
     }
 
   })
-  //Get the button
+
+  $(document).ready(function(){
+    console.log("testing")
+    
+    $("#createcomment").click(function(){    
+        
+        console.log("testing")
+            $.ajax({
+                type:"POST",
+                url: "{% url 'testing:create_comment' %}",
+                data: {
+                     content:$("#content").val(),
+                     post:$("#post").val(),
+                     csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function(response){
+                    console.log("request sent")
+                    toastr["success"]("Commented Successfully");
+                    document.getElementById("formid").reset();
+                    $("#comments").append(response["newcomment"])
+                    //work(); // this is causing the multi post problem when submit
+                    
+                }
+                
+            });
+            
+    })
+})
+
+//Get the button
 var mybutton = document.getElementById("myBtn");
 
 // When the user scrolls down 20px from the top of the document, show the button
@@ -645,6 +590,7 @@ function topFunction() {
   document.body.scrollTop = 0;
   document.documentElement.scrollTop = 0;
 }
+
 </script>
 
 </html>
