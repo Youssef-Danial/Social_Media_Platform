@@ -1,7 +1,12 @@
 	 <!--thi is the post -->
      {% load post_tags %}
      {% load static %}
-     <div class="post-container">
+    {% comment %} <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet'> {% endcomment %}
+    {% comment %} <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+    <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script> {% endcomment %}
+    
+     <div class="post-container" id="post-container{{post.id}}">
+       <div>
         <div class="post-row">
           <div class="user-profile">
             <a href ="{% url 'main:profile' post.user.id %}"> <img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></a>
@@ -12,9 +17,32 @@
               </div>
               
           </div>
-          {% is_post_owner viewer post.id as is_owner %}
-              {% if is_owner %}
-              <button class="btn btn-sm btn-info" style="margin-left: auto;">Del</button>
+          
+          {% is_post_owner viewer post.id as is_ownerr %}
+              {% if is_ownerr %}
+              <!-- Button trigger modal -->
+              {% comment %} <p>{{post.id}}</p> {% endcomment %}
+              <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#exampleModalCenter{{post.id}}">Del</button>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter{{post.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this post
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="close-{{post.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" id="delete-post{{post.id}}" class="delete" value="{{post.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
               {% endif %}
         </div>
           <p class="post-text"><b>{{post.text_content}}</b></p>
@@ -55,7 +83,9 @@
              {% comment %} <div><img src="{% static 'images/profile/share.png' %}"> </div> {% endcomment %}
            </div>
         </div>
-
+      </div>
+        
      </div>
-		 <br>
+     <br id = "post-footer{{post.id}}">
+		 
      

@@ -14,6 +14,7 @@ from django.views.generic.edit import FormMixin
 from django.contrib import messages
 from .cipher_auth import auth_user, is_user_auth, get_user, get_current_datetime
 from autheno.filehandler import receive_files
+import main.templatetags.post_tags
 # Create your views here.
 class registery(FormMixin,View):
     def register(request):
@@ -47,8 +48,8 @@ class registery(FormMixin,View):
                 return HttpResponseRedirect(reverse_lazy("autheno:home"))
         else:
             form = register()
-        
-        return render(request, "authenticate/register.html", {"form":form})
+        return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
+        #return render(request, "authenticate/register.html", {"form":form})
     
     def register_action(self, request):
         pass
@@ -75,7 +76,8 @@ class login(View):
         else:
             form = login_u()   
             #request.session"] = None
-        return render(request, "authenticate/login.html", {"form":form})
+        return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
+        #return render(request, "authenticate/login.html", {"form":form})
 
 def create_poste(request):
         if is_user_auth(request):
@@ -111,7 +113,7 @@ def home(request):
         return render(request, "authenticate/homepage.html", {"user": u, "formfile":formfile, "posts":userposts, "viewer":viewer.id})
     else:
         #print("not authenticated")
-        return HttpResponseRedirect(reverse_lazy("autheno:login"))
+        return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
 
 def registere(request):
         # if the user submit the form
@@ -176,10 +178,14 @@ def logout(request): # loging out a user
     if is_user_auth(request):
         # loging the user out
         try:
+            user = get_user(request)
             del request.session['email']
-        except KeyError:
+            message = "You're logged out."
+            return render(request, "main/notify_page.html", {"message":message, "user":user})
+        except:
             pass
-        return HttpResponse("You're logged out.")
+        
+        # return HttpResponse("You're logged out.")
 
 
 

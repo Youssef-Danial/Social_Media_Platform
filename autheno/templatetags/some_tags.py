@@ -34,13 +34,12 @@ def is_post_owner(user_id, post_id):
     except:
         return False
 
-
 @register.simple_tag
 def is_blockr(blocker_id, blocked_id):
     blocker = get_userbyid(blocker_id)
     blocked = get_userbyid(blocked_id)
-    blockinstance = block.objects.filter(blocker=blocker, blocked=blocked).first()
-    # print(f"the result--------{blockinstance}")
+    blockinstance = block.objects.filter(blocker=blocker, blocked=blocked)
+    print(f"the result--------{blockinstance}")
     if blockinstance != None:
         return True
     else:

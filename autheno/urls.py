@@ -9,4 +9,7 @@ urlpatterns = [
     path("home", views.home, name="home"),
     path("profile/<int:id>", views.profile, name="profile"),
     path("login-register",views.login_register, name="login-register"),
+    path("logout", views.logout, name="logout"),
+    path("register", views.registere,name="registere"),
+    path("login", views.logine , name="logine"),
 ]

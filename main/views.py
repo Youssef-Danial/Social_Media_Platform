@@ -17,6 +17,10 @@ from django.contrib.auth.hashers import make_password, check_password
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
+        if is_user_auth(request):
+            pass
+        else:
+            return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
         #user = get_user(request)
         viewer = get_user(request)
         mutual = get_mutualfriends(request, user_id)
@@ -27,6 +31,9 @@ class profile(View):
         # getting the data of the user states
         is_ufollower = is_follower(request, user_id)
         is_ufriend = is_friend(request, user_id)
+        if(is_blocked(request, user_id)):
+            message = "You are blocked by this User"
+            return render(request, "main/notify_page.html", {"user":viewer, "is_owner":is_owner, "profile": prof, "is_follower":is_ufollower, "is_friend": is_ufriend, "mutual_friends":mutual, "viewer":viewer.id,  "message":message})
         if is_user_auth(request):
             if user != None:
                 # show if the owner
@@ -51,7 +58,8 @@ class profile(View):
                 # show if the viewer
                 return render(request, "main/profile.html", {"user":viewer, "is_owner":is_owner, "profile": prof, "posts":profileposts, "is_follower":is_ufollower, "is_friend": is_ufriend, "mutual_friends":mutual, "viewer":viewer.id})
             else:
-                return HttpResponse("The User you are looking for does not Exist")
+                message = "The User you are looking for does not Exist"
+                return render(request, "main/notify_page.html", {"user":viewer, "is_owner":is_owner, "profile": prof, "is_follower":is_ufollower, "is_friend": is_ufriend, "mutual_friends":mutual, "viewer":viewer.id,  "message":message})
         else:
             # the user is login redirecting him to the login page
             return HttpResponseRedirect(reverse_lazy("autheno:login"))
@@ -136,6 +144,7 @@ def un_friend(request):
             print("userid : {}".format(userid))
             print("userid : {}".format(get_user(request).id))
             print(unfriend(request, userid))
+            unfriend_request(request, userid)
         return JsonResponse({"nothing":None},status=200)
 
 def show_notifications(request):
@@ -335,6 +344,38 @@ def change_password(request):
                 return JsonResponse({"feedback":"Wrong"},status=200)
     return JsonResponse({"feedback":"Nothing"},status=200)
 
+def remove_post(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            post_id = request.POST["post_id"]
+            print("-----------{}----------remove post".format(post_id))
+            delete_post(request, post_id)
+        return JsonResponse({"nothing":None},status=200)
+def block_friend(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called block")
+            # now receiving the post data
+            user_id = request.POST["user_id"]
+            block_user(request, user_id)
+        return JsonResponse({"nothing":None},status=200)
+def unblock_friend(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called unblock")
+            # now receiving the post data
+            user_id = request.POST["user_id"]
+            # print("-----------{}----------remove post".format(user_id))
+            unblock(request, user_id)
+        return JsonResponse({"nothing":None},status=200)
 def edit_settings(request):
      # now sending the friend request
     if request.method == 'POST':

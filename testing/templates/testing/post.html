@@ -14,13 +14,12 @@
      {% csrf_token %}
      <textarea id="text-content" rows="4" class = "tarea" placeholder="How do you feel ..?" name="text_content" val=""></textarea>
      <select id="who-can-see" class ="btn btn-info" aria-label="who can see" name="who_can_see" required="true">
-        <option value="onlyme">only me</option>
-        <option value="followers">followers</option>
-        <option value="public">public</option>
+      <option value="followers">followers</option>
+        <option value="public">public</option>  
+      <option value="onlyme">only me</option>
       </select>
      <input id="who-can-see" type="hidden" name="post_location" value="profile"/>
     {{ formfile.file }}
-    <input class ="btn btn-info" style="margin-left: 120px;" type="submit" value="Submit">
+    <input id="postsubmit" class ="btn btn-info" style="margin-left: 120px;" type="submit" value="Submit">
  </form>
 </div>
-

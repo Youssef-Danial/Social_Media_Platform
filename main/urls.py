@@ -25,6 +25,9 @@ urlpatterns = [
      path("change_username", views.change_username, name="change_username"),
      path("change_phonenumber", views.change_phonenumber, name="change_phonenumber"),
      path("change_password", views.change_password, name="change_password"),
+     path("remove_post", views.remove_post, name="remove-post"),
+     path("block_friend", views.block_friend, name="block-friend"),
+     path("unblock_friend", views.unblock_friend, name="unblock-friend"),
      
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

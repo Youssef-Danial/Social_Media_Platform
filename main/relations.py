@@ -122,7 +122,7 @@ def is_followed(request, user_id):
 def is_blocked(request, user_id):
     blocked = get_user(request)
     blocker = get_userbyid(user_id)
-    blockinstance = block.objects.filter(blocker=blocker, blocked=blocked)
+    blockinstance = block.objects.filter(blocker=blocker, blocked=blocked).first()
     if blockinstance != None:
         return True
     else:
@@ -160,13 +160,13 @@ def unfollow(request, user_id):
         return False # you did not follow the user to unfollow
 
 def unfriend(request, user_id):
-    print("called")
+    print("friend remove called")
     sender = get_user(request)
     receiver = get_userbyid(user_id)
     if(is_friend(request, user_id)):
         # getting friendship instance and deleting it
-        friendinstancesender = friendship.objects.filter(sender_id = sender, receiver_id = receiver)
-        friendinstancereceiver = friendship.objects.filter(sender_id = receiver, receiver_id = sender)
+        friendinstancesender = friendship.objects.filter(sender_id = sender, receiver_id = receiver).first()
+        friendinstancereceiver = friendship.objects.filter(sender_id = receiver, receiver_id = sender).first()
         if friendinstancesender != None:
             friendinstancesender.delete()
             print("true--------- sender")

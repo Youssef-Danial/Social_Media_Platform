@@ -7,6 +7,8 @@ from database.models import profile
 from main.post_comment import *
 from django.forms import Form
 from django.views import View
+from django.forms.models import model_to_dict
+from django.template.loader import render_to_string
 # Create your views here.
 def ajax_test(request):
     profileinstance = profile.objects.get(pk=1)
@@ -18,6 +20,35 @@ def ajax(request):
 def javascriptrender(request):
     return render(request, "testing/javascript.html")
 
+
+def get_user_last_post(request):
+    userinstance = get_user(request)
+    postinstance = post.objects.filter(user=userinstance).last()
+    return postinstance
+
+# def create_post(postinstance):
+#     postobject = f"""<div class="post-container">
+#         <div class="post-row">
+#           <div class="user-profile">
+#             <a href="/main/profile/{postinstance.user.id}"> <img class="pfppic" src="/static{postinstance.user.profile.pfp.file_url}" alt="profile picture"></a>
+#               <div>
+#                  <p>{postinstance.user.user_name}</p>
+#                  <span>{postinstance.who_can_see}</span>
+#                  <span>{postinstance.get_timeago}</span>
+#               </div>      
+#           </div>
+#     </div>
+#           <p class="post-text"><b>    let fly into space</b></p>    
+#               <img src="/static/files/2/post/1LQq.gif" alt="post picture" style="width:100%">
+#       <hr>
+#         <div class="post-row">
+#            <div class="activity-icons">
+#              <div id="post53">
+#                <button class="like" id="like53" value="53" style="padding: 0;border: none;background: none;font-size: 20px;"> <span id="like53span" class="bi bi-hand-thumbs-up-fill" style="color:None"></span></button><p id="num53">1</p></div>
+#              <div><img src="/static/images/profile/comments.png"> 0</div>
+#            </div>
+#         </div>
+#      </div>"""
 class posts(View):
     def get(self, request, post_id):
         postinstance = load_post(request, post_id)
@@ -36,6 +67,8 @@ class posts(View):
             return render(request,"testing/postdisplay.html",data)
         else:
             return HttpResponse("You are authenticated try loging in") 
+   
+
     def create_post(request):
         if is_user_auth(request):
             fileslist = receive_files(request, state="post")
@@ -45,9 +78,13 @@ class posts(View):
                 u = get_user(request)
                 data = request.POST
                 data["instance_name"] = u.user_name
-                data["instance_id"] = u.id 
+                data["instance_id"] = u.id
                 if create_post(request, data,fileslist):
-                    return HttpResponse("Posted successfully")
+                    postinstance = get_user_last_post(request)
+                    rendered = render_to_string('main/post.html', { 'post': postinstance,"viewer":u.id })
+                    response = {"newpost":rendered}
+                    return JsonResponse(response,status=200)
+                    # return HttpResponse("success")
                 else:
                     return HttpResponse("User is not authenticated")
             return render(request, "testing/post.html",{"form":fileslist})
