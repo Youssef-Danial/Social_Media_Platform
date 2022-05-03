@@ -6,6 +6,7 @@
     <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script> {% endcomment %}
     
      <div class="post-container" id="post-container{{post.id}}">
+       <input type="hidden" id="postid" value="{{post.id}}"/>
        <div>
         <div class="post-row">
           <div class="user-profile">
@@ -76,7 +77,7 @@
                {% else %} 
                <button class="like" id="like{{post.id}}" value="{{post.id}}" style="padding: 0;border: none;background: none;font-size: 20px;" > <span  id="like{{post.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:None"></button><p id="num{{post.id}}">{{post.get_reactions}}</p></div>
                {% endif %}
-             <div><img src="{% static 'images/profile/comments.png' |safe %}"> {{post.comment_number}}</div>
+             <div ><img src="{% static 'images/profile/comments.png' |safe %}"> <span id="commentnumber">{{post.comment_number}}</span></div>
              {% comment %} <div><img src="{% static 'images/profile/share.png' %}"> </div> {% endcomment %}
            </div>
         </div>

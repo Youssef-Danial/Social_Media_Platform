@@ -45,16 +45,14 @@
                 </div>
               </div>
               {% endif %}
-        </div>
-       
+            </div>
         <div>
           <p class="post-text"> {{comment.content}}</p>
           {% is_user_reacted_comment viewer comment.id as is_likedcomment %}
           {% if is_likedcomment %}
-          <button class="cunlike" id="clike{{comment.id}}" value="{{comment.id}}"  title="dislike" style="padding: 0;border: none;background: none;font-size: 20px;" > <span  id="clike{{comment.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:#11C9EA"></button><p id="num{{post.id}}">{{comment.get_reactions}}</p></div>
+          <button class="cunlike" id="clike{{comment.id}}" value="{{comment.id}}"  title="dislike" style="padding: 0;border: none;background: none;font-size: 20px;" > <span  id="clike{{comment.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:#11C9EA"></button><p id="num{{comment.id}}">{{comment.get_reactions}}</p></div>
           {% else %} 
           <button class="clike" id="clike{{comment.id}}" value="{{comment.id}}" style="padding: 0;border: none;background: none;font-size: 20px;" > <span  id="clike{{comment.id}}span" class="bi bi-hand-thumbs-up-fill" style="color:None"></button><p id="num{{comment.id}}">{{comment.get_reactions}}</p></div>
           {% endif %}
         </div>
-      
          <br id = "comment-footer{{comment.id}}">

@@ -13,7 +13,8 @@ from main.notifications import *
 from main.post_comment import *
 import re
 from django.contrib.auth.hashers import make_password, check_password
-
+from django.forms.models import model_to_dict
+from django.template.loader import render_to_string
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
@@ -212,6 +213,38 @@ def remove_like_comment(request):
             remove_react_comment(request, comment_id )
         return JsonResponse({"nothing":None},status=200)
 
+
+def receive_newcomments(post_id, old_num_comments, request):
+    u = get_user(request)
+    postinstance = get_postbyid(post_id)
+    response = {}
+    response["newcomment"] = ""
+    if postinstance.comment_number() > int(old_num_comments):
+        new_comment_number = postinstance.comment_number()
+        response["newcommentnumber"] = new_comment_number
+        newcommentslen = postinstance.comment_number() - int(old_num_comments)
+        commentinstance = comment.objects.filter(post=postinstance).order_by('-id')[:newcommentslen]
+        for commentin in commentinstance:
+            rendered = render_to_string('main/comment.html', { 'comment': commentin,"viewer":u.id})
+            response["newcomment"] += rendered
+        return response
+    responsew = {}
+    return responsew
+
+
+
+def new_comments(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            print("called remove like comment")
+            # now receiving the post data
+            comment_num  = request.POST["comment_num"]
+            post_id = request.POST["post_id"]
+            print(f"{comment_num}, {post_id}")
+            response = receive_newcomments(post_id,comment_num, request)
+        return JsonResponse(response,status=200)
 
 def like_post(request):
     # we mark the notification as read

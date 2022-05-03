@@ -18,7 +18,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <script src="https://kit.fontawesome.com/c4254e24a8.js"
     crossorigin="anonymous"></script>
-                                <style>* {
+                                <style>
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -32,8 +33,12 @@ body {
 }
 
 .wrapper {
+    overflow: auto;
+    margin-top:42px;
+    padding-top:42px;
     width: 480px;
-    position: absolute;
+    height:700px;
+    position: fixed;
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%
@@ -147,35 +152,39 @@ background: none;
     background: none;
 }
 </style>
+<header>
+    <nav class="navo">
+      <img id="logotop" src="{% static "images/profile/logo3.png"|safe %}">
+      <input class="form-control" placeholder="Search" type="text" style="width:200px;">
+          <!--   src="{% static profile.pfp.file_url|safe %}"  -->
+      <a href="{% url 'autheno:home' %}">
+        <i class="material-icons">
+            home  </i>
+    </a>
+    <a href="">
+        <i class="material-icons">
+            chat </i>
+    </a>
+    <a href="">
+        <i class="material-icons">
+            group  </i>
+    </a>
+    <a href="{% url 'main:notifications' %}">
+        <i class="material-icons">
+            notifications </i>
+    </a>
+  
+    <a href="{% url 'main:profile' user.id %}"> <img src="{% static user.profile.pfp.file_url|safe %}" class="k-img" alt="Profile"> </a>
+    </nav>
+  </header>
+
     </head>
-    <header>
-        <nav class="navo">
-          <img id="logotop" src="{% static "images/profile/logo3.png"|safe %}">
-          <input class="form-control" placeholder="Search" type="text" style="width:200px;">
-              <!--   src="{% static profile.pfp.file_url|safe %}"  -->
-          <a href="{% url 'autheno:home' %}">
-            <i class="material-icons">
-                home  </i>
-        </a>
-        <a href="">
-            <i class="material-icons">
-                chat </i>
-        </a>
-        <a href="">
-            <i class="material-icons">
-                group  </i>
-        </a>
-        <a href="{% url 'main:notifications' %}">
-            <i class="material-icons">
-                notifications </i>
-        </a>
-      
-        <a href="{% url 'main:profile' user.id %}"> <img src="{% static user.profile.pfp.file_url|safe %}" class="k-img" alt="Profile"> </a>
-        </nav>
-      </header>
-        <body oncontextmenu='return false' class='snippet-body'>
-            <div class="wrapper">
+    
+ <body style=""  class='snippet-body'>
+    <div style="">
+        <div class="wrapper">
                 {% for notif in notifs %}
+                
                 <div class="toast info" id="{{notif.id}}">
                     {% if notif.source_name == "user" and notif.object_type.name == "friendrequest" %}
                     <div class="outer-container"> <a href ="{% url 'main:profile' notif.get_source.id %}"> <img class = "pfppic" src="{% static notif.get_source.profile.pfp.file_url|safe %}" alt="profile picture"></a> </div>
@@ -213,29 +222,9 @@ background: none;
                     <button id="markread{{notif.id}}" class = "buttonmark" value="{{notif.id}}">&times;</button>
                     </div>
                 </div>
+            
                 {% endfor %}
-    {% comment %} </div>
-    <div class="toast error">
-        <div class="outer-container"> <i class="fas fa-times-circle"></i> </div>
-        <div class="inner-container">
-            <p>Error</p>
-            <p>Error has occured while saving changes.</p>
-        </div> <button>&times;</button>
-    </div>
-    <div class="toast info">
-        <div class="outer-container"> <i class="fas fa-info-circle"></i> </div>
-        <div class="inner-container">
-            <p>Info</p>
-            <p>New settings available on your account.</p>
-        </div> <button>&times;</button>
-    </div>
-    <div class="toast warning">
-        <div class="outer-container"> <i class="fas fa-exclamation-circle"></i> </div>
-        <div class="inner-container">
-            <p>Warning</p>
-            <p>Username you have entered is invalid.</p>
-        </div> <button>&times;</button>
-    </div> {% endcomment %}
+            </div>
 </div>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
