@@ -422,6 +422,8 @@
               elementclose.click()
               element.parentNode.removeChild(element);
               elementfooter.parentNode.removeChild(elementfooter)
+              var elementcommentnumber = document.getElementById("commentnumber")
+              elementcommentnumber.innerHTML = parseInt(elementcommentnumber.innerHTML) - 1
           }
         });
       });

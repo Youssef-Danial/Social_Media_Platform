@@ -238,11 +238,10 @@ def new_comments(request):
     if (is_user_auth(request)):
         # now sending the friend request
         if request.method == 'POST':
-            print("called remove like comment")
             # now receiving the post data
             comment_num  = request.POST["comment_num"]
             post_id = request.POST["post_id"]
-            print(f"{comment_num}, {post_id}")
+            #print(f"{comment_num}, {post_id}")
             response = receive_newcomments(post_id,comment_num, request)
         return JsonResponse(response,status=200)
 
