@@ -1,6 +1,8 @@
 from pyexpat import model
 from django.db import models
 from sqlalchemy import null
+import pytz
+from datetime import datetime, timedelta
 import datetime
 from django.contrib.humanize.templatetags import humanize
 from django.utils import timezone
@@ -124,7 +126,9 @@ class notification(models.Model):
                 return u
             except:
                 return None
-
+    def get_time(self):
+        newtime = self.time_sent +  timedelta(hours=2)
+        return newtime
 class setting_code(models.Model):
     setting_name = models.CharField(max_length=50)
     default_value = models.CharField(max_length=20)
