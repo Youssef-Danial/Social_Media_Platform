@@ -13,14 +13,16 @@ def create_notification(sender_id, receipt_id, objecttype, source=None, source_n
     # try:
         # creating notification
         time_sent = get_current_datetime()
-        sender = get_userbyid(sender_id)
-        receipt = get_userbyid(receipt_id)
-        object_type = object.objects.filter(name = objecttype).first()
-        # creating a notification instance
-        notification_instance = notification(sender = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source, source_name=source_name, is_read=False)
-        notification_instance.save()
-        print("notification created ========================")
-        return True
+        if sender_id != receipt_id:
+            sender = get_userbyid(sender_id)
+            receipt = get_userbyid(receipt_id)
+            object_type = object.objects.filter(name = objecttype).first()
+            # creating a notification instance
+            notification_instance = notification(sender = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source, source_name=source_name, is_read=False)
+            notification_instance.save()
+            print("notification created ========================")
+            return True
+        return False
     # except:
     #     return False
     

@@ -14,7 +14,7 @@
   <!-- this link if for importing icons for the post-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
   <link rel="icon" href="images/logo.png" type="image/icon type">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/prof.css'|safe %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/profyd.css'|safe %}">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
 <link rel="shortcut icon" href="{% static "images/profile/logo.png"|safe %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/sec.css'|safe %}">
@@ -63,6 +63,15 @@
 #myBtn:hover {
   background-color: #555;
 }
+.notification-badge {
+  position:relative;
+  padding:5px 9px;
+  background-color: #11CDEF;
+  color: #F8F9FE; 
+  bottom: 15px;
+  left: 15px;
+  border-radius: 50%;
+}
 </style>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -85,8 +94,13 @@
           group  </i>
   </a>
   <a href="{% url 'main:notifications' %}">
-      <i class="material-icons">
-          notifications </i>
+    {% if user.get_notif_num > 0%}
+       <i class="material-icons">
+        notifications</i><small class="notification-badge" id="notifnum" style="visibility:visible;">{{user.get_notif_num}}</small>
+       {% else %}
+       <i class="material-icons">
+        notifications</i><small class="notification-badge" id="notifnum" style="visibility:hidden;">{{user.get_notif_num}}</small>
+       {% endif %}
   </a>
   <a href="{% url 'main:profile' user.id %}"> <img src="{% static user.profile.pfp.file_url|safe %}" class="k-img" alt="Profile"> </a>
   <div><button type="button" class="btn btn-info" style="width:20px; margin:0; padding: 0;border: none;background: none;" onclick="location.href = '{% url 'autheno:logout'%}'"><i class="fa fa-sign-out"></i></button></div>
@@ -197,15 +211,15 @@
     
 							</div>
 							<div>
-
 							</div>
                 <a href="#" class="btn btn-sm btn-default float-right">Message</a>
               </div>
             </div>
             <div class="card-body pt-0 pt-md-4">
-              <div class="row">
+              <div class="row"> 
                 <div class="col">
                   <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                    
                     <div>
                       <span class="heading">{{profile.get_friends_num}}</span>
                       <span class="description">Friends</span>
@@ -223,14 +237,16 @@
               </div>
               <div class="text-center">
                 <h3>
-                  <span class="font-weight-light">Bio.</span>
+                  {{profile.user.user_name}}
+                  
                 </h3>
+                <span class="font-weight-light">Bio.</span>
                 {% comment %} <div class="h5 font-weight-300">
                   <i class="ni location_pin mr-2"></i>#
                 </div>
                 <div class="h5 mt-4">
                   <i class="ni business_briefcase-24 mr-2"></i>#
-                </div> {% endcomment %}
+                </div>  {% endcomment %}
                 <div>
                   <i class="ni education_hat mr-2"></i>{{profile.about_me}}
                 </div>
@@ -290,7 +306,29 @@
 <script>
   $(document).ready(function(){
     console.log("testing")
-
+    setInterval(function(){
+      var element = document.getElementById("notifnum")
+      var oldvalue = parseInt(element.innerHTML)
+      $.ajax({
+        type:"POST",
+        url: '/main/is_there_notifications',
+        data: {
+             notifnum:oldvalue,
+             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(response){
+          if(response.hasOwnProperty('notifnum')){
+            //toastr["success"]("New notification")
+            element.innerHTML = response["notifnum"]
+            element.style.visibility = 'visible';
+          }else{
+            element.style.visibility = 'hidden';
+            console.log("server responded Nothing new")
+          }
+          
+        }
+    });
+    }, 10000);
     $("#add").click(function(){
       var fbtn = $(this);
       if (fbtn.hasClass('btn btn-info add')) {

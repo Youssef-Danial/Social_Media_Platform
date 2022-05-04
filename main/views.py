@@ -175,8 +175,9 @@ def accept_friend(request):
             print("called accept friend request")
             # now receiving the post data
             user_id = request.POST["user_id"]
-            accept_friendrequest(request, user_id)
             print("-----------{}----------accept".format(user_id))
+            accept_friendrequest(request, user_id)
+            
         return JsonResponse({"nothing":None},status=200)
 
 def reject_friend(request):
@@ -445,6 +446,24 @@ def unblock_friend(request):
             # print("-----------{}----------remove post".format(user_id))
             unblock(request, user_id)
         return JsonResponse({"nothing":None},status=200)
+
+
+
+def is_there_notifications(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        # now sending the friend request
+        if request.method == 'POST':
+            #print("called receive notification")
+            # now receiving the post data
+            oldvalue = request.POST["notifnum"]
+            notificationsinstance = get_user_notifications(request, state="unread")
+            response = {}
+            if len(notificationsinstance)>0 and len(notificationsinstance)!=oldvalue:
+                response["notifnum"] = len(notificationsinstance)
+        return JsonResponse(response,status=200)
+
+
 def edit_settings(request):
      # now sending the friend request
     if request.method == 'POST':

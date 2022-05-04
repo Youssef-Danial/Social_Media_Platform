@@ -9,6 +9,7 @@ from django.forms import Form
 from django.views import View
 from django.forms.models import model_to_dict
 from django.template.loader import render_to_string
+from main.relations import *
 # Create your views here.
 def ajax_test(request):
     profileinstance = profile.objects.get(pk=1)
@@ -30,7 +31,6 @@ def get_user_last_comment(request):
     userinstance = get_user(request)
     commentinstance = comment.objects.filter(user=userinstance).last()
     return commentinstance
-
 # def create_post(postinstance):
 #     postobject = f"""<div class="post-container">
 #         <div class="post-row">
@@ -58,6 +58,7 @@ class posts(View):
     def get(self, request, post_id):
         userinstance = get_user(request)
         postinstance = load_post(request, post_id)
+        # and (not is_blocked(request, postinstance.user.id))
         if is_user_auth(request):
             data = {
                 "post": postinstance,
@@ -74,7 +75,7 @@ class posts(View):
 
             return render(request,"main/display_post.html",data)
         else:
-            return HttpResponse("You are authenticated try loging in") 
+            return HttpResponse("You are not authenticated try loging in or you can not view this post") 
    
 
     def create_post(request):

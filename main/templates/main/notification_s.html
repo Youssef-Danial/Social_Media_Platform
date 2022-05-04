@@ -10,7 +10,7 @@
                                 <link href='' rel='stylesheet'>
                                 <link href='https://use.fontawesome.com/releases/v5.7.2/css/all.css' rel='stylesheet'>
                                 <link rel="icon" href="images/logo.png" type="image/icon type">
-	<link rel="stylesheet" type="text/css" href="{% static 'css/prof.css'|safe %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/profyd.css'|safe %}">
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
 <link rel="shortcut icon" href="{% static "images/profile/logo.png"|safe %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/sec.css'|safe %}">
@@ -258,7 +258,7 @@ background: none;
             var button_id = $(this).attr('id');
             if(button_id.includes("accept")){
                 $('#'+button_id).click(function(){
-                    console.log("entered button accept"+button_id)
+                    console.log("entered button accept"+$("#"+button_id).val())
                     $.ajax({
                         type:"POST",
                         url: "{% url 'main:accept-friend' %}",
@@ -282,7 +282,7 @@ background: none;
             }else if(button_id.includes("remove")){
                 $('#'+button_id).click(function(){
                     // your function here
-                    console.log("entered button reject")
+                    console.log("entered button reject"+$("#"+button_id).val())
                     $.ajax({
                         type:"POST",
                         url: "{% url 'main:reject-friend' %}",

@@ -15,7 +15,7 @@ def send_friend_request(request, user_id):
     create_notification(sender.id, receiver.id,'friendrequest', source=sender.id, source_name = "user")
     if sender!= None and receiver != None:
         friendrequest = friendship(sender_id = sender.id, receiver_id = receiver.id, state="pending", send_date=currentDateTime,creation_date = None)
-        if not is_blocked(request, user_id):
+        if is_blocked(request, user_id):
             del friendrequest
             return False
         else : # sending the friend request by saving it to the database
@@ -75,6 +75,8 @@ def block_user(request, user_id):
     try:
         blockinstance = block(blocker =blocker, blocked=blocked, creation_date=currentDateTime)
         blockinstance.save()
+        # now remove any friend or follow
+        unfollow_in(user_id, blocker.id)
     except:
         return False
     return True
@@ -159,6 +161,18 @@ def unfollow(request, user_id):
     else:
         return False # you did not follow the user to unfollow
 
+def unfollow_in(user_id1, user_id):
+    follower = get_userbyid(user_id1)
+    followed = get_userbyid(user_id)
+    try:
+        # if the user is a follower we remove him from the following
+        followerinstance = follow.objects.filter(follower = follower, followed = followed).first()
+        followerinstance.delete()
+        return True
+    except:
+        return False # you did not follow the user to unfollow
+
+
 def unfriend(request, user_id):
     print("friend remove called")
     sender = get_user(request)
@@ -216,8 +230,8 @@ def get_mutualfriends(request, user_id):
     for user in user1_friends:
         if user in user2_friends:
             mutualfriendslist.append(user)
-    if len(mutualfriendslist) > 1: # checking if there is mutual friends in the list
-        return len(mutualfriendslist) - 1
+    if len(mutualfriendslist) >= 1: # checking if there is mutual friends in the list
+        return len(mutualfriendslist)
 
     else:
         return 0 # there is no mutual friends

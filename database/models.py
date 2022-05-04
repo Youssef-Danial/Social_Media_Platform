@@ -52,6 +52,21 @@ def get_followers(user_id):
         return followinstance
     else:
         return "" # there is no users following the given user
+
+def get_user_notifications(userinstance, state="unread"):
+    # try:
+        
+        # now searching and getting all the notifications that have been sent to this user
+        if state =="unread":
+            notifications = notification.objects.filter(receipt = userinstance, is_read = False).order_by("-time_sent")
+            return notifications
+        elif state == "read":
+            notifications = notification.objects.filter(receipt = userinstance, is_read = True).order_by("-time_sent")
+            return notifications
+        else: # this mean all the notifications
+            print(userinstance.id)
+            notifications = notification.objects.filter(receipt = userinstance).order_by('-time_sent')
+            return notifications
 # model classes
 class user(models.Model):
     first_name = models.CharField(max_length=50)
@@ -68,7 +83,9 @@ class user(models.Model):
     created_date = models.DateTimeField() # this null should be removed it is added because of makemigrations
     Lt_t_un_changed = models.DateTimeField(null=True,blank=True) # last time the username have been changed his name
     #profile_link = models.CharField()
-
+    def get_notif_num(self):
+        notifnum = get_user_notifications(self)
+        return len(notifnum)
 class file(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
