@@ -8,7 +8,7 @@ from database.models import post, comment, postfile, post_react, comment_react, 
 from autheno.filehandler import receive_files
 from autheno.cipher_auth import is_user_auth
 from itertools import chain
-from main.relations import is_follower, get_follows, get_friendlist
+from main.relations import is_follower, get_follows, get_friendlist, get_followers
 from main.notifications import create_notification
 # getting current Time
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
@@ -38,6 +38,14 @@ def create_post(request, data, fileslist): # data should be a dictionary
                 # marking the files to the post
                 file.post = p
                 file.save()
+        # now creating a notifcation for other users
+        # first we get the users who follow that person
+        userfollowers = get_followers(p.user.id)
+        print(f" the user post is called and {type(userfollowers)}")
+        if userfollowers is not None and p.who_can_see != "onlyme":
+            for followerinstance in userfollowers:
+                print("the loop is working")
+                create_notification(p.user.id, followerinstance.follower.id,'newpost', source=p.user.id, source_name = "user")
         return True
     else:
         return False

@@ -77,3 +77,4 @@ def get_user_notifications(request, state="unread"):
 # (name="friendrefused", text="refused your friend request")
 # (name="postlike", text="liked your post")
 # (name="commentlike", text="liked your comment")
+# (name="newpost", text="created a new post")

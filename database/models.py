@@ -1,7 +1,6 @@
 from pyexpat import model
 from django.db import models
 from sqlalchemy import null
-import pytz
 from datetime import datetime, timedelta
 import datetime
 from django.contrib.humanize.templatetags import humanize

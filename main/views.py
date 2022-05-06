@@ -215,12 +215,12 @@ def remove_like_comment(request):
         return JsonResponse({"nothing":None},status=200)
 
 
-def receive_newcomments(post_id, old_num_comments, request):
+def receive_newcomments(post_id, old_num_comments, commentslist,request):
     u = get_user(request)
     postinstance = get_postbyid(post_id)
     response = {}
-    response["newcomment"] = ""
     if postinstance.comment_number() > int(old_num_comments):
+        response["newcomment"] = ""
         new_comment_number = postinstance.comment_number()
         response["newcommentnumber"] = new_comment_number
         newcommentslen = postinstance.comment_number() - int(old_num_comments)
@@ -229,11 +229,26 @@ def receive_newcomments(post_id, old_num_comments, request):
             rendered = render_to_string('main/comment.html', { 'comment': commentin,"viewer":u.id})
             response["newcomment"] += rendered
         return response
+    if postinstance.comment_number() < len(commentslist):
+        # doing the remove comment here
+        commentslist = list(map(int, commentslist))
+        commentslistfrompost = postinstance.get_comments()
+        commentslistids = [commentin.id for commentin in commentslistfrompost]
+        print(commentslist)
+        print(commentslistids)
+        set_difference = set(commentslist) - set(commentslistids)
+        print(f"the difference {list(set_difference)}")
+        response["deletedcomments"] = list(set_difference)
+        return response
     responsew = {}
     return responsew
 
-
-
+def get_list_from_POST(request):
+    for item in request.POST.keys():
+        items =  request.POST.getlist(item)
+        if len(items) > 1:
+            return list(items)
+    return list()
 def new_comments(request):
     # we mark the notification as read
     if (is_user_auth(request)):
@@ -241,9 +256,11 @@ def new_comments(request):
         if request.method == 'POST':
             # now receiving the post data
             comment_num  = request.POST["comment_num"]
+            commentslist = get_list_from_POST(request)
             post_id = request.POST["post_id"]
             #print(f"{comment_num}, {post_id}")
-            response = receive_newcomments(post_id,comment_num, request)
+            response = receive_newcomments(post_id,comment_num, commentslist, request)
+            print(f"server response {response.keys()}")
         return JsonResponse(response,status=200)
 
 def like_post(request):

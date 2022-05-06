@@ -248,26 +248,54 @@
 <script>
   // getting new comments commentnumber
   $(document).ready(function(){
+    //var elecomments = document.getElementByClassName("deletecomment")
+    //          for(ele in elecomments){
+    //            commentslist.append(ele.value())
+    //          }
     setInterval(function(){
-      var element = document.getElementById("commentnumber")
-      var oldvalue = parseInt(element.innerHTML)
+      var elementnumber = document.getElementById("commentnumber")
+      var oldvalue = parseInt(elementnumber.innerHTML)
+      commentslist = [];
+      var elecomments = document.getElementsByClassName("commentid")
+      for (var i = 0, len = elecomments.length; i < len; i++) {
+        commentslist.push(elecomments[i].value)
+      }
+      //console.log(commentslist)
+      //elementnumber.innerHTML = elecomments.length
+      //console.log(oldvalue)
       $.ajax({
         type:"POST",
         url: "{% url 'main:new_comments' %}",
-        data: {
+        data: { 
              comment_num:oldvalue,
+             commentlist:commentslist,
              post_id: $("#postid").val(),
              csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function(response){
           if(response.hasOwnProperty('newcomment')){
-            console.log("server responded")
+            //console.log("server responded")
             toastr["success"]("New Comment on the Post");
             //$("#comments").append(response["newcomment"])
             $(response["newcomment"]).insertBefore('#formid');
-            element.innerHTML = response["newcommentnumber"]
+            // here we delete the deleted comment from the document
+            elementnumber.innerHTML = response["newcommentnumber"]
+          }else if (response.hasOwnProperty('deletedcomments')){
+            // looping in the deleted comments list and removing it from the DOM 
+            //console.log("there is a comment deleted")
+            deletedcomments = response["deletedcomments"]
+            for(var i = 0, len = deletedcomments.length; i < len; i++){
+            //console.log("the id of the comment to be deleted  = "+deletedcomments[i])
+            var elementt = document.getElementById("comment-container"+deletedcomments[i])
+            var elementfooter = document.getElementById("comment-footer"+deletedcomments[i])
+            elementt.parentNode.removeChild(elementt);
+            elementfooter.parentNode.removeChild(elementfooter)
+            var elementcommentnumber = document.getElementById("commentnumber")
+            elementcommentnumber.innerHTML = parseInt(elementcommentnumber.innerHTML) - 1
+            toastr["warning"]("a Comment have been deleted");
+            }
           }else{
-            console.log("server responded Nothing new")
+            //console.log("server responded Nothing new")
           }
           
         }
@@ -439,6 +467,7 @@
               elementfooter.parentNode.removeChild(elementfooter)
               var elementcommentnumber = document.getElementById("commentnumber")
               elementcommentnumber.innerHTML = parseInt(elementcommentnumber.innerHTML) - 1
+              console.log("new value after deletion "+ elementcommentnumber.innerHTML)
           }
         });
       });

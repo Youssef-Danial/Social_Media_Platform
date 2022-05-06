@@ -240,12 +240,12 @@ def get_mutualfriends(request, user_id):
 def get_followers(user_id):
     # checking the followers of the userid
     user = get_userbyid(user_id)
-    followinstance = follow.objects.filter(followed = user).values()
+    followinstance = follow.objects.filter(followed = user) 
     # checking if the user have followers
     if len(followinstance) > 0:
         return followinstance
     else:
-        return False # there is no users following the given user
+        return None # there is no users following the given user
 def get_blocks(request):
     # getting user by request
     user = get_user(request)

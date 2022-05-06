@@ -8,7 +8,7 @@
 
       <div class = "post-container" id="comment-container{{comment.id}}">
         <div class="post-row">
-        
+        <input type="hidden" class="commentid" id="commentid{{comment.id}}" value="{{comment.id}}"/>
         <div class="user-profile">
           <a href ="{% url 'main:profile' comment.user.id %}"> <img class = "pfppic" src="{% static comment.user.profile.pfp.file_url|safe %}" alt="profile picture"></a>
             <div>
