@@ -52,20 +52,18 @@
         
           {% comment %} <p>{{postfile.file_type}}</p> {% endcomment %}
           {%if postfile.file_type == "image" %}
-              <img src="{% static postfile.file_url|safe %}" alt="post picture" style="width:100%">
+              <img loading="lazy" src="{% static postfile.file_url|safe %}" alt="post picture" style="width:100%">
           {% elif postfile.file_type == "video" %}
-              <video style="width:100%;" controls>
+              <video loading="lazy" style="width:100%;" controls>
                   <source src="{% static postfile.file_url|safe %}" type="video/mp4">
               </video>
           {% elif postfile.file_type == "audio" %}
-              <audio controls autoplay>
+              <audio loading="lazy" controls autoplay>
                   <source src="{% static postfile.file_url|safe %}" type="audio/mpeg">
                 Your browser does not support the audio element.
               </audio>
           {% else %}
           {% endif %}
-          
-
       {% endfor %}
       <hr>
         <div class="post-row">

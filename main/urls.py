@@ -34,5 +34,4 @@ urlpatterns = [
      path("new_comments", views.new_comments,name="new_comments"),
      path("is_there_notifications", views.is_there_notifications, name="is_there_notifications"),
      
-     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

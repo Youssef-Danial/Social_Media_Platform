@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  	   {% load static %}
+       {% csrf_token %}
+	<title>Chats</title>
+  <link rel="icon" href="images/logo.png" type="image/icon type">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/profyd.css'|safe %}">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+<link rel="shortcut icon" href="./logo/logo.png" type="image/x-icon">
+    <!--<link rel="stylesheet" href="{% static 'css/style.css' %}">-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://kit.fontawesome.com/c4254e24a8.js"
+    crossorigin="anonymous"></script>
+</head><link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+<style>
+	.notification-badge {
+	  position:relative;
+	  padding:5px 9px;
+	  background-color: #11CDEF;
+	  color: #F8F9FE; 
+	  bottom: 15px;
+	  left: 15px;
+	  border-radius: 50%;
+	}
+	.material-icons:hover{
+	  color:#11CDEF;
+	}
+  </style>
+<header>
+    <nav class="navo">
+      <img id="logotop"  src="{% static "images/profile/logo3.png"|safe %}">
+      <input class="form-control" placeholder="Search" type="text" style="width:200px;">
+          <!--   src="{% static profile.pfp.file_url|safe %}"  -->
+      <a href="{% url 'autheno:home' %}">
+        <i class="material-icons" >
+            home  </i>
+    </a>
+    <a href="{% url 'chat:chat' %}">
+        <i class="material-icons">
+            chat </i>
+    </a>
+    <a href="">
+        <i class="material-icons">
+            group  </i>
+    </a>
+    <a href="{% url 'main:notifications' %}">
+       {% if user.get_notif_num > 0%}
+       <i class="material-icons">
+        notifications</i><small class="notification-badge" id="notifnum" style="visibility:visible;">{{user.get_notif_num}}</small>
+       {% else %}
+       <i class="material-icons">
+        notifications</i><small class="notification-badge" id="notifnum" style="visibility:hidden;">{{user.get_notif_num}}</small>
+       {% endif %}
+    </a>
+  
+    <a href="{% url 'main:profile' user.id %}"> <img src="{% static user.profile.pfp.file_url|safe %}" class="k-img" alt="Profile"> </a>
+    </nav>
+  </header>
+ <style>
+  #myBtn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    font-size: 18px;
+    border: none;
+    outline: none;
+    background-color: #11CDEF;
+    color: white;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 4px;
+  }
+  
+  #myBtn:hover {
+    background-color: #555;
+  }
+ </style>
+<!--.................................................-->
+<hr><br>
+<link rel="stylesheet" type="text/css" href="{% static 'css/chat.css'%}">
+<body>
+<div id="container">
+	<aside>
+		<header>
+			<input type="text" id ="searchbar" placeholder="search" onkeyup="search_chat()">
+		</header>
+		<ul id="list">
+			<li class="chatlist">
+				<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="">
+				<div>
+					<h2>Youssef Daniel</h2>
+					<h3>
+						<span class="status orange"></span>
+						offline
+					</h3>
+				</div>
+			</li>
+		</ul>
+		<script src="{% static 'css/chat.js' %}"></script>
+
+	</aside>
+	<main>
+		<header>
+			<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="">
+			<div>
+				
+				<h2>Youssef Daniel</h2>
+				
+			</div>
+		</header>
+
+
+
+<!--conversation-->
+		<ul class="msg_card_body" id="chat">
+			<li class="you">
+				<div class="entete">
+					<span class="status green"></span>
+					
+					<h3>10:15AM, Today</h3>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Hi there how are you?!
+				</div>
+			</li>
+			<li class="me">
+				<div class="entete">
+					<h3>10:16AM, Today</h3>
+					<span class="status blue"></span>
+				</div>
+				<div class="triangle"></div>
+				<div class="message">
+					Hello Youssef i'm fine.
+				</div>
+			</li>
+			
+		</ul>
+		<footer>
+			<div><textarea id="input-message" placeholder="Type your message"></textarea>
+			<!--<a href="#">Send</a>-->
+			<button id="sendmessage"><i class="material-icons" id="sendicon">send</i></button>
+		</div>
+			<button ><i class="material-icons" id="atic">attachment</i></button>
+
+
+		</footer>
+	</main>
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+	// doing the ajax and js here
+    let loc = window.location;
+    let wstart = "ws://";
+	let input_message = $('#input-message')
+	let message_body = $('.msg_card_body')
+	let send_message = $('#sendmessage')
+    //let endpoint = wstart + loc.host + loc.pathname;
+    if(loc.protocol === "https"){
+        wstart = 'wss://';
+    }
+    let endpoint = wstart + loc.host + loc.pathname;
+    var socket = new WebSocket(endpoint)
+    socket.onopen = async function(e){
+        console.log('open', e)
+    }
+    socket.onmessage = async function(e){
+        console.log('message', e)
+		// working on the message
+		let data = JSON.parse(e.data)
+		let message = data["message"]
+		newmessage(message)
+    }
+    socket.onerror = async function(e){
+        console.log('error', e)
+    }
+    socket.onclose = async function(e){
+        console.log('close', e)
+    }
+    // working on messages
+	
+	
+	function newmessage(message){
+		if($.trim(message) === ""){
+			return false;
+		}
+		let message_element = '\<li class=\"me\"\>\<div class=\"entete\"\>\<h3\>date \</h3\>\<span class=\"status blue\"></span\>\</div\>\<div class=\"triangle\"\>\</div\>\<div class=\"message\"\>'+message+'\</div\>\</li\>'
+		message_body.append($(message_element));
+		message_body.animate({
+			scrollTop:$(document).height()
+
+		}, 100) // speed 100
+		input_message.val(null)
+	}
+ 
+	send_message.on("click", function(e){
+		e.preventDefault();
+		let message = input_message.val();
+		let data = {
+			"message":message
+		}
+		data = JSON.stringify(data);
+		socket.send(data);
+		input_message.val(null);
+	})
+
+	{% comment %} $(document).ready(function(){
+		setInterval(function(){
+		  var element = document.getElementById("notifnum")
+		  var oldvalue = parseInt(element.innerHTML)
+		  $.ajax({
+			type:"POST",
+			url: '/main/is_there_notifications',
+			data: {
+				 notifnum:oldvalue,
+				 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+			},
+			success: function(response){
+			  if(response.hasOwnProperty('notifnum')){
+				//toastr["success"]("New notification")
+				element.innerHTML = response["notifnum"]
+				element.style.visibility = 'visible';
+			  }else{
+				element.style.visibility = 'hidden';
+				console.log("server responded Nothing new")
+			  }
+			  
+			}
+		});
+		}, 1000);
+	   }) {% endcomment %}
+</script>
+-->

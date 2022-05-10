@@ -25,6 +25,7 @@ urlpatterns = [
     path("home/", include("testing.urls")),
     path("autheno/", include("autheno.urls")),
     path("main/", include("main.urls")),
+    path("chat/", include("chat.urls")),
     path("", home) # the home page
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -489,3 +489,5 @@ def edit_settings(request):
         post_id = request.POST["post_id"]
         # here should be the edit profile function
     return JsonResponse({"nothing":None},status=200)
+
+
