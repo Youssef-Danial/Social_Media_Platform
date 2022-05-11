@@ -78,3 +78,13 @@ def is_comment_owner(user_id, comment_id):
             return False
     except:
         return False
+
+@register.simple_tag
+def is_message_owner(message, user_id):
+    try:
+        user_instance = get_userbyid(user_id)
+        if message.sender == user_instance:
+            return True
+        return False
+    except:
+        return False

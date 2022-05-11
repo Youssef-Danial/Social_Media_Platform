@@ -212,7 +212,7 @@
 							</div>
 							<div>
 							</div>
-                <a href="#" class="btn btn-sm btn-default float-right">Message</a>
+                <a id="messageid" class="btn btn-sm btn-default float-right">Message</a>
               </div>
             </div>
             <div class="card-body pt-0 pt-md-4">
@@ -305,6 +305,22 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>
   $(document).ready(function(){
+    message_button = $("#messageid")
+    message_button.on("click", function(e){
+      e.preventDefault();
+      // sending the request to the backend using ajax
+      $.ajax({
+        type:"POST",
+        url: "{% url 'chat:messagedirect' %}",
+        data: {
+             user:$("#userid").val(),
+             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(response){
+          window.location.href ="{% url 'chat:chat' %}";
+        }
+    });
+    })
     console.log("testing")
     setInterval(function(){
       var element = document.getElementById("notifnum")

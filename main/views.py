@@ -89,7 +89,7 @@ class profile(View):
             # linking the profile pictre to the profile of the user
             p.pfpback = pfpback
             p.save()
-            # chaging the state of the pfp
+            # chaging the state of the pfp  
             return HttpResponseRedirect(reverse_lazy("main:profile", args = [u.id]))
         else:
             return render(request, "main/uploadfile.html", {"form":pfpback, "user":u})

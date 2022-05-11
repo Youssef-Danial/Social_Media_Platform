@@ -7,7 +7,7 @@ class chatconsumer(AsyncConsumer):
         await self.send({
             "type":"websocket.accept"
         })
-
+        
     async def websocket_receive(self, event):
         print("receive", event)
         receive_data = json.loads(event["text"])

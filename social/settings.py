@@ -132,3 +132,14 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# channels layer
+CHANNELS_LAYERS = {
+    "default":{
+        "BACKEND":"channels.layers.InMemeoryChannelLayer",
+        # "CONFIG":{ # this part is for production you can use servers like real servers
+        #     'hosts': [("127.0.0.1", 6379)] # the domain and the port
+        # }
+
+    }
+}

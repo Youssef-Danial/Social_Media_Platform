@@ -90,16 +90,18 @@
 			<input type="text" id ="searchbar" placeholder="search" onkeyup="search_chat()">
 		</header>
 		<ul id="list">
+			{% for thread in user.get_user_threads %}
 			<li class="chatlist">
-				<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="">
+				<a href="{% url 'main:profile' thread.get_other_user.user.id %}"><img src="{% static thread.get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
 				<div>
-					<h2>Youssef Daniel</h2>
+					<h2>{{thread.get_other_user.user.user_name}}</h2>
 					<h3>
 						<span class="status orange"></span>
 						offline
 					</h3>
 				</div>
 			</li>
+			{% endfor %}
 		</ul>
 		<script src="{% static 'css/chat.js' %}"></script>
 

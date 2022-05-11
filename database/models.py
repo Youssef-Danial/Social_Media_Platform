@@ -19,6 +19,16 @@ def get_postbyid(post_id):
     except:
         return None
 
+def get_user_threads(user_instance):
+    try:
+        particpant_instances = particpant.objects.filter(user = user_instance)
+        # getting each thread for each particpant
+        thread_list = []
+        for particpant_instance in particpant_instances:
+            thread_list.append(particpant_instance.thread)
+        return thread_list
+    except:
+        return None
 
 def get_user(request):
     user_email = request.session.get('email')
@@ -87,6 +97,10 @@ class user(models.Model):
     def get_notif_num(self):
         notifnum = get_user_notifications(self)
         return len(notifnum)
+
+    def get_user_threads(self):
+        threadslist = get_user_threads(self)
+        return threadslist
 class file(models.Model):
     file_name = models.CharField(max_length=250)
     uploaded_date = models.DateTimeField()
@@ -252,37 +266,43 @@ class thread(models.Model):
     subject = models.CharField(max_length=70)
     thread_creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
     creation_date = models.DateTimeField()
-    update_date = models.DateTimeField(blank=True)
-    delete_date = models.DateTimeField(blank=True)
+    update_date = models.DateTimeField(blank=True, null=True)
+    delete_date = models.DateTimeField(blank=True, null=True)
     #encrypted_key = models.CharField(max_length=50, blank=True)
-    seed = models.CharField(max_length=10)
+    seed = models.CharField(max_length=10,blank=True, null=True)
     type = models.CharField(max_length=80) # could be (direct, group)
     def get_particpants(self):
         particpants = particpant.objects.filter(thread=self)
         return particpants
+    def get_other_user(self):
+        particpants = particpant.objects.filter(thread=self)
+        if particpants[0].user != self.thread_creator:
+            return particpants[0]
+        else:
+            return particpants[1]
     def get_messages(self):
         messages = message.objects.filter(thread=self)
         return messages
 class particpant(models.Model):
     thread = models.ForeignKey("thread", on_delete=models.CASCADE)
     user = models.ForeignKey("user", on_delete=models.CASCADE)
-    creation_date = models.DateTimeField()
+    creation_date = models.DateTimeField(null=True, blank=True)
     delete_date = models.DateTimeField(null=True, blank=True)
-    last_read = models.DateTimeField(blank=True)
-    is_active = models.BooleanField(blank=True)
+    last_read = models.DateTimeField(blank=True, null=True)
+    is_active = models.BooleanField(blank=True, null=True)
 
-class message_type(models.Model): # types can be video, text, file, picture, collection
-    type = models.CharField(max_length=20)
+# class message_type(models.Model): # types can be video, text, file, picture, collection
+#     type = models.CharField(max_length=20)
 class message(models.Model):
-    sender = models.ForeignKey("particpant", on_delete=models.SET_NULL, null=True)
+    sender = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
     thread = models.ForeignKey("thread", on_delete=models.CASCADE)
     content = models.TextField()
     creation_date = models.DateTimeField()
-    delete_date = models.DateTimeField()
-    last_read = models.DateTimeField()
-    is_read = models.BooleanField() # if all the thread particpants readed the message is read
-    readers = models.CharField(max_length=100, null=True)
-    message_type = models.ForeignKey("message_type", on_delete=models.SET_NULL, null=True)
+    delete_date = models.DateTimeField(blank=True, null=True)
+    last_read = models.DateTimeField(blank=True, null=True)
+    is_read = models.BooleanField(blank=True, null=True) # if all the thread particpants readed the message is read
+    readers = models.CharField(max_length=100, null=True, blank=True)
+    message_type = models.CharField(max_length=20, null=True, blank=True)
 
 # admins, reports, levels
 
