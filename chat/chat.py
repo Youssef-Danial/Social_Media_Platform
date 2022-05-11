@@ -1,18 +1,21 @@
-from database.models import thread, message, particpant, message_type
-from autheno.cipher_auth import get_threadbyid, get_particpantbyid, get_user, get_userbyid, is_user_auth, get_current_datetime, user_byid
-
+from database.models import thread, message, particpant
+from autheno.cipher_auth import get_threadbyid, get_particpantbyid, get_user, get_userbyid, is_user_auth, get_current_datetime, get_userbyid
+import numpy as np
 
 
 def create_particpant(user_instance, thread_id):
-    try:
+    #try:
+        print("inside")
+        user_instance = get_userbyid(user_instance)
         thread_instance = get_threadbyid(thread_id)
         creation_date = get_current_datetime()
         particpant_instance = particpant(thread = thread_instance, user=user_instance, creation_date=creation_date)
         particpant_instance.save()
+        print("working")
         # user created successfully
         return True
-    except:
-        return False
+    #except:
+        #return False
 def delete_particpant(user_instance, thread_id):
     try:
         thread_instance = get_threadbyid(thread_id)
@@ -34,26 +37,43 @@ def leave_thread(request, thread_id):
         return False
         
 def create_thread(request, subject="default", type = "direct"):
-    try:
+    #try:
         if is_user_auth(request):
+            print("user is authenticated")
             user_instance = get_user(request)
             if subject =="default":
                 subject = user_instance.user_name
             creation_date = get_current_datetime()
-            seed = generate_seed()
+            seed = 1234 # generate_seed()
             thread_instance = thread(thread_creator=user_instance,subject = subject,creation_date = creation_date,type = type, seed=seed)
             thread_instance.save()
+            print(f"the thread id {thread_instance.id}")
             return thread_instance.id
-    except:
+    #except:
         return None
 
-
+def there_is_no_thread(request, user_id):
+    user_threads = get_user_threads(request)
+    other_user = get_userbyid(user_id)
+    for threadinstance in user_threads:
+        # checking each thread if the user is already a particpant in
+        if threadinstance.type == "direct":
+            thread_particpants = threadinstance.get_particpants()
+            for partic in thread_particpants:
+                if partic.user == other_user:             
+                    return False
+    
+    return True
 def create_direct_thread(request, user_id, type = "direct"):
     try:
-        if is_user_auth(request):
+        if is_user_auth(request) and there_is_no_thread(request, user_id):
             thread_id =  create_thread(request)
+            owneruser = get_user(request)
             if thread_id != None:
-                add_particpant_to_thread(request, thread_id)
+                print("before creating")
+                create_particpant(owneruser.id,thread_id)
+                create_particpant(user_id, thread_id)
+            print("thread have been created successfully=================")
         return True
     except:
         return False
@@ -66,6 +86,7 @@ def add_particpant_to_thread(request, user_id, thread_id):
             create_particpant(user_instance,thread_id)
     except:
         return False
+
 def make_particpant_active(request, thread_id):
     try:
         if is_user_auth(request):
@@ -100,7 +121,8 @@ def get_user_threads(request):
             # getting each thread for each particpant
             thread_list = []
             for particpant_instance in particpant_instances:
-                thread_list.append(particpant.thread)
+                thread_list.append(particpant_instance.thread)
+            return thread_list
         else:
             return None
     except:
@@ -110,7 +132,8 @@ def generate_encryption_key(request):
     pass
 
 def generate_seed(request):
-    pass
+    data = np.random.randint(100,size=(4))
+    return data
 
 def is_particpant_active(request, thread_id):
     try:
@@ -167,5 +190,14 @@ def get_particpant(user_id, thread_id):
 def create_group_thread(request):
     pass
 
-def make_message(request, thead_id, data):
-    pass
+def make_message(user_id, thread_id, data):
+    try:
+        thread_instance = get_threadbyid(thread_id)
+        sender = get_userbyid(user_id)
+        creation_date = get_current_datetime()
+        message_type = "text"
+        message_instance = message(sender = sender, thread=thread_instance, content=data, creation_date=creation_date, message_type=message_type)
+        message_instance.save()
+        return message_instance
+    except:
+        return None
