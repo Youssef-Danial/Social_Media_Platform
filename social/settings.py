@@ -133,13 +133,17 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# channels layer
-CHANNELS_LAYERS = {
-    "default":{
-        "BACKEND":"channels.layers.InMemeoryChannelLayer",
-        # "CONFIG":{ # this part is for production you can use servers like real servers
-        #     'hosts': [("127.0.0.1", 6379)] # the domain and the port
-        # }
-
+import channels
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }

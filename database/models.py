@@ -303,7 +303,9 @@ class message(models.Model):
     is_read = models.BooleanField(blank=True, null=True) # if all the thread particpants readed the message is read
     readers = models.CharField(max_length=100, null=True, blank=True)
     message_type = models.CharField(max_length=20, null=True, blank=True)
-
+    def get_time(self):
+        newtime = self.creation_date +  timedelta(hours=2)
+        return newtime
 # admins, reports, levels
 
 class admin_level(models.Model):

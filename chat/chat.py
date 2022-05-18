@@ -1,6 +1,8 @@
 from database.models import thread, message, particpant
 from autheno.cipher_auth import get_threadbyid, get_particpantbyid, get_user, get_userbyid, is_user_auth, get_current_datetime, get_userbyid
 import numpy as np
+from asgiref.sync import sync_to_async
+
 
 
 def create_particpant(user_instance, thread_id):
@@ -51,7 +53,7 @@ def create_thread(request, subject="default", type = "direct"):
             return thread_instance.id
     #except:
         return None
-
+        
 def there_is_no_thread(request, user_id):
     user_threads = get_user_threads(request)
     other_user = get_userbyid(user_id)
@@ -190,6 +192,7 @@ def get_particpant(user_id, thread_id):
 def create_group_thread(request):
     pass
 
+@sync_to_async
 def make_message(user_id, thread_id, data):
     try:
         thread_instance = get_threadbyid(thread_id)
