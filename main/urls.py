@@ -33,5 +33,6 @@ urlpatterns = [
      path("remove_like_comment", views.remove_like_comment, name="remove_like_comment"),
      path("new_comments", views.new_comments,name="new_comments"),
      path("is_there_notifications", views.is_there_notifications, name="is_there_notifications"),
+     path("search/", views.get_search, name="search"),
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -15,6 +15,10 @@ import re
 from django.contrib.auth.hashers import make_password, check_password
 from django.forms.models import model_to_dict
 from django.template.loader import render_to_string
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import pandas as pd
+import numpy as np
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
@@ -490,4 +494,49 @@ def edit_settings(request):
         # here should be the edit profile function
     return JsonResponse({"nothing":None},status=200)
 
+# searching part 
+def searchfunc(request, content):
+    #try:
+        # making the search query to a lowercase for the search
+        content = str(content).lower()
+        usersearcher = get_user(request)
+        # searching for a user
+        userinstances = user.objects.all()
+        tfidf_vectorizer = TfidfVectorizer(analyzer="char")
+        user_resultlist = []
+        for userinstance in userinstances:
+            sparse_matrix = tfidf_vectorizer.fit_transform([content]+[str(userinstance.user_name).lower()])
+            cosine = cosine_similarity(sparse_matrix[0,:],sparse_matrix[1:,:])
+            if cosine[0][0] > 0.80:
+                user_resultlist.append(userinstance)
+        # searching for posts
+        postinstances = post.objects.all()
+        post_resultlist = []
+        for postinstance in postinstances:
+            sparse_matrix = tfidf_vectorizer.fit_transform([content]+[str(postinstance.text_content).lower()])
+            cosine = cosine_similarity(sparse_matrix[0,:],sparse_matrix[1:,:])
+            print(is_follower(request, postinstance.user.id))
+            if cosine[0][0] > 0.80:
+                if  postinstance.who_can_see == "public" or is_follower(request, postinstance.user.id) or usersearcher.id == postinstance.user.id:
+                    print("enteredone")
+                    post_resultlist.append(postinstance)
+        return (user_resultlist, post_resultlist)
+    #except:
+        #return None
 
+def get_search(request):
+    # we mark the notification as read
+    if (is_user_auth(request)):
+        query = request.GET.get('q','')
+        userinstance = get_user(request)
+        userlist = []
+        postlist = []
+        if query:
+            userlist, postlist = searchfunc(request, query)
+        data={
+                "userlist":userlist,
+                "postlist":postlist,
+                "user":userinstance,
+                "profile":userinstance.profile,
+            }
+        return render(request, "main/search.html", data)

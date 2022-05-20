@@ -33,8 +33,11 @@
 <header>
     <nav class="navo">
       <img id="logotop"  src="{% static "images/profile/logo3.png"|safe %}">
-      <input class="form-control" placeholder="Search" type="text" style="width:200px;">
-          <!--   src="{% static profile.pfp.file_url|safe %}"  -->
+      <form method='GET' action="{% url 'main:search' %}">
+        <input class="form-control" name = "q" placeholder="Search" type="text" style="width:200px;">
+        <!-- <input type="text" name="q" placeholder="Search posts"/> -->
+        <input type="submit"  class = "d-none" value="{{ query|escape }}"/>
+      </form>
       <a href="{% url 'autheno:home' %}">
         <i class="material-icons" >
             home  </i>
@@ -258,7 +261,7 @@
 		currentthread = fbtn.val()
 		$(".msg_card_body"+fbtn.val()).scrollTop($(".msg_card_body"+fbtn.val()).prop('scrollHeight'))
 	});
-	{% comment %} $(document).ready(function(){
+	$(document).ready(function(){
 		setInterval(function(){
 		  var element = document.getElementById("notifnum")
 		  var oldvalue = parseInt(element.innerHTML)
@@ -282,6 +285,6 @@
 			}
 		});
 		}, 1000);
-	   }) {% endcomment %}
+	   })
 </script>
 -->

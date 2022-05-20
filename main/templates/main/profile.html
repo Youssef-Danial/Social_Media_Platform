@@ -79,7 +79,11 @@
 <header>
   <nav class="navo">
     <img id="logotop" src="{% static "images/profile/logo3.png"|safe %}">
-    <input class="form-control" placeholder="Search" type="text" style="width:200px;">
+    <form method='GET' action="{% url 'main:search' %}">
+      <input class="form-control" name = "q" placeholder="Search" type="text" style="width:200px;">
+      <!-- <input type="text" name="q" placeholder="Search posts"/> -->
+      <input type="submit"  class = "d-none" value="{{ query|escape }}"/>
+    </form>
 		<!--   src="{% static profile.pfp.file_url|safe %}"  -->
     <a href="{% url 'autheno:home' %}">
       <i class="material-icons">
@@ -212,7 +216,11 @@
 							</div>
 							<div>
 							</div>
+              {% if is_owner %}
+               
+              {% else %}
                 <a id="messageid" class="btn btn-sm btn-default float-right">Message</a>
+              {% endif %}
               </div>
             </div>
             <div class="card-body pt-0 pt-md-4">

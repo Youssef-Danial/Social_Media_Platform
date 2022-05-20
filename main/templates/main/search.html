@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    {% csrf_token %}
+      <input type="hidden" id ="userid" value="{{profile.user.id}}" />
+     <title>Home</title>
+     <!-- the this section is concerned with posts-->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+     <!-- the this section is concerned with posts end-->
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+   <link rel="icon" href="images/logo.png" type="image/icon type">
+     <link rel="stylesheet" type="text/css" href="{% static 'css/profyd.css'|safe %}">
+ <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+ <link rel="shortcut icon" href="{% static "images/profile/logo.png"|safe %}" type="image/x-icon">
+     {% comment %} <link rel="stylesheet" href="{% static 'css/sec.css'|safe %}"> {% endcomment %}
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+     <script src="https://kit.fontawesome.com/c4254e24a8.js"crossorigin="anonymous"></script>
+     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+ <style>
+   .notification-badge {
+     position:relative;
+     padding:5px 9px;
+     background-color: #11CDEF;
+     color: #F8F9FE; 
+     bottom: 15px;
+     left: 15px;
+     border-radius: 50%;
+   }
+   .material-icons:hover{
+     color:#11CDEF;
+   }
+ </style>
+   </head>
+<header>
+ <nav class="navo">
+   <img id="logotop"  src="{% static "images/profile/logo3.png"|safe %}">
+   <form method='GET' action="{% url 'main:search' %}">
+     <input class="form-control" name = "q" placeholder="Search" type="text" style="width:200px;">
+     <!-- <input type="text" name="q" placeholder="Search posts"/> -->
+     <input type="submit"  class = "d-none" value="{{ query|escape }}"/>
+   </form>
+       <!--   src="{% static profile.pfp.file_url|safe %}"  -->
+   <a href="{% url 'autheno:home' %}">
+     <i class="material-icons" >
+         home  </i>
+ </a>
+ <a href="{% url 'chat:chat' %}">
+     <i class="material-icons">
+         chat </i>
+ </a>
+ <a href="">
+     <i class="material-icons">
+         group  </i>
+ </a>
+ <a href="{% url 'main:notifications' %}">
+    {% if user.get_notif_num > 0%}
+    <i class="material-icons">
+     notifications</i><small class="notification-badge" id="notifnum" style="visibility:visible;">{{user.get_notif_num}}</small>
+    {% else %}
+    <i class="material-icons">
+     notifications</i><small class="notification-badge" id="notifnum" style="visibility:hidden;">{{user.get_notif_num}}</small>
+    {% endif %}
+ </a>
+
+ <a href="{% url 'main:profile' user.id %}"> <img src="{% static user.profile.pfp.file_url|safe %}" class="k-img" alt="Profile"> </a>
+ </nav>
+</header>
+<style>
+    .float-container {
+        border: 3px solid #fff;
+        padding: 1px;
+    }
+    
+    .float-child {
+        width: 50%;
+        float: left;
+        padding: 1px;
+        border-left-style: dotted;
+    }
+</style>
+<body>
+    <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
+    <br>
+    <br>
+    <br>
+    <br>
+    {% comment %} <br>
+    <br>
+    <br> {% endcomment %}
+    <div class="float-container">
+
+        <div class="float-child">
+          {% for useri in userlist %}
+          <div style="float:center;">
+          <div class="user-profile">
+            <a href ="{% url 'main:profile' useri.id %}"> <img class = "pfppic" src="{% static useri.profile.pfp.file_url|safe %}" alt="profile picture"></a>
+              <div>
+                 <p>{{useri.user_name}}</p>
+              </div>
+          </div>
+          <br>
+        </div>
+         {% endfor %}
+        </div>
+        
+        <div class="float-child">
+        {% for post in postlist %}
+        {% include 'main/post.html' %}
+        {% endfor %}
+        </div>
+        
+      </div>
+
+
+</body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+<script>
+    {% comment %} $(document).ready(function(){
+		setInterval(function(){
+		  var element = document.getElementById("notifnum")
+		  var oldvalue = parseInt(element.innerHTML)
+		  $.ajax({
+			type:"POST",
+			url: '/main/is_there_notifications',
+			data: {
+				 notifnum:oldvalue,
+				 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+			},
+			success: function(response){
+			  if(response.hasOwnProperty('notifnum')){
+				//toastr["success"]("New notification")
+				element.innerHTML = response["notifnum"]
+				element.style.visibility = 'visible';
+			  }else{
+				element.style.visibility = 'hidden';
+				console.log("server responded Nothing new")
+			  }
+			  
+			}
+		});
+		}, 1000);
+	   }) {% endcomment %}
+</script>
+<script id = "oldscript" src="/static/css/homepage.js">
+</script> 
+</html>
