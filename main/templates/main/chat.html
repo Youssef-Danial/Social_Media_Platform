@@ -83,21 +83,29 @@
   #myBtn:hover {
     background-color: #555;
   }
+ #list::-webkit-scrollbar-track {
+	background-color: orange;        /* color of the tracking area */
+  }
+  #list::-webkit-scrollbar-thumb {
+	background-color: blue;    /* color of the scroll thumb */
+	border-radius: 20px;       /* roundness of the scroll thumb */
+	border: 3px solid orange;  /* creates padding around scroll thumb */
+  }
  </style>
 <!--.................................................-->
 <hr><br>
 <link rel="stylesheet" type="text/css" href="{% static 'css/chat.css'%}">
-<body>
+<body style="background-color:#172B4C;">
 	<input type="hidden" id= "meid" value="{{user.id}}"/>
 <div id="container">
 	<aside>
-		<header>
+		<header style="background-color:#172B4C;">
 			<input type="text" id ="searchbar" placeholder="search" onkeyup="search_chat()">
 		</header>
-		<ul id="list">
+		<ul id="list" style="background-color:#172B4C;">
 			{% for thread in user.get_user_threads %} <!--the thread otheruser id is the particpant id-->
 			 {% get_thread_other_user thread.id user.id as get_other_user%}
-			<li class="chatlist" id="chatlist{{get_other_user.id}}" value="{{thread.id}}">
+			<li class="chatlist" id="chatlist{{get_other_user.id}}" value="{{thread.id}}" >
 				<a href="{% url 'main:profile' thread.get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
 				<div>
 					<h2>{{get_other_user.user.user_name}}</h2>
@@ -217,14 +225,22 @@
 	
 	
 	function newmessage(message, me, threadiid){
+		//var date = new Date();
+		var today = new Date();
+		var dd = String(today.getDate()).padStart(2, '0');
+		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+		var yyyy = today.getFullYear();
+		var hour = today.getHours();
+		var minute =today.getMinutes();
+		today = mm + '/' + dd + '/' + yyyy +':'+hour+':'+minute;
 		message_body = $(".msg_card_body"+threadiid)
 		if($.trim(message) === ""){
 			return false;
 		}
 		console.log(me)
-		var message_element = '\<li class=\"you\"\>\<div class=\"entete\"\>\<h3\>date \</h3\>\<span class=\"status blue\"></span\>\</div\>\<div class=\"triangle\"\>\</div\>\<div class=\"message\"\>'+message+'\</div\>\</li\>'
+		var message_element = '\<li class=\"you\"\>\<div class=\"entete\"\>\<h3\>'+today+'\</h3\>\<span class=\"status blue\"></span\>\</div\>\<div class=\"triangle\"\>\</div\>\<div class=\"message\"\>'+message+'\</div\>\</li\>'
 		if(me==userid){
-			var message_element = '\<li class=\"me\"\>\<div class=\"entete\"\>\<h3\>date \</h3\>\<span class=\"status blue\"></span\>\</div\>\<div class=\"triangle\"\>\</div\>\<div class=\"message\"\>'+message+'\</div\>\</li\>'
+			var message_element = '\<li class=\"me\"\>\<div class=\"entete\"\>\<h3\>'+today+' \</h3\>\<span class=\"status blue\"></span\>\</div\>\<div class=\"triangle\"\>\</div\>\<div class=\"message\"\>'+message+'\</div\>\</li\>'
 		}else{
 			
 		}

@@ -48,7 +48,6 @@ aside input{
     background-position: 288px;
     background-size: 45px;
 }
-}
 aside input::placeholder{
 	color:#fff;
 }

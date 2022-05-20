@@ -3,6 +3,7 @@
 <head>
     {% load static %}
     {% csrf_token %}
+    {% load post_tags %}
       <input type="hidden" id ="userid" value="{{profile.user.id}}" />
      <title>Home</title>
      <!-- the this section is concerned with posts-->

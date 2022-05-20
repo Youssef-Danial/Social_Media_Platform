@@ -538,5 +538,6 @@ def get_search(request):
                 "postlist":postlist,
                 "user":userinstance,
                 "profile":userinstance.profile,
+                "viewer":userinstance.id,
             }
         return render(request, "main/search.html", data)
