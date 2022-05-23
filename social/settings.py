@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-#@zm3@9*-(6ut9o0vkxlz8r0_bj56&-elz4(#4qs^ip$(h=$e$
 DEBUG = True
 STATIC_URL = 'database/static/files/'
 STATIC_ROOT = "database/static/files/"
+CSRF_TRUSTED_ORIGINS =["https://spaceshare.azurewebsites.net","https://*"] # ,"https://*"
 #CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ["*"]
 #AUTH_USER_MODEL = 'database.models.user'
@@ -51,9 +52,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'django.middleware.common.CommonMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
