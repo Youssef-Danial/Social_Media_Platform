@@ -191,14 +191,15 @@
 	// doing the ajax and js here\
 	var currentthread;
     let loc = window.location;
-    let wstart = "ws://";
+    let wstart = "wss://";
 	//let input_message = $('#input-message');
 	var message_body = $('.msg_card_body');
 	let send_message = $('.sendmessage');
 	let userid = $("#meid").val();
     //let endpoint = wstart + loc.host + loc.pathname;
-    if(loc.protocol === "https"){
-        wstart = 'wss://';
+	//console.log(loc.protocol)
+    if(loc.protocol === "http:"){
+        wstart = 'ws://';
     }
     let endpoint = wstart + loc.host + loc.pathname;
     var socket = new WebSocket(endpoint)
