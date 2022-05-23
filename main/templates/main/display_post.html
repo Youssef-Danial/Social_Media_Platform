@@ -232,7 +232,7 @@
     {% endfor %}
   
   <div>
-    <form class = "post-container" id="formid" method="post" >
+    <form class = "post-container" style="width:50%;" id="formid" method="post" >
       {% csrf_token %}
       <textarea class="tarea" name="content" placeholder="Engage with the Post" id="content"></textarea>
       <input type="hidden" name="post" id="post" value="{{post.id}}">
