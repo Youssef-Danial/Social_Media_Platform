@@ -208,11 +208,13 @@
                       <div class="col-lg-4">
                       <div class="col-lg-4">
                        
-                        
+                     
                       </div>
                     </div>
                   </div>
+                  
                   <hr class="my-4">
+                 
                   <!-- Description -->
                   {% comment %} <h6 class="heading-small text-muted mb-4">About me</h6> {% endcomment %}
                   {% comment %} <div class="pl-lg-4">
@@ -227,6 +229,45 @@
                 </form>
               </div> {% endcomment %}
             </div>
+            <hr class="my-4">
+                  <!-- Address -->
+                  <h6 class="heading-small text-muted mb-4">Create a group</h6>
+                  
+                  <div class="pl-lg-4">
+                    <div class="row">
+                      <div class="col-md-12">
+                        {% comment %} <div class="form-group focused">
+                          <label class="form-control-label" for="input-address">Password</label>
+                          <input id="password" type="password" class="form-control form-control-alternative" placeholder="Your new Password" />
+                        </div> {% endcomment %}
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-lg-4">
+                          <!-- this should be the form to change the passwod-->
+                        <div class="form-group focused">
+                            <label class="form-control-label" for="input-address">Group Name</label>
+                            <input id="groupname" type="text" class="form-control form-control-alternative" placeholder="Your Group Name" />
+                          </div>
+                          <div class="form-group focused">
+                            <label class="form-control-label" for="input-address">Description</label> 
+                            <textarea id="groupdesc" rows="4" class = "tarea" placeholder="Describe your Group it will enhance it is appearance in Search Results" name="text_content" val=""></textarea>
+                          </div>
+                          <div class="form-group focused">
+                            {% comment %} <label class="form-control-label" for="input-address">Group Privacy</label>
+                            <select id="who-can-see" class ="btn btn-info" aria-label="who can see" name="who_can_see" required="true">
+                              <option value="public">Public</option>
+                              <option value="Private">Private</option>  
+                              </select> {% endcomment %}
+                          </div>
+                          <button id="create_group" class="btn btn-info">Create</button>
+                      <div class="col-lg-4">
+                      <div class="col-lg-4">
+                       
+                     
+                      </div>
+                    </div>
+                  </div>
           </div>
         </div>
       </div>
@@ -323,7 +364,35 @@
                     
             })
             
+            $("#create_group").click(function(){
             
+              if($("#groupname").val() != "" && $("#groupdesc").val() != ""){
+                  $.ajax({
+                      type:"POST",
+                      url: "{% url 'main:create_group' %}",
+                      data: {
+                           groupname:$("#groupname").val(),
+                           groupdesc:$("#groupdesc").val(),
+                           csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                      },
+                      success: function(response){
+                          if (response["feedback"] == "success"){
+                              toastr["success"]("group Created Successfully");
+                              $("#groupdesc").val('');
+                              $("#groupname").val('');
+                          }else{
+                              toastr["error"]("Something Wrong Try Checking your Inputs");
+                          }
+  
+                      }
+                  });
+              }
+              else{
+                  console.log("empty")
+                  toastr["error"]("Empty Fields Detected");
+              }
+                  
+          })   
         $("#change_username").click(function(){
             
                 if($("#new_username").val() != ""){

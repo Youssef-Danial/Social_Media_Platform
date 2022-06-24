@@ -19,6 +19,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import numpy as np
+from main.page_group import *
 # Create your views here.
 class profile(View):
     def get(self, request, user_id):
@@ -520,7 +521,14 @@ def searchfunc(request, content):
                 if  postinstance.who_can_see == "public" or is_follower(request, postinstance.user.id) or usersearcher.id == postinstance.user.id:
                     print("enteredone")
                     post_resultlist.append(postinstance)
-        return (user_resultlist, post_resultlist)
+        groupinstances = group.objects.all()
+        group_resultlist = []
+        for groupinstance in groupinstances:
+            sparse_matrix = tfidf_vectorizer.fit_transform([content]+[str(groupinstance.description).lower() + str(groupinstance.name).lower()])
+            cosine = cosine_similarity(sparse_matrix[0,:],sparse_matrix[1:,:])
+            if cosine[0][0] > 0.70:
+                group_resultlist.append(groupinstance)
+        return (user_resultlist, post_resultlist, group_resultlist)
     #except:
         #return None
 
@@ -531,13 +539,78 @@ def get_search(request):
         userinstance = get_user(request)
         userlist = []
         postlist = []
+        grouplist = []
         if query:
-            userlist, postlist = searchfunc(request, query)
+            userlist, postlist,grouplist = searchfunc(request, query)
         data={
                 "userlist":userlist,
                 "postlist":postlist,
+                "grouplist":grouplist,
                 "user":userinstance,
                 "profile":userinstance.profile,
                 "viewer":userinstance.id,
             }
         return render(request, "main/search.html", data)
+
+def friends(request):
+     # we mark the notification as read
+    if (is_user_auth(request)):
+        userinstance = get_user(request)
+        # getting the user friends and followers
+        userinstanceid = userinstance.id
+        userfriends = get_friendlist(userinstanceid)
+        friendslist = []
+        for friend in userfriends:
+            if friend.sender_id == userinstanceid:
+                friendslist.append(get_userbyid(friend.receiver_id))
+            else:
+                friendslist.append(get_userbyid(friend.sender_id))
+        # handling followers
+        followers = get_followers(userinstanceid)
+        followerslist = []
+        if followers is not None:
+            for follower in followers:
+                followerslist.append(follower.follower)
+        #print(friendslist[0].user_name)
+        data = {
+            "user":userinstance,
+            "viewer": userinstance.id,
+            "userfriends":friendslist,
+            "followerslist":followerslist
+        }
+        return render(request, "main/friends.html", data)
+    else:
+        return HttpResponse("You are not authorized try logining in")
+# group section
+class groupe(View):
+    def get(self, request, group_id):
+        if is_user_auth(request):
+            pass
+        else:
+            return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
+        #user = get_user(request)
+        viewer = get_user(request)
+        groupinstance  = get_groupbyid(group_id)
+        groupposts = ""
+        data = {
+            "group":groupinstance,"user":viewer, "posts":groupposts, "viewer":viewer.id
+        }
+        return render(request,"group.html",data)
+
+def create_group(request):
+    if (is_user_auth(request)):
+        data = {}
+        # getting user who sent the request
+        userinstance = get_user(request)
+        data["creator"] = userinstance
+        data["name"] = request.POST.get("groupname")
+        data["description"]= request.POST.get("groupdesc")
+        data["is_public"] = True
+        data ["state"] = "working" # empty for now it is not being used
+        print(data)
+        if create_groupfunc(request, data):
+            return JsonResponse({"feedback":"success"},status=200)
+        else:
+            return JsonResponse({"nothing":None},status=200)
+
+

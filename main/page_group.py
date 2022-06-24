@@ -1,4 +1,4 @@
-from database.models import page, group, user_group, user_page
+from database.models import page, group, user_group, user_page, file
 from autheno.cipher_auth import is_user_auth, get_current_datetime, get_pagebyid, get_user, get_userbyid, get_groupbyid
 from main.relations import is_page_creator, is_group_creator, is_usergroup_moderator
 from main.notifications import create_notification
@@ -22,8 +22,8 @@ def create_page(request, data):
     except:
         return False
 
-def create_group(request, data):
-    try:
+def create_groupfunc(request, data):
+    #try:
         if is_user_auth(request):
             creator = data["creator"]
             name = data["name"]
@@ -31,14 +31,15 @@ def create_group(request, data):
             state = data["state"]
             is_public = data["is_public"]
             description = data["description"]
-            group_instance = group(creator = creator, name = name, creation_date = creation_date, description = description, creation_date = creation_date, description = description, is_public = is_public)
+            grouppfp = file.objects.get(pk=10)
+            group_instance = group(grouppfp = grouppfp,creator = creator, name = name, state = state, creation_date = creation_date, description = description, is_public = is_public, users_num = 1)
             group_instance.save()
             # group created successfully
             return True
         else:
             return False
-    except:
-        return False
+    #except:
+        #return False
 
 def delete_page(request, page_id):
     try:

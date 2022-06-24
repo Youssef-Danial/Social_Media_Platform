@@ -1,6 +1,6 @@
 from django import template
 from autheno.cipher_auth import *
-from database.models import post_react, block, comment_react
+from database.models import post_react, block, comment_react, user_group, group
 
 register = template.Library()
 
@@ -88,3 +88,30 @@ def is_message_owner(message, user_id):
         return False
     except:
         return False
+
+@register.simple_tag
+def is_group_CorM(userid,groupid): # checking if the user is moderator or creator of the page
+    try:
+        userinstance = get_userbyid(userid)
+        groupinstance = get_groupbyid(groupid)
+        user_group_instance = user_group.objects.fitler(user = userinstance, group=groupinstance).first()
+        if user_group_instance.state == "moderator" or groupinstance.creator == userinstance:
+            return True
+        else:
+            return False
+    except:
+        return False # the user is not in the group
+
+@register.simple_tag
+def is_group_creator(userid, groupid):
+    try:
+        userinstance = get_user(userid)
+        groupinstance = get_groupbyid(groupid)
+        if groupinstance.creator == userinstance:
+            return True
+        else:
+            return False
+    except:
+        return False
+
+   

@@ -34,5 +34,8 @@ urlpatterns = [
      path("new_comments", views.new_comments,name="new_comments"),
      path("is_there_notifications", views.is_there_notifications, name="is_there_notifications"),
      path("search/", views.get_search, name="search"),
+     path("friends/",views.friends ,name="friends"),
+     path("group/<int:group_id>", views.groupe.as_view(), name="group"),
+     path("create_group", views.create_group, name="create_group")
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

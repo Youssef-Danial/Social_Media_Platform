@@ -89,8 +89,17 @@
   #myBtn:hover {
     background-color: #555;
   }
+  .float-container {
+    border: 3px solid #fff;
+    padding: 1px;
+}
 
-
+.float-child {
+    width: 50%;
+    float: left;
+    padding: 1px;
+    border-left-style: dotted;
+}
  </style>
 <body>
   <button onclick="topFunction()" id="myBtn" title="Go to top">Top</button>
@@ -98,18 +107,42 @@
     <br>
     <br>
     <br>
-    <br>
-    <br>
-    <br>
     <div class="tweet">
-    {% include 'testing/post.html' %}
     </div>
     <hr>
     <br>
     <div id="feeds">
-    {% for post in posts %}
-    {% include 'main/post.html' %}
-    {% endfor %}
+        <div class="float-container">
+            <div class="float-child">
+                <p>Friends List</p>
+                {% for useri in userfriends %}
+                <div style="float:center;">
+                <div class="user-profile">
+                <a href ="{% url 'main:profile' useri.id %}"> <img class = "pfppic" src="{% static useri.profile.pfp.file_url|safe %}" alt="profile picture"></a>
+                <div>
+                <p>{{useri.user_name}}</p>
+                </div>
+                </div>
+                <br>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="float-child">
+                <p>Followers List</p>
+                {% for useri in followerslist %}
+                <div style="float:center;">
+                <div class="user-profile">
+                <a href ="{% url 'main:profile' useri.id %}"> <img class = "pfppic" src="{% static useri.profile.pfp.file_url|safe %}" alt="profile picture"></a>
+                <div>
+                <p>{{useri.user_name}}</p>
+                </div>
+                </div>
+                <br>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
     </div>
       
 </body>

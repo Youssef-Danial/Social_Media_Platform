@@ -229,12 +229,13 @@ class category(models.Model):
     name = models.CharField(max_length=15)
 class group(models.Model):
     creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30,unique=True)
     creation_date = models.DateTimeField()
-    description = models.TextField()
+    description = models.TextField(null=True, blank=True)
     is_public = models.BooleanField()
     # moderators = models.TextField(blank=True) # can have a list of user ids who are moderators and default value would be the creator only
     state = models.CharField(max_length=10) # state (working, stopped, suspended) ex. if the creator deleted his account the group will be in stop state
+    grouppfp = models.ForeignKey("file",on_delete=models.SET_NULL,null=True)
     users_num = models.IntegerField(blank=True) # number of users on the group
 class page(models.Model):
     creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)

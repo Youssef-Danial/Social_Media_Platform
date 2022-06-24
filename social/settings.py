@@ -24,8 +24,8 @@ SECRET_KEY = 'django-insecure-#@zm3@9*-(6ut9o0vkxlz8r0_bj56&-elz4(#4qs^ip$(h=$e$
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-STATIC_URL = 'database/static/files/'
-STATIC_ROOT = "database/static/files/"
+STATIC_URL = 'database/static/files' # 'database/static/'
+STATIC_ROOT = "database/static/files" # "database/static/"
 CSRF_TRUSTED_ORIGINS =["https://spaceshare.azurewebsites.net","https://*"] # ,"https://*"
 #CORS_ORIGIN_ALLOW_ALL = True
 ALLOWED_HOSTS = ["*"]
@@ -71,6 +71,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
+                #'django.core.context_processors.i18n',
                 'django.contrib.messages.context_processors.messages',
             ],
         },
@@ -136,19 +137,19 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import channels
 # for local host
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels.layers.InMemoryChannelLayer"
-#     }
-# }
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 # 80 port for azure
 # "BACKEND": "channels_redis.core.RedisChannelLayer",
 # for azure host
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-        "CONFIG": {
-            "hosts": [("https://spaceshare.azurewebsites.net", 80)],
-        },
-    },
-}
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("https://spaceshare.azurewebsites.net", 80)],
+#         },
+#     },
+# }

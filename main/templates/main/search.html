@@ -53,7 +53,7 @@
      <i class="material-icons">
          chat </i>
  </a>
- <a href="">
+ <a href="{% url 'main:friends' %}">
      <i class="material-icons">
          group  </i>
  </a>
@@ -101,6 +101,18 @@
             <a href ="{% url 'main:profile' useri.id %}"> <img class = "pfppic" src="{% static useri.profile.pfp.file_url|safe %}" alt="profile picture"></a>
               <div>
                  <p>{{useri.user_name}}</p>
+              </div>
+          </div>
+          <br>
+        </div>
+         {% endfor %}
+         <p>Groups</p>
+         {% for groupi in grouplist %}
+          <div style="float:center;">
+          <div class="user-profile">
+            <a href ="{% url 'main:group' groupi.id %}"> <img class = "pfppic" src="{% static groupi.grouppfp.file_url|safe %}" alt="profile picture"></a>
+              <div>
+                 <p>{{groupi.name}}</p>
               </div>
           </div>
           <br>
