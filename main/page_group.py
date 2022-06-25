@@ -90,6 +90,7 @@ def accept_group_request(user_id, group_id):
         follower = get_userbyid(user_id)
         groupinstance = get_groupbyid(group_id)
         user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "accepted")
+        groupinstance.users_num = int(groupinstance.users_num) + 1
         user_group_follow_instance.save()
         return True
     except:
@@ -176,6 +177,8 @@ def remove_user_from_group(request, group_id, user_id):
                     # getting the user who accepted the request
                     sender = get_user(request)
                     sender_id = sender.id
+                    groupinstance = get_groupbyid(group_id)
+                    groupinstance.users_num = int(groupinstance.users_num) - 1 
                     # now sending notification for the user about the group
                     objectinstance = object.objects.filter(name = "groupremove").first()
                     create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance)

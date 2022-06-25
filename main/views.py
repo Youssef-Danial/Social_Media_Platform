@@ -7,7 +7,7 @@ from django.urls import reverse,reverse_lazy
 from autheno.filehandler import receive_file
 from database.models import file, profile as profilemodel, user
 from main.post_comment import load_profile_posts
-from database.models import postfile
+from database.models import postfile, post_group
 from main.relations import *
 from main.notifications import *
 from main.post_comment import *
@@ -526,7 +526,7 @@ def searchfunc(request, content):
         for groupinstance in groupinstances:
             sparse_matrix = tfidf_vectorizer.fit_transform([content]+[str(groupinstance.description).lower() + str(groupinstance.name).lower()])
             cosine = cosine_similarity(sparse_matrix[0,:],sparse_matrix[1:,:])
-            if cosine[0][0] > 0.70:
+            if cosine[0][0] > 0.50:
                 group_resultlist.append(groupinstance)
         return (user_resultlist, post_resultlist, group_resultlist)
     #except:
@@ -582,6 +582,29 @@ def friends(request):
     else:
         return HttpResponse("You are not authorized try logining in")
 # group section
+def get_group_posts(groupinstance):
+    grouppostslist = []
+    groupposts = post_group.objects.filter(group = groupinstance)
+    for grouppost in groupposts:
+        grouppostslist.append(grouppost.post)
+    return reversed(grouppostslist)
+
+def create_postee(request):
+        if is_user_auth(request):
+            fileslist = receive_files(request, state="post")
+            if request.method == "POST":
+                # getting user data
+                request.POST._mutable = True
+                u = get_user(request)
+                data = request.POST
+                data["instance_name"] = u.user_name
+                data["instance_id"] = u.id 
+                if create_post(request, data, fileslist):
+                    return HttpResponse("Posted successfully")
+                else:
+                    return HttpResponse("User is not authenticated")
+            return fileslist
+        return None
 class groupe(View):
     def get(self, request, group_id):
         if is_user_auth(request):
@@ -591,11 +614,13 @@ class groupe(View):
         #user = get_user(request)
         viewer = get_user(request)
         groupinstance  = get_groupbyid(group_id)
-        groupposts = ""
+        groupposts = get_group_posts(groupinstance)
+        formfile = create_postee(request)
         data = {
-            "group":groupinstance,"user":viewer, "posts":groupposts, "viewer":viewer.id
+            "group":groupinstance,"formfile":formfile,"user":viewer, "posts":groupposts, "viewer":viewer.id
         }
-        return render(request,"group.html",data)
+        return render(request,"main/group.html",data)
+    
 
 def create_group(request):
     if (is_user_auth(request)):
@@ -612,5 +637,12 @@ def create_group(request):
             return JsonResponse({"feedback":"success"},status=200)
         else:
             return JsonResponse({"nothing":None},status=200)
+
+
+
+def group_settings(request):
+    if (is_user_auth(request)):
+        data = {}
+        return render(request, "main/groupsettings.html", data)
 
 

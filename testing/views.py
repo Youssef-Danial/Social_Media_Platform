@@ -3,7 +3,7 @@ from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from autheno.cipher_auth import get_postbyid, is_user_auth, get_user
 from autheno.filehandler import receive_files
-from database.models import profile
+from database.models import profile, post_group
 from main.post_comment import *
 from django.forms import Form
 from django.views import View
@@ -92,6 +92,10 @@ class posts(View):
                     postinstance = get_user_last_post(request)
                     rendered = render_to_string('main/post.html', { 'post': postinstance,"viewer":u.id })
                     response = {"newpost":rendered}
+                    if data["post_location"] == "group":
+                        groupinstance = get_groupbyid(data["groupidd"])
+                        postgroupinstance = post_group(postinstance,groupinstance)
+                        postgroupinstance.save()
                     return JsonResponse(response,status=200)
                     # return HttpResponse("success")
                 else:
@@ -99,6 +103,36 @@ class posts(View):
             return render(request, "testing/post.html",{"form":fileslist})
         return HttpResponse("User is not authenticated try to login")
 
+    def create_postg(request):
+        if is_user_auth(request):
+            fileslist = receive_files(request, state="post")
+            if request.method == "POST":
+                # getting user data
+                print("inside the group create post")
+                request.POST._mutable = True
+                u = get_user(request)
+                data = request.POST
+                print(request.POST)
+                for i in data.items():
+                    print(i)
+                print("====================")
+                data["who_can_see"] = "public"
+                data["instance_name"] = u.user_name
+                data["instance_id"] = u.id
+                if create_post(request, data,fileslist):
+                    postinstance = get_user_last_post(request)
+                    rendered = render_to_string('main/post.html', { 'post': postinstance,"viewer":u.id })
+                    response = {"newpost":rendered}
+                    if data["post_location"] == "group":
+                        groupinstance = get_groupbyid(data["groupidd"])
+                        postgroupinstance = post_group(post = postinstance,group = groupinstance)
+                        postgroupinstance.save()
+                    return JsonResponse(response,status=200)
+                    # return HttpResponse("success")
+                else:
+                    return HttpResponse("User is not authenticated")
+            return render(request, "testing/post.html",{"form":fileslist})
+        return HttpResponse("User is not authenticated try to login")
     # def disply_edit_post(request, post_id):
     #     if is_user_auth(request):
     #         if is_post_owner(request, post_id):

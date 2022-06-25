@@ -20,7 +20,7 @@ def create_post(request, data, fileslist): # data should be a dictionary
     if is_user_auth(request):
         # getting the user that will make the post
         postuser = get_user(request)
-        # data(text_content, )
+        # data(text_content,)
         # adding missing parts from the data
         # create post object 
         p = post(user=postuser)

@@ -4,8 +4,9 @@
    {% load static %}
    {% csrf_token %}
    {% load post_tags %}
+   {% load group_tags %}
 	 <input type="hidden" id ="groupid" value="{{group.id}}" />
-	<title>Profile</title>
+	<title>Group</title>
   <!-- the this section is concerned with posts-->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -177,7 +178,7 @@
                 <div class="card-profile-image">
                   <a href="#">
                     <!-- /static/files/1/profile/2dAnimator3.gif -->
-                    <img  src="{% static profile.pfp.file_url|safe %}" class="rounded-circle">
+                    <img  src="{% static group.grouppfp.file_url|safe %}" class="rounded-circle">
                   </a>
                 </div>
               </div>
@@ -185,42 +186,28 @@
             <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
               <div class="d-flex justify-content-between">
 								<div style = "airflow:absolute;">
-    {% is_blockr viewer profile.user.id as is_blocker %}
-		{% if is_owner %}
-		{% comment %}<p><button>You are the Owner</button></p> {% endcomment %}
-		<p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_pfp'%}'">Edit pfp</button></p>
-    <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_backpfp'%}'">Edit bpf</button></p>
-    <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:settings'%}'">Settings</button></p>
+    {% isgroupcreator user.id group.id as is_groupowner %}
+    {% is_user_member  user.id group.id as is_memeber %}
+    {% is_group_CorM user.id group.id as is_moderator %}
+    {% is_user_requesting user.id group.id as is_requested %}
+	{% if is_groupowner %}
+		{% comment %} <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_pfp'%}'">Edit pfp</button></p> {% endcomment %}
+        <!-- <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_backpfp'%}'">Edit bpf</button></p> -->
+        <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:group_settings'%}'">Settings</button></p>
 		{% comment %} <p><button onclick="location.href = '{% url 'main:edit_about_me'%}'">Edit about me</button></p> {% endcomment %}
-    
-    {% elif is_blocker %}
-    <p>{{is_block}}here is the thing</p>
-    <p><button class = "btn btn-info unblock" id = "unblock">unblock</button></p>
-    {% elif is_follower %}
-			<button id="unfollow" value="{{profile.user.id}}" class = "btn btn-info unfollow" >unfollow</button></p>
-			{% if is_friend %}
-			<p><button id="unfriend" value="{{profile.user.id}}" class = "btn btn-info unfriend">unfriend</button></p>
-			{% else %}
-			<p><button id="add" value="{{profile.user}}" class ="btn btn-info add">add</button></p>
-			{% endif %}
+    {% elif is_member or is_moderator %}
+			<button id="leave" value="{{group.id}}" class = "btn btn-info unfollow" >Leave</button></p>
 		{% else %}
-    <p><button id="follow" value="{{profile.user.id}}" class = "btn btn-info follow">follow</button></p>
-			{% if is_friend %}
-			<p><button id="unfriend" value="{{profile.user.id}}" class = "btn btn-info unfriend">unfriend</button></p>
+			{% if is_requested %}
+			<p><button id="cancelrequest" value="{{group.id}}" class = "btn btn-info follow">Cancel Request</button></p>
 			{% else %}
-			<p><button id="add" value="{{profile.user.id}}" class = "btn btn-info add">add</button></p>
-      <p><button class = "btn btn-info block" id = "block">block</button></p>
+            <p><button id="join" value="{{group.id}}" class = "btn btn-info follow">Join</button></p>
 			{% endif %}
 		{% endif %}
     
 							</div>
 							<div>
 							</div>
-              {% if is_owner %}
-               
-              {% else %}
-                <a id="messageid" class="btn btn-sm btn-default float-right">Message</a>
-              {% endif %}
               </div>
             </div>
             <div class="card-body pt-0 pt-md-4">
@@ -229,23 +216,16 @@
                   <div class="card-profile-stats d-flex justify-content-center mt-md-5">
                     
                     <div>
-                      <span class="heading">{{profile.get_friends_num}}</span>
-                      <span class="description">Friends</span>
-                    </div>
-                    <div>
-                      <span class="heading">{{profile.get_followers_num}}</span>
-                      <span class="description">Followers</span>
-                    </div>
-                    <div>
-                      <span class="heading">{{mutual_friends}}</span>
-                      <span class="description">Mutual Friends</span>
+                      <span class="heading">{{group.users_num}}</span>
+                      <span class="description">Number of Users in Group</span><br>
+                      <span class="description">Group Owner {{group.creator.user_name}}</span>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="text-center">
                 <h3>
-                  {{profile.user.user_name}}
+                  {{group.name}}
                   
                 </h3>
                 <span class="font-weight-light">Bio.</span>
@@ -256,7 +236,7 @@
                   <i class="ni business_briefcase-24 mr-2"></i>#
                 </div>  {% endcomment %}
                 <div>
-                  <i class="ni education_hat mr-2"></i>{{profile.about_me}}
+                  <i class="ni education_hat mr-2"></i>{{group.description}}
                 </div>
                 <hr class="my-4">
 								{% if is_owner %}
@@ -290,45 +270,94 @@
     </div>
   </div>
 
-  {% comment %} <div class="tweet">
-    <label>Add Post</label>
-    <textarea rows="4" class="tarea" placeholder="How do you feel ..?" ></textarea>
+
+<br>
+<br>
+<br>
+<br>
+{% if is_memeber or is_moderator %}
+<style>
+   select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;       /* Remove default arrow */
+      background-image: url(...);   /* Add custom arrow */
+      background:#11C9EA;
+      border:None;
+      color:white;
+   }
+</style>
+<div class ="tweet">
+ <form id="form-postt" style="display:absolute;"  method="post" enctype="multipart/form-data">
+     {% csrf_token %}
+     <textarea id="text-content" rows="4" class = "tarea" placeholder="How do you feel ..?" name="text_content" val=""></textarea>
+     <input type="hidden" id="who-can-see" value="public" class ="btn btn-info" >
+     <input id="who-can-see" type="hidden" name="post_location" value="group"/>
+     <input type="hidden" id ="groupidd" value="{{group.id}}" />
+        {{ formfile.file }}
+    <input id="postsubmit" class ="btn btn-info" style="margin-left: 120px;" type="button" value="Submit">
+ </form>
+</div>
+{% endif %}
     <br>
-    <img src="images/photo.png"> &nbsp; </a><input type="file" id="myFile" name="filename" class="btn btn-sm btn-info mr-4"></a>
-
-    <a href="#" class="btn btn-sm btn-info mr-4">Post</a>
-  </div> {% endcomment %}
-<br>
-<br>
-<br>
-<br>
-
-
+    <br>
+    <hr>
+    <br>
 		 <!--thi is the post -->
-		 {% for post in posts %}
+  <div id="feeds">
+  {% for post in posts %}
   {% include 'main/post.html' %}
   {% endfor %}
-
+  </div>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 <script>
   $(document).ready(function(){
-    message_button = $("#messageid")
-    message_button.on("click", function(e){
-      e.preventDefault();
-      // sending the request to the backend using ajax
-      $.ajax({
-        type:"POST",
-        url: "{% url 'chat:messagedirect' %}",
-        data: {
-             user:$("#userid").val(),
-             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function(response){
-          window.location.href ="{% url 'chat:chat' %}";
+    toastr.options = {
+        "closeButton": true,
+        "debug": true,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "showDuration": "300",
+        "hideDuration": "1000000",
+        "timeOut": "5000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
         }
-    });
-    })
+
+    $("#postsubmit").click(function(e) {
+        e.preventDefault();
+        //var formData = new FormData($("#form-postt"));
+        formdata = new FormData(document.getElementById("form-postt"));
+        formdata.append("groupidd", $("#groupid").val());
+        if($("#text-content").val()!=""){
+          $.ajax({
+            url: "/home/create_postg",
+            type: 'POST',
+            data: formdata,
+            success: function (data) {
+              toastr["success"]("Posted Successfully");
+              var feeds = document.getElementById("feeds")
+              document.getElementById("form-postt").reset();
+              $("#feeds").prepend(data["newpost"])
+              //work(); // this is causing the multi post problem when submit
+            },
+            cache: false,
+            contentType: false,
+            processData: false
+        });
+        }else{
+          toastr["error"]("Posting Failed Empty Post");
+        }  
+    });  
+    
     console.log("testing")
     setInterval(function(){
       var element = document.getElementById("notifnum")
@@ -353,227 +382,7 @@
         }
     });
     }, 10000);
-    $("#add").click(function(){
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info add')) {
-        console.log("add")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:add-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("request sent")
-          }
-      });
-        fbtn.removeClass('btn btn-info add').addClass('btn btn-info unfriend');
-        fbtn.text('unfriend');
-      } else {
-        console.log("unfriend")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:un-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("friend request have been removed")
-            }
-        });
-        fbtn.removeClass('btn btn-info unfriend').addClass('btn btn-info add');
-        fbtn.text('add');
-      }
-
-    })
-    $("#unfriend").click(function(){
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info add')) {
-        console.log("add")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:add-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("request sent")
-          }
-      });
-        fbtn.removeClass('btn btn-info add').addClass('btn btn-info unfriend');
-        fbtn.text('unfriend');
-      } else {
-        console.log("unfriend")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:un-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("friend request have been removed")
-                fbtn.removeClass('btn btn-info unfriend').addClass('btn btn-info add');
-                fbtn.text('add');
-            }
-        });
-        
-      }
-
-    })
-
-    $("#follow").click(function(){
-
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info follow')) {
-        console.log("follow")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:follow-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("follow success")
-          }
-      });
-        fbtn.removeClass('btn btn-info follow').addClass('btn btn-info unfollow');
-        fbtn.text('unfollow');
-      } else {
-        console.log("unfollow")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:unfollow-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("unfollow success")
-            }
-        });
-        fbtn.removeClass('btn btn-info unfollow').addClass('btn btn-info follow');
-        fbtn.text('follow');
-      }
-
-    })
-    $("#unfollow").click(function(){
-      var fbtn = $(this);
-      if (fbtn.hasClass('btn btn-info follow')) {
-        console.log("follow")
-        $.ajax({
-          type:"POST",
-          url: "{% url 'main:follow-friend' %}",
-          data: {
-               user:$("#userid").val(),
-               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-          },
-          success: function(response){
-              console.log("follow success")
-          }
-      });
-        fbtn.removeClass('btn btn-info follow').addClass('btn btn-info unfollow');
-        fbtn.text('unfollow');
-      } else {
-        console.log("unfollow")
-        $.ajax({
-            type:"POST",
-            url: "{% url 'main:unfollow-friend' %}",
-            data: {
-                 user:$("#userid").val(),
-                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(response){
-                console.log("unfollow success")
-            }
-        });
-        fbtn.removeClass('btn btn-info unfollow').addClass('btn btn-info follow');
-        fbtn.text('follow');
-      }
-    })
-
-})
-
-// blocking 
-
-$("#block").click(function(){
-
-  var fbtn = $(this);
-  if (fbtn.hasClass('btn btn-info block')) {
-    console.log("block")
-    $.ajax({
-      type:"POST",
-      url: "{% url 'main:block-friend' %}",
-      data: {
-           user_id:$("#userid").val(),
-           csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-      },
-      success: function(response){
-          console.log("block success")
-      }
-  });
-    fbtn.removeClass('btn btn-info block').addClass('btn btn-info unblock');
-    fbtn.text('unblock');
-  } else {
-    console.log("unblock")
-    $.ajax({
-        type:"POST",
-        url: "{% url 'main:unblock-friend' %}",
-        data: {
-             user_id:$("#userid").val(),
-             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function(response){
-            console.log("unblock success")
-        }
-    });
-    fbtn.removeClass('btn btn-info unblock').addClass('btn btn-info block');
-    fbtn.text('block');
-  }
-
-})
-$("#unblock").click(function(){
-  
-  var fbtn = $(this);
-  if (fbtn.hasClass('btn btn-info block')) {
-    console.log("block")
-    $.ajax({
-      type:"POST",
-      url: "{% url 'main:block-friend' %}",
-      data: {
-           user_id:$("#userid").val(),
-           csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-      },
-      success: function(response){
-          console.log("block success")
-      }
-  });
-    fbtn.removeClass('btn btn-info block').addClass('btn btn-info unblock');
-    fbtn.text('unblock');
-  } else {
-    console.log("unblock")
-    $.ajax({
-        type:"POST",
-        url: "{% url 'main:unblock-friend' %}",
-        data: {
-             user_id:$("#userid").val(),
-             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-        },
-        success: function(response){
-            console.log("unblock success")
-        }
-    });
-    fbtn.removeClass('btn btn-info unblock').addClass('btn btn-info block');
-    fbtn.text('block');
-  }
-})
-
-
-
+});
 </script>
 <script>
   // script concerned with posts

@@ -9,6 +9,7 @@ urlpatterns = [
     path("ajax", views.ajax, name="ajax"),
     path("javascript", views.javascriptrender, name="javascriptrender"),
     path("create_post", views.posts.create_post, name="createpost"),
+    path("create_postg", views.posts.create_postg, name="createpostg"),
     path("post/<int:post_id>", views.posts.as_view(), name="displaypost"),
     
 ]   

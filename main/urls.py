@@ -36,6 +36,7 @@ urlpatterns = [
      path("search/", views.get_search, name="search"),
      path("friends/",views.friends ,name="friends"),
      path("group/<int:group_id>", views.groupe.as_view(), name="group"),
-     path("create_group", views.create_group, name="create_group")
+     path("create_group", views.create_group, name="create_group"),
+     path("group_settings", views.group_settings, name="group_settings")
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
