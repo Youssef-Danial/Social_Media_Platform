@@ -46,7 +46,7 @@
 </div>
               {% endif %}
         </div>
-          <p class="post-text"><b>{{post.text_content}}</b></p>
+          <p class="post-text"><b>{{post.text_content|safe}}</b></p>
 
           {% for postfile in  post.postfiles %}
         

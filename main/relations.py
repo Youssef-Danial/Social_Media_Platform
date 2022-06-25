@@ -332,15 +332,16 @@ def join_group(request, group_id):
         follower = get_user(request)
         groupinstance = get_groupbyid(group_id)
         # checking the privacy state of the group
-        if groupinstance.is_public and (not is_user_refused_group(request, group_id)): # true mean public false mean private
-            # now creating a relation with with the follower and the page
-            user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "accepted", create_date=get_current_datetime())
-            user_group_follow_instance.save()
-            return True # joined successfully
-        else:
-            user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "pending", create_date=get_current_datetime())
-            user_group_follow_instance.save()
-            return True
+        if not is_user_refused_group(request, group_id):
+            if groupinstance.is_public and (not is_user_refused_group(request, group_id)): # true mean public false mean private
+                # now creating a relation with with the follower and the page
+                user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "accepted", create_date=get_current_datetime())
+                user_group_follow_instance.save()
+                return True # joined successfully
+            else:
+                user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "pending", create_date=get_current_datetime())
+                user_group_follow_instance.save()
+                return True
     except:
         return False
 
@@ -350,16 +351,49 @@ def leave_group(request, group_id):
         follower = get_user(request)
         groupinstance = get_groupbyid(group_id)
         # now creating a relation with with the follower and the page
-        user_group_follow_instance = user_page.objects.filter(page = groupinstance, user = follower).first()
+        user_group_follow_instance = user_group.objects.filter(group = groupinstance, user = follower).first()
         # checking if the user a moderator
-        if user_group_follow_instance.state == "moderator" or user_group_follow_instance.user_state == "refused":
-            return False # the user is a moderator or a refused from the page
+        if user_group_follow_instance.state == "moderator":
+            return False # the user is a moderator or a refused from the group
         else:
-            # deleting the user from the page
+            # deleting the user from the group
             user_group_follow_instance.delete()
             return True
     except:
         return False # user is not in the group
+
+def unban(user_id, group_id):
+    try:
+        follower = get_userbyid(user_id)
+        groupinstance = get_groupbyid(group_id)
+        # now creating a relation with with the follower and the page
+        user_group_follow_instance = user_group.objects.filter(group = groupinstance, user = follower).first()
+        # checking if the user a moderator
+        if user_group_follow_instance.state == "moderator":
+            return False # the user is a moderator or a refused from the group
+        else:
+            # deleting the user from the group
+            user_group_follow_instance.delete()
+            return True
+    except:
+        return False # user is not in the group
+
+def leave_groupp(user_id, group_id):
+    try:
+        follower = get_userbyid(user_id)
+        groupinstance = get_groupbyid(group_id)
+        # now creating a relation with with the follower and the page
+        user_group_follow_instance = user_group.objects.filter(group = groupinstance, user = follower).first()
+        # checking if the user a moderator
+        if user_group_follow_instance.state == "moderator" or user_group_follow_instance.user_state == "refused":
+            return False # the user is a moderator or a refused from the group
+        else:
+            # deleting the user from the group
+            user_group_follow_instance.delete()
+            return True
+    except:
+        return False # user is not in the group
+
 
 def is_userpage_moderator(request, page_id):
     try:

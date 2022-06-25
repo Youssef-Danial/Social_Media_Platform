@@ -57,7 +57,7 @@ def is_user_requesting(user_id, group_id):
         # making sure that the information only appears for creator or moderator of the group
         group_instance = get_groupbyid(group_id)
         userinstance = get_userbyid(user_id)
-        user_group_instance = user_group.objects.filter(group=group_instance, user = userinstance, state = "pending").first()
+        user_group_instance = user_group.objects.filter(group=group_instance, user = userinstance, user_state = "pending").first()
         if user_group_instance is not None:
             return True
         else:

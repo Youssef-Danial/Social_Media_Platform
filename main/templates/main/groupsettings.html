@@ -3,6 +3,7 @@
 <head>
 	{% load static %}
     {% csrf_token %}
+    {% load group_tags %}
 	 <input type="hidden" id ="groupid" value="{{group.id}}" />
 	<title>Settings</title>
   <!-- this link if for importing icons for the post -->
@@ -10,13 +11,21 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="icon" href="images/logo.png" type="image/icon type">
 	{% comment %} <link rel="stylesheet" type="text/css" href="{% static 'css/prof.css'|safe %}"> {% endcomment %}
-    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
-    <link rel="shortcut icon" href="{% static "images/profile/logo.png"|safe %}" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <!-- the this section is concerned with posts end-->
+  <!-- this link if for importing icons for the post-->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+  <link rel="icon" href="images/logo.png" type="image/icon type">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/profyd.css'|safe %}">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
+<link rel="shortcut icon" href="{% static "images/profile/logo.png"|safe %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/sec.css'|safe %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <script src="https://kit.fontawesome.com/c4254e24a8.js" crossorigin="anonymous"></script>
-    
+    <script src="https://kit.fontawesome.com/c4254e24a8.js"
+    crossorigin="anonymous"></script>
 <!-- things concerned with the post-->
 <style>
   .ico{
@@ -53,8 +62,8 @@
           <div class="row">
             <div class="col-lg-7 col-md-10">
               <h1 class="display-2 text-white">Hello {{user.user_name}}</h1>
-              <p class="text-white mt-0 mb-5">This is your Setting page. You can Change your Username, Password, Email, Etc</p>
-              <a href="{% url 'main:profile' user.id %}" class="btn btn-info">View My Profile</a>
+              <p class="text-white mt-0 mb-5">This is The ({{group.name}}) Group Setting page. You can Change your accept or decline incoming join request, remove users, appoint moderators for the group</p>
+              <button type = "button" onclick="history.back()" class="btn btn-info">Back to Group</button>
             </div>
           </div>
         </div>
@@ -63,65 +72,85 @@
       <div class="container-fluid mt--7">
         <div class="row">
           <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
-            {% comment %} <div class="card card-profile shadow">
+            <div class="card card-profile shadow">
               <div class="row justify-content-center">
                 <div class="col-lg-3 order-lg-2">
                   <div class="card-profile-image">
                     <a href="#">
-                      <img src="images/pp1.jpeg" class="rounded-circle">
+                      <img src="{% static group.grouppfp.file_url %}" class="rounded-circle">
                     </a>
                   </div>
                 </div>
               </div>
               <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
                 <div class="d-flex justify-content-between">
-                  <a href="#" class="btn btn-sm btn-info mr-4">Update Profile Picture</a>
-                  <a href="#" class="btn btn-sm btn-default float-right">Update Cover Photo</a>
+                  Moderators
                 </div>
               </div>
               <div class="card-body pt-0 pt-md-4">
                 <div class="row">
                   <div class="col">
                     <div class="card-profile-stats d-flex justify-content-center mt-md-5">
-                      <div>
-                        <span class="heading">22</span>
-                        <span class="description">Friends</span>
-                      </div>
-                      <div>
-                        <span class="heading">10</span>
-                        <span class="description">Photos</span>
-                      </div>
-                      <div>
-                        <span class="heading">89</span>
-                        <span class="description">Comments</span>
-                      </div>
+                      Moderators
                     </div>
                   </div>
                 </div>
                 <div class="text-center">
-                  <h3>
-                    John George<span class="font-weight-light">, 23 YO.</span>
-                  </h3>
-                  <div class="h5 font-weight-300">
-                    <i class="ni location_pin mr-2"></i>Sadat City, Egypt
-                  </div>
-                  <div class="h5 mt-4">
-                    <i class="ni business_briefcase-24 mr-2"></i>Network Engineer & System administrator
-                  </div>
-                  <div>
-                    <i class="ni education_hat mr-2"></i>Faculty of Computer Science - ACU
-                  </div>
-  
+                  {% isgroupcreator user.id group.id as is_groupowner %}
+                  {% is_group_CorM user.id group.id as is_moderator %}
+                  {% for grouprequest in mods %}
+                  <div  id="comment-container{{grouprequest.id}}" style="width:50%;">
+                    <div class="post-row">
+                    <input type="hidden" class="commentid" id="commentid{{grouprequest.id}}" value="{{grouprequest.id}}"/>
+                    <div class="user-profile">
+                      <a href ="{% url 'main:profile' grouprequest.user.id %}"> <img class = "pfppic" src="{% static grouprequest.user.profile.pfp.file_url|safe %}" style = "border-radius: 50%;width:30px;height:30px;" alt="profile picture"></a>
+                        <div>
+                           <p>{{grouprequest.user.user_name}}</p>
+                           {% comment %} <a href = "{% url 'testing:displaypost' post.id %}" > {% endcomment %}
+                           </a>
+                        </div>
+                      </div>
+                      
+                          {% if is_groupowner %}
+                          <!-- Button trigger modal -->
+                          {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                          <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#exampleModalCenter{{mod.id}}" style="float: right;">remove</button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="exampleModalCenter{{mod.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  Are you sure you want to remove this Moderator
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="button" id="removemod{{grouprequest.id}}" class="removemoderator" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Delete</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          
+                        </div>
+                    <div>
+                    </div>
+                    {% endif %}
+                  {% endfor %}
                 </div>
               </div>
-            </div> {% endcomment %}
+            </div> 
           </div>
           <div class="col-xl-8 order-xl-1">
             <div class="card bg-secondary shadow">
               <div class="card-header bg-white border-0">
                 <div class="row align-items-center">
                   <div class="col-8">
-                    <h3 class="mb-0">My account</h3>
+                    <h3 class="mb-0">Group Settings </h3>
                   </div>
                   <div class="col-4 text-right">
                     {% comment %} <a href="#!" class="btn btn-sm btn-primary">Save</a> {% endcomment %}
@@ -129,138 +158,203 @@
                 </div>
               </div>
               <div class="card-body">
-                
-                  <h6 class="heading-small text-muted mb-4">User information</h6>
-                  <div class="pl-lg-4">
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <div class="form-group focused">
-                          <label class="form-control-label" for="input-username">Username</label>
-                          <input type="text" id="new_username" class="form-control form-control-alternative" placeholder="Username" value="">
-                          <button id = "change_username" class="btn btn-info">Change</button>
+                <hr class="my-4">
+                  <!-- Address -->
+                  <h6 class="heading-small text-muted mb-4">Incoming requests</h6>
+                  {% for grouprequest in grouprequests %}
+                  <div class = "post-container" id="comment-container{{grouprequest.id}}" style="width:50%;">
+                    <div class="post-row">
+                    <input type="hidden" class="commentid" id="commentid{{grouprequest.id}}" value="{{grouprequest.id}}"/>
+                    <div class="user-profile">
+                      <a href ="{% url 'main:profile' grouprequest.user.id %}"> <img class = "pfppic" src="{% static grouprequest.user.profile.pfp.file_url|safe %}" style = "border-radius: 50%;width:30px;height:30px;" alt="profile picture"></a>
+                        <div>
+                           <p>{{grouprequest.user.user_name}}</p>
+                           {% comment %} <a href = "{% url 'testing:displaypost' post.id %}" > {% endcomment %}
+                           </a>
                         </div>
                       </div>
-                      <div class="col-lg-6">
-                        <div class="form-group">
-                          <label class="form-control-label" for="input-email">Email address</label>
-                          <input id = "new_email" type="email" class="form-control form-control-alternative" placeholder="name@gmail.com">
-                          <button id="change_email" class="btn btn-info">Change</button>
+                       
+                          <!-- Button trigger modal -->
+                          {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                          <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#aexampleModalCenter{{grouprequest.id}}" style="float: right;">Accept_</button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="aexampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Accept Request</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  Are you sure you want to Accept this Request
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="button" id="accept-request{{grouprequest.id}}" class="acceptrequest" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Confirm</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-lg-6">
-                        <div class="form-group focused">
-                          <label class="form-control-label" for="input-first-name">Mobile</label>
-                          <input type="text" id="new_phonenumber" class="form-control form-control-alternative" placeholder="Ex: 01XX XXX XXX" value="">
-                          <button id="change_phonenumber" class="btn btn-info">Change</button>
+                        <!-- Button trigger modal -->
+                          {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                          <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#exampleModalCenter{{grouprequest.id}}" style="float: right;">Decline</button>
+                          <!-- Modal -->
+                          <div class="modal fade" id="exampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLongTitle">Decline Request</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                                <div class="modal-body">
+                                  Are you sure you want to Decline this Request
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                  <button type="button" id="decline-request{{grouprequest.id}}" class="declinerequest" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Confirm</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                  {% endfor %}
                       <div class="col-lg-6">
                         <div class="form-group focused">
   
                           <div class="bd">
-                              {% comment %} <label for="birthdate">Birthdate:</label>
-                              </div>
-                              <div class="bdc">
-                              <input type="date" id="birthdate" name="birthdate" value="31-Oct-1998" >
-   {% endcomment %}
+                      
                         </div>
                       </div>
                     </div>
                   </div>
-                  <hr class="my-4">
-                  <!-- Address -->
-                  <h6 class="heading-small text-muted mb-4">Password Changing</h6>
-                  <p>password should contain atleast
-                      <ul>
-                          <li>a number</li>
-                          <li>a symbol</li>
-                          <li>a Uppercase char</li>
-                          <li>be 8 character in length</li>
-                      </ul>
-                  </p>
-                  <div class="pl-lg-4">
-                    <div class="row">
-                      <div class="col-md-12">
-                        {% comment %} <div class="form-group focused">
-                          <label class="form-control-label" for="input-address">Password</label>
-                          <input id="password" type="password" class="form-control form-control-alternative" placeholder="Your new Password" />
-                        </div> {% endcomment %}
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-lg-4">
-                          <!-- this should be the form to change the passwod-->
-                        <div class="form-group focused">
-                            <label class="form-control-label" for="input-address">Old Password</label>
-                            <input id="passwordold" type="password" class="form-control form-control-alternative" placeholder="Your new Password" />
-                          </div>
-                          <div class="form-group focused">
-                            <label class="form-control-label" for="input-address">New Password</label>
-                            <input id="passwordnew" type="password" class="form-control form-control-alternative" placeholder="Your new Password" />
-                          </div>
-                          <div class="form-group focused">
-                            <label class="form-control-label" for="input-address">Confirm Password</label>
-                            <input id="passwordnewconfirm" type="password" class="form-control form-control-alternative" placeholder="Your new Password" />
-                          </div>
-                          <button id="change_password" class="btn btn-info">Change</button>
-                      <div class="col-lg-4">
-                      <div class="col-lg-4">
-                       
-                     
-                      </div>
-                    </div>
-                  </div>
                   
-                  <hr class="my-4">
-                 
-                  <!-- Description -->
-                  {% comment %} <h6 class="heading-small text-muted mb-4">About me</h6> {% endcomment %}
-                  {% comment %} <div class="pl-lg-4">
-                    <div class="form-group focused">
-                      <label>Bio</label>
-                      <textarea rows="4" class="form-control form-control-alternative" placeholder="A few words about you ...">John George, 23 YO.
-                        Sadat City, Egypt
-                        Network Engineer & System administrator
-                        Faculty of Computer Science - ACU</textarea>
-                    </div>
-                  </div>
-                </form>
-              </div> {% endcomment %}
-            </div>
+                  
+                  
             <hr class="my-4">
                   <!-- Address -->
-                  <h6 class="heading-small text-muted mb-4">Create a group</h6>
-                  
-                  <div class="pl-lg-4">
-                    <div class="row">
-                      <div class="col-md-12">
-                        {% comment %} <div class="form-group focused">
-                          <label class="form-control-label" for="input-address">Password</label>
-                          <input id="password" type="password" class="form-control form-control-alternative" placeholder="Your new Password" />
-                        </div> {% endcomment %}
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-lg-4">
-                          <!-- this should be the form to change the passwod-->
-                        <div class="form-group focused">
-                            <label class="form-control-label" for="input-address">Group Name</label>
-                            <input id="groupname" type="text" class="form-control form-control-alternative" placeholder="Your Group Name" />
+                  <h6 class="heading-small text-muted mb-4">Group Users</h6>
+                    {%for grouprequest in groupusers %}
+                    {% is_group_CorM grouprequest.user.id group.id as is_moderatorown %}
+                    <div  id="comment-container{{grouprequest.id}}" style="width:50%;">
+                      <div class="post-row">
+                      <input type="hidden" class="commentid" id="commentid{{grouprequest.id}}" value="{{grouprequest.id}}"/>
+                      <div class="user-profile">
+                        <a href ="{% url 'main:profile' grouprequest.user.id %}"> <img class = "pfppic" src="{% static grouprequest.user.profile.pfp.file_url|safe %}" style = "border-radius: 50%;width:30px;height:30px;" alt="profile picture"></a>
+                          <div>
+                             <p>{{grouprequest.user.user_name}}</p>
+                             {% comment %} <a href = "{% url 'testing:displaypost' post.id %}" > {% endcomment %}
+                             </a>
                           </div>
-                          <div class="form-group focused">
-                            <label class="form-control-label" for="input-address">Description</label> 
-                            <textarea id="groupdesc" rows="4" class = "tarea" placeholder="Describe your Group it will enhance it is appearance in Search Results" name="text_content" val=""></textarea>
+                        </div>
+                         
+                            <!-- Button trigger modal -->
+                            {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                            {% if is_groupowner %}
+                            {% if is_moderatorown %}
+                            <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#aasexampleModalCenter{{grouprequest.id}}" style="float: right;">Is Mod</button>
+                            {% else %}
+                            <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#aaexampleModalCenter{{grouprequest.id}}" style="float: right;">Make Mod</button>
+                            {% endif %}
+                            <!-- Modal -->
+                            <div class="modal fade" id="aaexampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Making User Moderator</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    Are you sure you want to make a moderator
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="mod-request{{grouprequest.id}}" class="makemod" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Confirm</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <div class="form-group focused">
-                            {% comment %} <label class="form-control-label" for="input-address">Group Privacy</label>
-                            <select id="who-can-see" class ="btn btn-info" aria-label="who can see" name="who_can_see" required="true">
-                              <option value="public">Public</option>
-                              <option value="Private">Private</option>  
-                              </select> {% endcomment %}
+                          {% endif %}
+                          <!-- Button trigger modal -->
+                          
+                          {% if is_moderatorown == False %}
+                            {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                            <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#sexampleModalCenter{{grouprequest.id}}" style="float: right;">Ban</button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="sexampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Removing User From Group</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    Are you sure you want to remove this user
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="remove-request{{grouprequest.id}}" class="removeuser" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Confirm</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
                           </div>
-                          <button id="create_group" class="btn btn-info">Create</button>
+                          {% endif %}
+                    {% endfor %}
+                    <br>
+                    
+                    {% for grouprequest in banned_users %}
+                    {% if forloop.first %}
+                    <hr>
+                    <p>Banned Users </p>                         
+                      {% endif %}
+                    <div  id="comment-container{{grouprequest.id}}" style="width:50%;">
+                      <div class="post-row">
+                      <input type="hidden" class="commentid" id="commentid{{grouprequest.id}}" value="{{grouprequest.id}}"/>
+                      <div class="user-profile">
+                        <a href ="{% url 'main:profile' grouprequest.user.id %}"> <img class = "pfppic" src="{% static grouprequest.user.profile.pfp.file_url|safe %}" style = "border-radius: 50%;width:30px;height:30px;" alt="profile picture"></a>
+                          <div>
+                             <p>{{grouprequest.user.user_name}}</p>
+                             {% comment %} <a href = "{% url 'testing:displaypost' post.id %}" > {% endcomment %}
+                             </a>
+                          </div>
+                        </div>
+                         
+                            <!-- Button trigger modal -->
+                            {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                            <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#aaexampleModalCenter{{grouprequest.id}}" style="float: right;">UnBan</button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="aaexampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">UnBanning</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    Are you sure you want to un Ban this User
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="unban-request{{grouprequest.id}}" class="unban" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Confirm</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                         
+                    {% endfor %}
                       <div class="col-lg-4">
                       <div class="col-lg-4">
                        
@@ -301,7 +395,124 @@
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
             }
-        
+            $(document).on("click",".unban",function(){
+              var fbtn = $(this);
+              $(fbtn).click(function(){
+                  console.log("remove-post ajax called")
+                  $.ajax({
+                    type:"POST",
+                    url: '/main/remove_group_requestban',
+                    data: {
+                         request_id:fbtn.val(),
+                         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                      location.reload();
+                        //elementfooter.parentNode.removeChild(elementfooter)
+                    }
+                  });
+                });
+            });
+
+            $(document).on("click",".makemod",function(){
+              console.log("is called delete")
+              var fbtn = $(this);
+              $(fbtn).click(function(){
+                  console.log("remove-post ajax called")
+                  $.ajax({
+                    type:"POST",
+                    url: '/main/make_mod',
+                    data: {
+                         request_id:fbtn.val(),
+                         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                      location.reload();
+                        //elementfooter.parentNode.removeChild(elementfooter)
+                    }
+                  });
+                });
+            });
+
+            $(document).on("click",".declinerequest",function(){
+              console.log("is called delete")
+              var fbtn = $(this);
+              $(fbtn).click(function(){
+                  console.log("remove-post ajax called")
+                  $.ajax({
+                    type:"POST",
+                    url: '/main/refuse_group_request',
+                    data: {
+                         request_id:fbtn.val(),
+                         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                      location.reload();
+                        //elementfooter.parentNode.removeChild(elementfooter)
+                    }
+                  });
+                });
+            });
+            
+
+            $(document).on("click",".removemoderator",function(){
+              console.log("is called delete")
+              var fbtn = $(this);
+              $(fbtn).click(function(){
+                  console.log("remove-post ajax called")
+                  $.ajax({
+                    type:"POST",
+                    url: '/main/remove_mod',
+                    data: {
+                         request_id:fbtn.val(),
+                         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                      location.reload();
+                        //elementfooter.parentNode.removeChild(elementfooter)
+                    }
+                  });
+                });
+            });
+
+            $(document).on("click",".removeuser",function(){
+              console.log("is called delete")
+              var fbtn = $(this);
+              $(fbtn).click(function(){
+                  console.log("remove-post ajax called")
+                  $.ajax({
+                    type:"POST",
+                    url: '/main/remove_user_group',
+                    data: {
+                         request_id:fbtn.val(),
+                         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                      location.reload();
+                        //elementfooter.parentNode.removeChild(elementfooter)
+                    }
+                  });
+                });
+            });
+            $(document).on("click",".acceptrequest",function(){
+              console.log("is called delete")
+              var fbtn = $(this);
+              $(fbtn).click(function(){
+                  console.log("remove-post ajax called")
+                  $.ajax({
+                    type:"POST",
+                    url: '/main/accept_group_request',
+                    data: {
+                         request_id:fbtn.val(),
+                         csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function(response){
+                      location.reload();
+                        //elementfooter.parentNode.removeChild(elementfooter)
+                    }
+                  });
+                });
+            });
 
             $("#change_password").click(function(){
             

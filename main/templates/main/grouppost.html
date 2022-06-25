@@ -5,7 +5,8 @@
     {% comment %} <link href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' rel='stylesheet'> {% endcomment %}
     {% comment %} <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
     <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js'></script> {% endcomment %}
-    
+    {% is_group_CorM user.id group.id as is_moderator %}
+    {% is_group_CorM post.user.id group.id as is_moderatorown %}
      <div class="post-container" style="width:50%;" id="post-container{{post.id}}">
        <input type="hidden" id="postid" value="{{post.id}}"/>
        <div>
@@ -13,7 +14,8 @@
           <div class="user-profile">
             <a href ="{% url 'main:profile' post.user.id %}"> <img class = "pfppic" src="{% static post.user.profile.pfp.file_url|safe %}" alt="profile picture"></a>
               <div>
-                 <p>{{post.user.user_name}}</p>
+                 <p>{{post.user.user_name}} - {%if is_moderatorown %} <strong>Moderator</strong> {% endif %} </p>
+                 
                  <a href = "{% url 'testing:displaypost' post.id %}" ><span>{{post.who_can_see}}:</span>
                  <span>{{post.get_timeago}}</span></a>
               </div>
@@ -21,7 +23,7 @@
           </div>
           
           {% is_post_owner viewer post.id as is_ownerr %}
-              {% if is_ownerr %}
+              {% if is_ownerr or is_moderator %}
               <!-- Button trigger modal -->
               {% comment %} <p>{{post.id}}</p> {% endcomment %}
               <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#exampleModalCenter{{post.id}}">Del</button>
@@ -47,7 +49,7 @@
 </div>
               {% endif %}
         </div>
-          <p class="post-text"><b>{{post.text_content}}</b></p>
+          <p class="post-text"><b>{{post.text_content | safe}}</b></p>
 
           {% for postfile in  post.postfiles %}
         

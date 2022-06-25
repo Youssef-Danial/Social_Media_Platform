@@ -190,20 +190,26 @@
     {% is_user_member  user.id group.id as is_memeber %}
     {% is_group_CorM user.id group.id as is_moderator %}
     {% is_user_requesting user.id group.id as is_requested %}
-	{% if is_groupowner %}
+    
+    {% if is_memeber or is_moderator and is_groupowner == False %}
+    <p><button id="leave" value="{{group.id}}" class = "btn btn-info" >Leave</button></p>
+    {% elif is_requested == False and is_groupowner == False %}
+    <p><button id="join" value="{{group.id}}" class = "btn btn-info">Join</button></p>
+    {% endif %}
+	  {% if is_groupowner or is_moderator %}
 		{% comment %} <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_pfp'%}'">Edit pfp</button></p> {% endcomment %}
         <!-- <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:edit_backpfp'%}'">Edit bpf</button></p> -->
-        <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:group_settings'%}'">Settings</button></p>
+        <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:group_settings' group.id %}'">Settings</button></p>
 		{% comment %} <p><button onclick="location.href = '{% url 'main:edit_about_me'%}'">Edit about me</button></p> {% endcomment %}
-    {% elif is_member or is_moderator %}
-			<button id="leave" value="{{group.id}}" class = "btn btn-info unfollow" >Leave</button></p>
-		{% else %}
-			{% if is_requested %}
-			<p><button id="cancelrequest" value="{{group.id}}" class = "btn btn-info follow">Cancel Request</button></p>
-			{% else %}
-            <p><button id="join" value="{{group.id}}" class = "btn btn-info follow">Join</button></p>
-			{% endif %}
-		{% endif %}
+    {% endif %}
+    
+    
+	
+		{% if is_requested %}
+		<p><button id="cancelrequest" value="{{group.id}}" class = "btn btn-info">Cancel Request</button></p>
+    {% endif %}
+		
+		
     
 							</div>
 							<div>
@@ -216,7 +222,7 @@
                   <div class="card-profile-stats d-flex justify-content-center mt-md-5">
                     
                     <div>
-                      <span class="heading">{{group.users_num}}</span>
+                      <span class="heading"></span>
                       <span class="description">Number of Users in Group</span><br>
                       <span class="description">Group Owner {{group.creator.user_name}}</span>
                     </div>
@@ -304,10 +310,15 @@
     <hr>
     <br>
 		 <!--thi is the post -->
+     
   <div id="feeds">
+  
+  {% if is_memeber or is_moderator%}
   {% for post in posts %}
-  {% include 'main/post.html' %}
+  {% include 'main/grouppost.html' %}
   {% endfor %}
+  {% endif %}
+  
   </div>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -356,8 +367,59 @@
         }else{
           toastr["error"]("Posting Failed Empty Post");
         }  
-    });  
+    });
     
+    $(document).on("click","#cancelrequest",function(){
+      var fbtn = $(this);
+        console.log("joining")
+        $.ajax({
+          type:"POST",
+          url: '/main/remove_group_request',
+          data: {
+               group_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("Done")
+              fbtn.html('Done');
+              location.reload();
+          }
+      });
+    });
+    $(document).on("click","#leave",function(){
+      var fbtn = $(this);
+        console.log("joining")
+        $.ajax({
+          type:"POST",
+          url: '/main/remove_group_request',
+          data: {
+               group_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("Done")
+              fbtn.html('Done');
+              location.reload();
+          }
+      });
+    });
+    $(document).on("click","#join",function(){
+      var fbtn = $(this);
+        console.log("joining")
+        $.ajax({
+          type:"POST",
+          url: '/main/create_group_request',
+          data: {
+               group_id:fbtn.val(),
+               csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+          },
+          success: function(response){
+              console.log("request sent")
+              fbtn.html('Request Sent');
+              location.reload();
+          }
+      });
+    });
     console.log("testing")
     setInterval(function(){
       var element = document.getElementById("notifnum")

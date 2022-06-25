@@ -37,6 +37,15 @@ urlpatterns = [
      path("friends/",views.friends ,name="friends"),
      path("group/<int:group_id>", views.groupe.as_view(), name="group"),
      path("create_group", views.create_group, name="create_group"),
-     path("group_settings", views.group_settings, name="group_settings")
+     path("group_settings/<int:group_id>", views.group_settings.as_view(), name="group_settings"),
+     path("create_group_request", views.create_group_request, name = "create_group_request"),
+     path("accept_group_request",views.accept_group_request,name="accept_group_request"),
+     path("remove_user_group", views.remove_user_group,name="remove_user_group"),
+     path("remove_group_request", views.remove_group_request,name="remove_group_request"),
+     path("refuse_group_request", views.refuse_group_requestt, name="refuse_group_request"),
+     path("remove_group_requestban", views.remove_group_requestban, name="remove_group_requestban"),
+     path("make_mod", views.make_mod, name="make_mod"),
+     path("remove_mod", views.remove_mod, name="remove_mod")
+
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

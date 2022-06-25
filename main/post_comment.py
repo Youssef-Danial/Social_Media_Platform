@@ -113,8 +113,9 @@ def delete_postfile(request, post_id):
 
 def delete_post(request, post_id):
     try:
+        postinstance = get_postbyid(post_id)
         if is_user_auth(request):
-            if is_post_owner(request, post_id):
+            if is_post_owner(request, post_id) or  postinstance.post_location == "group":
                 postinstance = get_postbyid(post_id)
                 postinstance.delete()
                 return True

@@ -253,12 +253,13 @@
                             <label class="form-control-label" for="input-address">Description</label> 
                             <textarea id="groupdesc" rows="4" class = "tarea" placeholder="Describe your Group it will enhance it is appearance in Search Results" name="text_content" val=""></textarea>
                           </div>
+                          
                           <div class="form-group focused">
-                            {% comment %} <label class="form-control-label" for="input-address">Group Privacy</label>
-                            <select id="who-can-see" class ="btn btn-info" aria-label="who can see" name="who_can_see" required="true">
+                            <label class="form-control-label" for="input-address">Group Privacy</label>
+                            <select id="ispublic" class ="btn btn-info" aria-label="who can see" name="who_can_see" required="true">
                               <option value="public">Public</option>
                               <option value="Private">Private</option>  
-                              </select> {% endcomment %}
+                              </select> 
                           </div>
                           <button id="create_group" class="btn btn-info">Create</button>
                       <div class="col-lg-4">
@@ -365,14 +366,16 @@
             })
             
             $("#create_group").click(function(){
-            
+              console.log($("#ispublic").val());
               if($("#groupname").val() != "" && $("#groupdesc").val() != ""){
+                
                   $.ajax({
                       type:"POST",
                       url: "{% url 'main:create_group' %}",
                       data: {
                            groupname:$("#groupname").val(),
                            groupdesc:$("#groupdesc").val(),
+                           ispublic:$("#ispublic").val(),
                            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                       },
                       success: function(response){
@@ -380,6 +383,7 @@
                               toastr["success"]("group Created Successfully");
                               $("#groupdesc").val('');
                               $("#groupname").val('');
+                              //$("#ispublic").val('');
                           }else{
                               toastr["error"]("Something Wrong Try Checking your Inputs");
                           }

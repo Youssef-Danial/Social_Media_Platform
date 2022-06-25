@@ -7,7 +7,7 @@ from django.urls import reverse,reverse_lazy
 from autheno.filehandler import receive_file
 from database.models import file, profile as profilemodel, user
 from main.post_comment import load_profile_posts
-from database.models import postfile, post_group
+from database.models import postfile, post_group, user_group
 from main.relations import *
 from main.notifications import *
 from main.post_comment import *
@@ -518,9 +518,10 @@ def searchfunc(request, content):
             cosine = cosine_similarity(sparse_matrix[0,:],sparse_matrix[1:,:])
             print(is_follower(request, postinstance.user.id))
             if cosine[0][0] > 0.80:
-                if  postinstance.who_can_see == "public" or is_follower(request, postinstance.user.id) or usersearcher.id == postinstance.user.id:
-                    print("enteredone")
-                    post_resultlist.append(postinstance)
+                if postinstance.post_location == "profile":
+                    if  postinstance.who_can_see == "public" or is_follower(request, postinstance.user.id) or usersearcher.id == postinstance.user.id:
+                        print("enteredone")
+                        post_resultlist.append(postinstance)
         groupinstances = group.objects.all()
         group_resultlist = []
         for groupinstance in groupinstances:
@@ -608,18 +609,17 @@ def create_postee(request):
 class groupe(View):
     def get(self, request, group_id):
         if is_user_auth(request):
-            pass
+             #user = get_user(request)
+            viewer = get_user(request)
+            groupinstance  = get_groupbyid(group_id)
+            groupposts = get_group_posts(groupinstance)
+            formfile = create_postee(request)
+            data = {
+                "group":groupinstance,"formfile":formfile,"user":viewer, "posts":groupposts, "viewer":viewer.id
+            }
+            return render(request,"main/group.html",data)
         else:
             return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
-        #user = get_user(request)
-        viewer = get_user(request)
-        groupinstance  = get_groupbyid(group_id)
-        groupposts = get_group_posts(groupinstance)
-        formfile = create_postee(request)
-        data = {
-            "group":groupinstance,"formfile":formfile,"user":viewer, "posts":groupposts, "viewer":viewer.id
-        }
-        return render(request,"main/group.html",data)
     
 
 def create_group(request):
@@ -630,7 +630,12 @@ def create_group(request):
         data["creator"] = userinstance
         data["name"] = request.POST.get("groupname")
         data["description"]= request.POST.get("groupdesc")
-        data["is_public"] = True
+        ispublic = request.POST.get("ispublic")
+        print(ispublic)
+        if (ispublic == "public"):
+            data["is_public"] = True
+        else:
+            data["is_public"] = False
         data ["state"] = "working" # empty for now it is not being used
         print(data)
         if create_groupfunc(request, data):
@@ -639,10 +644,178 @@ def create_group(request):
             return JsonResponse({"nothing":None},status=200)
 
 
+def is_group_CorM(userid,groupid): # checking if the user is moderator or creator of the page
+    try:
+        userinstance = get_userbyid(userid)
+        groupinstance = get_groupbyid(groupid)
+        user_group_instance = user_group.objects.filter(user = userinstance, group=groupinstance).first()
+        if  groupinstance.creator == userinstance: 
+            return True
+        elif user_group_instance != None and user_group_instance.state == "moderator":
+            return True
+        else:
+            return False
+    except:
+       return False
 
-def group_settings(request):
-    if (is_user_auth(request)):
-        data = {}
-        return render(request, "main/groupsettings.html", data)
+def get_group_mods(request, group_id):
+    try:
+        if is_user_auth(request):
+            if is_group_creator(request, group_id) or is_usergroup_moderator(request, group_id):
+                # making sure that the information only appears for creator or moderator of the group
+                group_instance = get_groupbyid(group_id)
+                user_group_instances = user_group.objects.filter(group=group_instance, state = "moderator")
+                return user_group_instances
+            else:
+                return None
+        else:
+            return None
+    except:
+        return None
 
+def get_banned_users(request, group_id):
+    try:
+        if is_user_auth(request):
+            if is_group_creator(request, group_id) or is_usergroup_moderator(request, group_id):
+                # making sure that the information only appears for creator or moderator of the group
+                group_instance = get_groupbyid(group_id)
+                user_group_instances = user_group.objects.filter(group=group_instance, user_state = "refused")
+                return user_group_instances
+            else:
+                return None
+        else:
+            return None
+    except:
+        return None
+class group_settings(View):
+    def get(self, request, group_id):
+        userinstance = get_user(request)
+        groupinstance = get_groupbyid(group_id)
+        if (is_user_auth(request) and is_group_CorM(userinstance.id,groupinstance.id)):
+            moderatorlist = get_group_mods(request, group_id)
+            grouprequests = get_group_requests(request, group_id)
+            groupusers = get_group_users(request, group_id)
+            banned_users = get_banned_users(request, group_id)
+            print(banned_users)
+            data = {"user": userinstance,
+            "group":groupinstance,
+            "mods":moderatorlist,
+            "grouprequests":grouprequests,
+            "groupusers":groupusers,
+            "banned_users": banned_users}
+            return render(request, "main/groupsettings.html", data)
 
+# user
+def create_group_request(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            group_id = request.POST["group_id"]
+            print("-----------{}----------joining group".format(group_id))
+            join_group(request, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+def remove_group_request(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            group_id = request.POST["group_id"]
+            print("-----------{}----------leaving group".format(group_id))
+            leave_group(request, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+def remove_group_requestban(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            groupuserid = request.POST["request_id"]
+            groupuserinstance = user_group.objects.get(pk=groupuserid)
+            user_id = groupuserinstance.user.id
+            group_id = groupuserinstance.group.id
+            #objectinstance = object.objects.get(pk=7)
+            print("-----------{}----------removing user group".format(group_id))
+            unban(user_id, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+# admin or moderator
+def accept_group_request(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            groupuserid = request.POST["request_id"]
+            groupuserinstance = user_group.objects.get(pk=groupuserid)
+            user_id = groupuserinstance.user.id
+            group_id = groupuserinstance.group.id
+            #objectinstance = object.objects.get(pk=7)
+            print("-----------{}----------accepting group".format(group_id))
+            add_user_to_group(request, user_id, group_id, "groupaccept")
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+def remove_user_group(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            groupuserid = request.POST["request_id"]
+            groupuserinstance = user_group.objects.get(pk=groupuserid)
+            user_id = groupuserinstance.user.id
+            group_id = groupuserinstance.group.id
+            #objectinstance = object.objects.get(pk=7)
+            print("-----------{}----------removing user group".format(group_id))
+            refuse_group_request(user_id, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+def refuse_group_requestt(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            groupuserid = request.POST["request_id"]
+            groupuserinstance = user_group.objects.get(pk=groupuserid)
+            user_id = groupuserinstance.user.id
+            group_id = groupuserinstance.group.id
+            #objectinstance = object.objects.get(pk=7)
+            print("-----------{}----------removing user group".format(group_id))
+            leave_groupp(user_id, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+# getting ban and moderators
+def make_mod(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            groupuserid = request.POST["request_id"]
+            groupuserinstance = user_group.objects.get(pk=groupuserid)
+            user_id = groupuserinstance.user.id
+            group_id = groupuserinstance.group.id
+            #objectinstance = object.objects.get(pk=7)
+            print("-----------{}----------makeing mod user group".format(group_id))
+            make_user_mod_group(request, user_id, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+def remove_mod(request):
+    if is_user_auth(request):
+         if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            groupuserid = request.POST["request_id"]
+            groupuserinstance = user_group.objects.get(pk=groupuserid)
+            user_id = groupuserinstance.user.id
+            group_id = groupuserinstance.group.id
+            #objectinstance = object.objects.get(pk=7)
+            print("-----------{}----------removing user group".format(group_id))
+            remove_user_mod_group(request, user_id, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
