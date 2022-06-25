@@ -70,30 +70,58 @@ def delete_group(request, group_id):
         return False
 
 def get_group_requests(request, group_id):
-    try:
+    #try:
         if is_user_auth(request):
-            if is_group_creator(request) or is_usergroup_moderator(request, group_id):
+            # if is_group_creator(request) or is_usergroup_moderator(request, group_id):
                 # making sure that the information only appears for creator or moderator of the group
                 group_instance = get_groupbyid(group_id)
-                user_group_instances = user_group.objects.filter(group=group_instance, state = "pending")
+                user_group_instances = user_group.objects.filter(group=group_instance, user_state = "pending")
                 return user_group_instances
-            else:
-                return None
+            # else:
+            #     return None
         else:
             return None
-    except:
-        return None
+    #except:
+        #return None
+
+def get_group_users(request, group_id):
+    #try:
+        if is_user_auth(request):
+            #if is_group_creator(request) or is_usergroup_moderator(request, group_id):
+                # making sure that the information only appears for creator or moderator of the group
+                group_instance = get_groupbyid(group_id)
+                user_group_instances = user_group.objects.filter(group=group_instance, user_state = "accepted")
+                return user_group_instances
+            #else:
+                #return None
+        else:
+            return None
 
 def accept_group_request(user_id, group_id):
-    try:
+    #try:
         # getting the user and the group_id
         follower = get_userbyid(user_id)
         groupinstance = get_groupbyid(group_id)
-        user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "accepted")
+        create_date = get_current_datetime()
+        user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "accepted", create_date = create_date)
         groupinstance.users_num = int(groupinstance.users_num) + 1
         user_group_follow_instance.save()
         return True
-    except:
+    #except:
+        return False
+
+
+def accept_group_request_done(user_id, group_id):
+    #try:
+        # getting the user and the group_id
+        follower = get_userbyid(user_id)
+        groupinstance = get_groupbyid(group_id)
+        user_group_follow_instance = user_group.objects.filter(group = groupinstance, user = follower).first()
+        groupinstance.users_num = int(groupinstance.users_num) + 1
+        user_group_follow_instance.user_state = "accepted"
+        user_group_follow_instance.save()
+        return True
+    #except:
         return False
 
 def refuse_group_request(user_id, group_id):
@@ -101,30 +129,33 @@ def refuse_group_request(user_id, group_id):
         # getting the user and the group_id
         follower = get_userbyid(user_id)
         groupinstance = get_groupbyid(group_id)
-        user_group_follow_instance = user_group(group = groupinstance, user = follower, state = "normal",user_state = "refused")
+        user_group_follow_instance = user_group.objects.filter(group = groupinstance, user = follower).first()
+        groupinstance.users_num = int(groupinstance.users_num) + 1
+        user_group_follow_instance.user_state = "refused"
         user_group_follow_instance.save()
         return True
     except:
         return False
 
-def add_user_to_group(request, user_id, group_id):
-    try:
+def add_user_to_group(request, user_id, group_id, objectinstance):
+    #try:
         if is_user_auth(request):
-            if is_group_creator(request) or is_usergroup_moderator(request, group_id):
-                if accept_group_request(user_id, group_id):
+            if is_group_creator(request, group_id) or is_usergroup_moderator(request, group_id):
+                if accept_group_request_done(user_id, group_id):
                     # getting the user who accepted the request
                     sender = get_user(request)
                     sender_id = sender.id
                     # now sending notification for the user about the group
-                    objectinstance = object.objects.filter(name = "groupaccept").first()
-                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance)
+                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance,source=sender_id, source_name = "user")
                     return True
             else:
+                
                 return False
         else:
+            
             return False
-    except:
-        return False
+    #except:
+        #return False
 
 def refuse_user_from_group(request, user_id, group_id):
     try:
@@ -135,8 +166,8 @@ def refuse_user_from_group(request, user_id, group_id):
                     sender = get_user(request)
                     sender_id = sender.id
                     # now sending notification for the user about the group
-                    objectinstance = object.objects.filter(name = "grouprefuse").first()
-                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance)
+                    #objectinstance = object.objects.filter(name = "grouprefuse").first()
+                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = "grouprefuse",source=sender_id, source_name = "user")
                     return True
             else:
                 return False
@@ -180,8 +211,8 @@ def remove_user_from_group(request, group_id, user_id):
                     groupinstance = get_groupbyid(group_id)
                     groupinstance.users_num = int(groupinstance.users_num) - 1 
                     # now sending notification for the user about the group
-                    objectinstance = object.objects.filter(name = "groupremove").first()
-                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance)
+                    #objectinstance = object.objects.filter(name = "groupremove").first()
+                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = "groupremove",source=sender_id, source_name = "user")
                     return True
             else:
                 return False
@@ -192,7 +223,7 @@ def remove_user_from_group(request, group_id, user_id):
 def make_user_mod_group(request, user_id, group_id):
     try:
         if is_user_auth(request):
-            if is_group_creator(request):
+            if is_group_creator(request, group_id):
 
                     # getting teh user and making him admin
                     user_instance = get_userbyid(user_id)
@@ -204,8 +235,8 @@ def make_user_mod_group(request, user_id, group_id):
                     sender = get_user(request)
                     sender_id = sender.id
                     # now sending notification for the user about the group
-                    objectinstance = object.objects.filter(name = "adminadd").first()
-                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance)
+                    #objectinstance = object.objects.filter(name = "adminadd").first()
+                    create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = "adminadd",source=sender_id, source_name = "user")
                     return True
 
         else:
@@ -216,7 +247,7 @@ def make_user_mod_group(request, user_id, group_id):
 def remove_user_mod_group(request, user_id, group_id):
         try:
             if is_user_auth(request):
-                if is_group_creator(request):
+                if is_group_creator(request, group_id):
                         # getting teh user and making him admin
                         user_instance = get_userbyid(user_id)
                         group_instance = get_groupbyid(group_id)
@@ -227,8 +258,8 @@ def remove_user_mod_group(request, user_id, group_id):
                         sender = get_user(request)
                         sender_id = sender.id
                         # now sending notification for the user about the group
-                        objectinstance = object.objects.filter(name = "adminremove").first()
-                        create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance)
+                        #objectinstance = object.objects.filter(name = "adminremove").first()
+                        create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype ="adminremove",source=sender_id, source_name = "user")
                         return True
             else:
                 return False
@@ -249,13 +280,16 @@ def make_user_mod_page(request, user_id, group_id):
                         sender = get_user(request)
                         sender_id = sender.id
                         # now sending notification for the user about the group
-                        objectinstance = object.objects.filter(name = "adminremove").first()
-                        create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = objectinstance)
+                        #objectinstance = object.objects.filter(name = "adminremove").first()
+                        create_notification(sender_id = sender_id, receipt_id = user_id ,objecttype = "adminremove",source=sender_id, source_name = "user")
                         return True
             else:
                 return False
         except:
             return False
+
+
+
 
 def remove_user_mod_page(request, user_id, group_id):
     pass
