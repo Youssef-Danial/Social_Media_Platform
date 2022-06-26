@@ -238,8 +238,8 @@ class group(models.Model):
     grouppfp = models.ForeignKey("file",on_delete=models.SET_NULL,null=True)
     users_num = models.IntegerField(blank=True) # number of users on the group
     def get_number_users(self):
-        usergroupinstance = user_group.objects.filter(group = self)
-        return len(usergroupinstance)
+        usergroupinstance = user_group.objects.filter(group = self, user_state = "accepted")
+        return len(usergroupinstance) + 1
 class page(models.Model):
     creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
     page_name = models.CharField(max_length=30)
