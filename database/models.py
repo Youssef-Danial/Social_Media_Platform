@@ -237,6 +237,9 @@ class group(models.Model):
     state = models.CharField(max_length=10) # state (working, stopped, suspended) ex. if the creator deleted his account the group will be in stop state
     grouppfp = models.ForeignKey("file",on_delete=models.SET_NULL,null=True)
     users_num = models.IntegerField(blank=True) # number of users on the group
+    def get_number_users(self):
+        usergroupinstance = user_group.objects.filter(group = self)
+        return len(usergroupinstance)
 class page(models.Model):
     creator = models.ForeignKey("user", on_delete=models.SET_NULL, null=True)
     page_name = models.CharField(max_length=30)

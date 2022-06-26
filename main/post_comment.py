@@ -13,7 +13,13 @@ from main.notifications import create_notification
 # getting current Time
 currentDateTime = datetime.datetime.now(tz=timezone.utc)
 
+import re
 
+yt_link = re.compile(r'(https?://)?(www\.)?((youtu\.be/)|(youtube\.com/watch/?\?v=))([A-Za-z0-9-_]+)', re.I)
+yt_embed = '<iframe width="560" height="315" src="https://www.youtube.com/embed/{0}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+
+def convert_ytframe(text):
+  return yt_link.sub(lambda match: yt_embed.format(match.groups()[5]), text)
 # post
 def create_post(request, data, fileslist): # data should be a dictionary 
     # 100 percent if this function is called the user is already authenticated
@@ -24,7 +30,8 @@ def create_post(request, data, fileslist): # data should be a dictionary
         # adding missing parts from the data
         # create post object 
         p = post(user=postuser)
-        p.text_content = data["text_content"] # saving the text content to the post
+        
+        p.text_content = convert_ytframe(data["text_content"]) # saving the text content to the post
         p.who_can_see = data["who_can_see"]
         p.interaction_counter = "{likes:0}"
         p.post_location = data["post_location"]

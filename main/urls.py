@@ -48,6 +48,7 @@ urlpatterns = [
      path("remove_mod", views.remove_mod, name="remove_mod"),
      path("change_group_pfp/<int:group_id>", views.change_group_pfp.as_view(), name="change_group_pfp"),
      path("deletegroup",views.delete_groupp, name="deletegroup"),
+     path("edit_group_desc", views.edit_group_desc, name="edit_group_desc"),
 
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

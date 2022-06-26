@@ -872,6 +872,15 @@ class change_group_pfp(View):
             else:
                 return HttpResponse("unathenticated")
 
+def edit_group_desc(request):
+    textnew = request.POST.get("txt")
+    group_id = request.POST.get("groupidd")
+    groupinstance = group.objects.get(pk=int(group_id))
+    groupinstance.description = textnew
+    groupinstance.save()
+    return HttpResponseRedirect(reverse_lazy("main:group", args = [groupinstance.id]))
+    
+
 def delete_groupp(request):
     if is_user_auth(request):
         if request.method == 'POST':

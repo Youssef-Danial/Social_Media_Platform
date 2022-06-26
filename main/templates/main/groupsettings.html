@@ -112,6 +112,20 @@
                 </div>
               </div>
             </div> 
+            {% if is_groupowner %}
+                <div class="container">
+        
+                    <!-- expand here -->
+                    <div id = "demo" class="tweet">
+                      <p><form action="{% url 'main:edit_group_desc' %}" method="post" >
+                        {% csrf_token %}
+                    <textarea  class="tarea" id="txtid" name="txt" rows="4" cols="30" placeholder="Describe Your group this enhance your group in Search results" maxlength="200"></textarea>
+                    <input id ="groupid" name = "groupidd" type="hidden" value = "{{group.id}}"/> 
+                    <input class = "btn btn-info" type="submit" value="Change Description">
+                    </form></p>
+                    </div>
+                </div>
+							{% endif %}
           </div>
           
           <div class="col-xl-8 order-xl-1">
@@ -160,7 +174,7 @@
                               </div>
                               <div class="modal-footer">
                                 <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" id="removemod{{grouprequest.id}}" class="removemoderator" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Delete</button>
+                                <button type="button" id="removemod{{grouprequest.id}}" class="removemoderator" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Remove</button>
                               </div>
                             </div>
                           </div>

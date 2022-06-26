@@ -114,7 +114,7 @@ def home(request):
     else:
         #print("not authenticated")
         return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
-
+oldpostregister = None
 def registere(request):
         # if the user submit the form
         if request.method == 'POST':
@@ -142,9 +142,11 @@ def registere(request):
                 auth_user(request, new_user.email, password)
                 # marking the user to be authenticated
                 return HttpResponseRedirect(reverse_lazy("autheno:home"))
+            global oldpostregister
+            oldpostregister = form
+            return False
         else:
-            form = register()
-        
+            form = register(request.POST or None)
         return form
 
 def logine(request):
@@ -168,6 +170,10 @@ def logine(request):
             form = login_u()   
             #request.session"] = None
         return form
+
+
+
+
 
 def login_register(request):
     register_form = registere(request)

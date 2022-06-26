@@ -54,6 +54,8 @@ def get_user_last_comment(request):
 #            </div>
 #         </div>
 #      </div>"""
+
+
 class posts(View):
     def get(self, request, post_id):
         userinstance = get_user(request)
