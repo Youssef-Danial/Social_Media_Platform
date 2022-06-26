@@ -85,6 +85,15 @@
               <div class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
                 <div class="d-flex justify-content-between">
                   Moderators
+                  <p><button class = "btn btn-info" onclick="location.href = '{% url 'main:change_group_pfp' group.id %}'">Edit pfp</button></p>
+                  {% isgroupcreator user.id group.id as is_groupownerr %}
+                  {% if is_groupownerr %}
+                   <!-- Button trigger modal -->
+                          {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                          <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#ddaexampleModalCenter{{group.id}}" >delete group</button>
+                          <!-- Modal -->
+                         
+                  {% endif %}
                 </div>
               </div>
               <div class="card-body pt-0 pt-md-4">
@@ -92,59 +101,19 @@
                   <div class="col">
                     <div class="card-profile-stats d-flex justify-content-center mt-md-5">
                       Moderators
+                      
                     </div>
                   </div>
                 </div>
                 <div class="text-center">
                   {% isgroupcreator user.id group.id as is_groupowner %}
                   {% is_group_CorM user.id group.id as is_moderator %}
-                  {% for grouprequest in mods %}
-                  <div  id="comment-container{{grouprequest.id}}" style="width:50%;">
-                    <div class="post-row">
-                    <input type="hidden" class="commentid" id="commentid{{grouprequest.id}}" value="{{grouprequest.id}}"/>
-                    <div class="user-profile">
-                      <a href ="{% url 'main:profile' grouprequest.user.id %}"> <img class = "pfppic" src="{% static grouprequest.user.profile.pfp.file_url|safe %}" style = "border-radius: 50%;width:30px;height:30px;" alt="profile picture"></a>
-                        <div>
-                           <p>{{grouprequest.user.user_name}}</p>
-                           {% comment %} <a href = "{% url 'testing:displaypost' post.id %}" > {% endcomment %}
-                           </a>
-                        </div>
-                      </div>
-                      
-                          {% if is_groupowner %}
-                          <!-- Button trigger modal -->
-                          {% comment %} <p>{{post.id}}</p> {% endcomment %}
-                          <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#exampleModalCenter{{mod.id}}" style="float: right;">remove</button>
-                          <!-- Modal -->
-                          <div class="modal fade" id="exampleModalCenter{{mod.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered" role="document">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                  </button>
-                                </div>
-                                <div class="modal-body">
-                                  Are you sure you want to remove this Moderator
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                  <button type="button" id="removemod{{grouprequest.id}}" class="removemoderator" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Delete</button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          
-                        </div>
-                    <div>
-                    </div>
-                    {% endif %}
-                  {% endfor %}
+               
                 </div>
               </div>
             </div> 
           </div>
+          
           <div class="col-xl-8 order-xl-1">
             <div class="card bg-secondary shadow">
               <div class="card-header bg-white border-0">
@@ -159,7 +128,68 @@
               </div>
               <div class="card-body">
                 <hr class="my-4">
+                <h6 class="heading-small text-muted mb-4">Moderators</h6>
+                {% for grouprequest in mods %}
+                <div  id="comment-container{{grouprequest.id}}" style="width:50%;">
+                  <div class="post-row">
+                  <input type="hidden" class="commentid" id="commentid{{grouprequest.id}}" value="{{grouprequest.id}}"/>
+                  <div class="user-profile">
+                    <a href ="{% url 'main:profile' grouprequest.user.id %}"> <img class = "pfppic" src="{% static grouprequest.user.profile.pfp.file_url|safe %}" style = "border-radius: 50%;width:30px;height:30px;" alt="profile picture"></a>
+                      <div>
+                         <p>{{grouprequest.user.user_name}}</p>
+                         {% comment %} <a href = "{% url 'testing:displaypost' post.id %}" > {% endcomment %}
+                         </a>
+                      </div>
+                    </div>       
+                        {% if is_groupowner %}
+                        <!-- Button trigger modal -->
+                        {% comment %} <p>{{post.id}}</p> {% endcomment %}
+                        <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#mexampleModalCenter{{mod.id}}" style="float: right;">remove</button>
+                        <!-- Modal -->
+                        <div class="modal fade" id="mexampleModalCenter{{mod.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                Are you sure you want to remove this Moderator
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" id="removemod{{grouprequest.id}}" class="removemoderator" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Delete</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  {% endif %}
+                {% endfor %}
                   <!-- Address -->
+                  <div class="modal fade" id="ddaexampleModalCenter{{group.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLongTitle">delete group</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to delete this group
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" id="close-{{groupid}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                          <button type="button" id="deletegroupp" class="deletegroup" value="{{group.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Confirm</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                  <hr>
                   <h6 class="heading-small text-muted mb-4">Incoming requests</h6>
                   {% for grouprequest in grouprequests %}
                   <div class = "post-container" id="comment-container{{grouprequest.id}}" style="width:50%;">
@@ -513,151 +543,27 @@
                   });
                 });
             });
-
-            $("#change_password").click(function(){
-            
-                if($("#passwordold").val() != ""&& $("#passwordnew").val() != "" && $("#passwordnewconfirm").val() != ""){
-                    if($("#passwordnew").val()==$("#passwordnewconfirm").val()){
-                        $.ajax({
-                            type:"POST",
-                            url: "{% url 'main:change_password' %}",
-                            data: {
-                                 oldpassword:$("#passwordold").val(),
-                                 newpassword:$("#passwordnew").val(),
-                                 csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-                            },
-                            success: function(response){
-                                if (response["feedback"] == "success"){
-                                    toastr["success"]("Changed Password Successfully");
-                                }else{
-                                    toastr["error"]("Changing Password Failed try another Password or old password is wrong");
-                                }
-        
-                            }
-                        });
-                    }else{
-                        console.log("empty")
-                        toastr["error"]("New Passwords does not match");
-                    }
-                   
-                }
-                else{
-                    console.log("empty")
-                    toastr["error"]("Empty Password Fields");
-                }
-                    
-            })
-
-            $("#change_phonenumber").click(function(){
-            
-                if($("#new_phonenumber").val() != ""){
-                    $.ajax({
-                        type:"POST",
-                        url: "{% url 'main:change_phonenumber' %}",
-                        data: {
-                             phonenumber:$("#new_phonenumber").val(),
-                             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-                        },
-                        success: function(response){
-                            if (response["feedback"] == "success"){
-                                toastr["success"]("Changed Phone Number Successfully");
-                            }else{
-                                toastr["error"]("Changing Phone Number Failed try another Phone Number");
-                            }
-    
-                        }
-                    });
-                }
-                else{
-                    console.log("empty")
-                    toastr["error"]("Empty Phone Number");
-                }
-                    
-            })
-            
-            $("#create_group").click(function(){
-            
-              if($("#groupname").val() != "" && $("#groupdesc").val() != ""){
+            $(document).on("click","#deletegroupp",function(){
+              console.log("is called delete")
+              var fbtn = $(this);
+              $(fbtn).click(function(){
+                  console.log("remove-post ajax called")
                   $.ajax({
-                      type:"POST",
-                      url: "{% url 'main:create_group' %}",
-                      data: {
-                           groupname:$("#groupname").val(),
-                           groupdesc:$("#groupdesc").val(),
-                           csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-                      },
-                      success: function(response){
-                          if (response["feedback"] == "success"){
-                              toastr["success"]("group Created Successfully");
-                              $("#groupdesc").val('');
-                              $("#groupname").val('');
-                          }else{
-                              toastr["error"]("Something Wrong Try Checking your Inputs");
-                          }
-  
-                      }
-                  });
-              }
-              else{
-                  console.log("empty")
-                  toastr["error"]("Empty Fields Detected");
-              }
-                  
-          })   
-        $("#change_username").click(function(){
-            
-                if($("#new_username").val() != ""){
-                    $.ajax({
-                        type:"POST",
-                        url: "{% url 'main:change_username' %}",
-                        data: {
-                             username:$("#new_username").val(),
-                             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-                        },
-                        success: function(response){
-                            if (response["feedback"] == "success"){
-                                toastr["success"]("Changed Username Successfully");
-                            }else{
-                                toastr["error"]("Changing Username Failed try another User Name");
-                            }
-    
-                        }
-                    });
-                }
-                else{
-                    console.log("empty")
-                    toastr["error"]("Empty Username");
-                }
-                    
-            })
-
-
-        $("#change_email").click(function(){
-            
-            if($("#new_email").val() != ""){
-                $.ajax({
                     type:"POST",
-                    url: "{% url 'main:change_email' %}",
+                    url: '/main/deletegroup',
                     data: {
-                         email:$("#new_email").val(),
+                         request_id:fbtn.val(),
                          csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
                     },
                     success: function(response){
-                        if (response["feedback"] == "success"){
-                            toastr["success"]("Changed Email Successfully");
-                        }else{
-                            toastr["error"]("Changing Email Failed try another Email");
-                        }
-
+                      //location.reload();
+                      window.location = "/autheno/home";
+                        //elementfooter.parentNode.removeChild(elementfooter)
                     }
+                  });
                 });
-            }
-            else{
-                console.log("empty")
-                toastr["error"]("Empty Email");
-            }
-                
-        })
-    })
+            });
+
+    });
 </script>
 </html>

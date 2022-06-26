@@ -57,20 +57,20 @@ def delete_page(request, page_id):
         return False
 
 def delete_group(request, group_id):
-    try:
+    #try:
         if is_user_auth(request):
-            if is_group_creator(request):
+            if is_group_creator(request, group_id):
                 # is the user is the group creator he can delete it
                 group_instance = get_groupbyid(group_id)
                 group_instance.delete()
                 return True
         else:
             return False
-    except:
-        return False
+    #except:
+        #return False
 
 def get_group_requests(request, group_id):
-    #try:
+    try:
         if is_user_auth(request):
             # if is_group_creator(request) or is_usergroup_moderator(request, group_id):
                 # making sure that the information only appears for creator or moderator of the group
@@ -81,8 +81,8 @@ def get_group_requests(request, group_id):
             #     return None
         else:
             return None
-    #except:
-        #return None
+    except:
+        return None
 
 def get_group_users(request, group_id):
     #try:

@@ -553,6 +553,23 @@ def get_search(request):
             }
         return render(request, "main/search.html", data)
 
+def get_user_groups(request):
+    userinstance = get_user(request)
+    # checking the groups of that user
+    user_groupinstance = user_group.objects.filter(user = userinstance)
+    grouplist = []
+    for usergroupinstance in user_groupinstance:
+        grouplist.append(usergroupinstance.group)
+    return grouplist
+
+def get_user_created_groups(request):
+    userinstance = get_user(request)
+    groupinstances = group.objects.filter(creator = userinstance)
+    group_createdlist = []
+    for groupins in groupinstances:
+        group_createdlist.append(groupins)
+    return group_createdlist
+    
 def friends(request):
      # we mark the notification as read
     if (is_user_auth(request)):
@@ -573,11 +590,15 @@ def friends(request):
             for follower in followers:
                 followerslist.append(follower.follower)
         #print(friendslist[0].user_name)
+        grouplist = get_user_groups(request)
+        groupcreatedlist = get_user_created_groups(request)
         data = {
             "user":userinstance,
             "viewer": userinstance.id,
             "userfriends":friendslist,
-            "followerslist":followerslist
+            "followerslist":followerslist,
+            "grouplist": grouplist,
+            "groupscreated": groupcreatedlist,
         }
         return render(request, "main/friends.html", data)
     else:
@@ -817,5 +838,48 @@ def remove_mod(request):
             #objectinstance = object.objects.get(pk=7)
             print("-----------{}----------removing user group".format(group_id))
             remove_user_mod_group(request, user_id, group_id)
+            return JsonResponse({"nothing":None},status=200)
+    return HttpResponse("unathenticated")
+
+global_group = 0
+class change_group_pfp(View):
+    def get(self, request, group_id):
+        try:
+            global global_group
+            global_group = group_id  
+            groupinstance = group.objects.get(pk=group_id)
+            pfp = receive_file(request, state="profile")
+            u = get_user(request)
+            return render(request, "main/uploadfilegroup.html", {"form":pfp,"group":groupinstance ,"user":u})
+        except:
+            return HttpResponse("Something Wrong with the Path")
+        #return HttpResponse("unathenticated")
+    def post(self, request, group_id):
+        u = get_user(request)
+        if is_user_auth(request) and is_group_CorM(u.id, group_id):
+            print("in the function")
+            # creating a form for the profile picture
+            pfp = receive_file(request, state="profile")
+            u = get_user(request)
+            if type(pfp) is file:
+                # linking the file to the profile of the user
+                groupinstance = group.objects.get(pk=group_id)
+                # linking the profile pictre to the profile of the user
+                groupinstance.grouppfp = pfp
+                groupinstance.save()
+                # chaging the state of the pfp
+                return HttpResponseRedirect(reverse_lazy("main:group", args = [group_id]))
+            else:
+                return HttpResponse("unathenticated")
+
+def delete_groupp(request):
+    if is_user_auth(request):
+        if request.method == 'POST':
+            print("called remove post")
+            # now receiving the post data
+            groupid = request.POST["request_id"]
+            #objectinstance = object.objects.get(pk=7)
+            print("-----------{}----------removing user group".format(groupid))
+            delete_group(request, groupid)
             return JsonResponse({"nothing":None},status=200)
     return HttpResponse("unathenticated")

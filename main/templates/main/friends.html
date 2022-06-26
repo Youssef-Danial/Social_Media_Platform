@@ -114,6 +114,34 @@
     <div id="feeds">
         <div class="float-container">
             <div class="float-child">
+
+              
+              {% for groupi in groupscreated %}
+              {% if forloop.first %}
+              <p>Groups You Created </p>
+              {% endif %}
+               <div style="float:center;">
+               <div class="user-profile">
+                 <a href ="{% url 'main:group' groupi.id %}"> <img class = "pfppic" src="{% static groupi.grouppfp.file_url|safe %}" alt="profile picture"></a>
+                   <div>
+                      <p>{{groupi.name}}</p>
+                   </div>
+               </div>
+               <br>
+             </div>
+              {% endfor %}
+              <p>Groups</p>
+         {% for groupi in grouplist %}
+          <div style="float:center;">
+          <div class="user-profile">
+            <a href ="{% url 'main:group' groupi.id %}"> <img class = "pfppic" src="{% static groupi.grouppfp.file_url|safe %}" alt="profile picture"></a>
+              <div>
+                 <p>{{groupi.name}}</p>
+              </div>
+          </div>
+          <br>
+        </div>
+         {% endfor %}
                 <p>Friends List</p>
                 {% for useri in userfriends %}
                 <div style="float:center;">
