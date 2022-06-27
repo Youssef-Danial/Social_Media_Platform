@@ -892,3 +892,91 @@ def delete_groupp(request):
             delete_group(request, groupid)
             return JsonResponse({"nothing":None},status=200)
     return HttpResponse("unathenticated")
+
+# forget password 
+
+def get_user_by_email(email):
+    userinstance = user.objects.filter(email=email).first()
+    return userinstance
+
+def forget_password(request):
+    if request.method == 'POST':
+        tempemail = request.POST["useremail"]
+        request.session["tempemail"] = tempemail
+        print(tempemail)
+        userinstance = get_user_by_email(tempemail)
+        if userinstance != None:
+            return JsonResponse({"success":"true"},status=200)
+        else:   
+            return JsonResponse({"success":"false"},status=200)
+
+
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from random import randint
+
+def sendemail(receive_email):
+    
+    tempcode = random_with_N_digits(8)
+    #The mail addresses and password
+    sender_address = 'spaceshareservices@gmail.com'
+    sender_pass = 'vafqssdoazmnbgae'
+    receiver_address = receive_email
+    #Setup the MIME
+    message = MIMEMultipart()
+    message['From'] = sender_address
+    message['To'] = receiver_address
+    message['Subject'] = f'Changing Password'   #The subject line
+    mail_content = f'''Hello,
+    Greetings This is your Verification Code it will expire with your session {tempcode}
+    '''
+    #The body and the attachments for the mail
+    message.attach(MIMEText(mail_content, 'plain'))
+    #Create SMTP session for sending the mail
+    session = smtplib.SMTP('smtp.gmail.com', 587) #use gmail with port
+    session.starttls() #enable security
+    session.login(sender_address, sender_pass) #login with mail_id and password
+    text = message.as_string()
+    session.sendmail(sender_address, receiver_address, text)
+    session.quit()
+    return tempcode
+
+
+def random_with_N_digits(n):
+    range_start = 10**(n-1)
+    range_end = (10**n)-1
+    return randint(range_start, range_end)
+
+def forget_passwordtwo(request):
+    #password = "Testingspaceshare1"
+    #secondpass = "vafqssdoazmnbgae"
+    #email = "spaceshareservices@gmail.com"
+    receive_email = request.session["tempemail"]
+    temp_code = sendemail(receive_email)
+    request.session["temp_code"] = temp_code
+    return render(request, "main/forgetpassword.html")
+
+def change_passwordtwo(request):
+    print("change password called")
+    if "tempemail" in request.session :
+        # now we get the user
+        tempmailtemp = request.session["tempemail"]
+        userinstance = get_user_by_email(tempmailtemp)
+        if request.method == 'POST':
+            new_password = clean_password(request.POST["newpassword"])
+            tempcodereceived = request.POST["oldpassword"]
+            temp_code = request.session["temp_code"] 
+            print(f"received code {tempcodereceived}")
+            print(f"what we have code {temp_code}")
+            if new_password is not None and str(temp_code) == str(tempcodereceived):
+                userinstance.password_hash = make_password(new_password)
+                # saving the new email and returning success to the front
+                userinstance.save()
+                # authenticating the new email
+                auth_user(request, userinstance.email, userinstance.password_hash)
+                return JsonResponse({"feedback":"success"},status=200)
+            else:
+                # something wrong with the email returning error
+                return JsonResponse({"feedback":"Wrong"},status=200)
+    return JsonResponse({"feedback":"Nothing"},status=200)

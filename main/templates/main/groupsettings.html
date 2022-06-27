@@ -63,7 +63,8 @@
             <div class="col-lg-7 col-md-10">
               <h1 class="display-2 text-white">Hello {{user.user_name}}</h1>
               <p class="text-white mt-0 mb-5">This is The ({{group.name}}) Group Setting page. You can Change your accept or decline incoming join request, remove users, appoint moderators for the group</p>
-              <button type = "button" onclick="history.back()" class="btn btn-info">Back to Group</button>
+              {% comment %} <button type = "button" onclick="history.back()" class="btn btn-info">Back to Group</button> {% endcomment %}
+              <a href="{% url 'main:group' group.id %}" class="btn btn-info">Back to Group</a>
             </div>
           </div>
         </div>

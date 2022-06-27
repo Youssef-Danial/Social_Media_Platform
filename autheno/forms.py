@@ -107,5 +107,5 @@ class register(forms.ModelForm):
     #     return phonenumber
 
 class login_u(forms.Form):
-    email = EmailField(widget=EmailInput(attrs={'placeholder':'Email'}),label="")
+    email = EmailField(widget=EmailInput(attrs={'id':'emailid','placeholder':'Email'}),label="")
     password = CharField(widget=PasswordInput(attrs={'placeholder':'Password'}),label="")

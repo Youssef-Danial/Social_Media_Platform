@@ -49,6 +49,9 @@ urlpatterns = [
      path("change_group_pfp/<int:group_id>", views.change_group_pfp.as_view(), name="change_group_pfp"),
      path("deletegroup",views.delete_groupp, name="deletegroup"),
      path("edit_group_desc", views.edit_group_desc, name="edit_group_desc"),
+     path("forgetpassword", views.forget_password, name="forgetpassword"),
+     path("forgetpasswordtwo", views.forget_passwordtwo, name="forgetpasswordtwo"),
+     path("change_password_two", views.change_passwordtwo, name="change_password_two")
 
      
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

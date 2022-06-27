@@ -62,3 +62,10 @@ def is_user_requesting(user_id, group_id):
             return True
         else:
             return False
+
+
+
+@register.simple_tag
+def get_userid_by_email(email):
+    userinstance = user.objects.filter(email=email).first()
+    return userinstance.id
