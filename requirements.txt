@@ -6,4 +6,3 @@ pandas==1.4.2
 scikit-learn==1.1.1
 SQLAlchemy==1.4.35
 Pillow
-mailer
