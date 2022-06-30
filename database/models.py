@@ -287,6 +287,9 @@ class thread(models.Model):
     def get_messages(self):
         messages = message.objects.filter(thread=self)
         return messages
+    def latest_message_date(self):
+        latestmessage = message.objects.filter(thread=self).latest("creation_date")
+        return latestmessage.creation_date
 class particpant(models.Model):
     thread = models.ForeignKey("thread", on_delete=models.CASCADE)
     user = models.ForeignKey("user", on_delete=models.CASCADE)

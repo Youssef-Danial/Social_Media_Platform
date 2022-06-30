@@ -92,7 +92,7 @@ class register(forms.ModelForm):
                 "password and confirm password does not match"
             )
         # checking the password if it is match the requirements
-        if re.match(r"^(?=.*[\d])(?=.*[A-Z])(?=.*[a-z])(?=.*[@#$])[\w\d@#$]{6,12}$", password):
+        if len(password)>=8:
             pass
         else:
             raise forms.ValidationError("Wrong Password")

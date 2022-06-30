@@ -411,13 +411,15 @@ def is_usergroup_moderator(request, group_id):
     try:
         userinstance = get_user(request)
         groupinstance = get_groupbyid(group_id)
-        user_group_instance = user_group.objects.fitler(user = userinstance, group=groupinstance).first()
-        if user_group_instance.state == "moderator":
+        user_group_instance = user_group.objects.filter(user = userinstance, group=groupinstance).first()
+        if  groupinstance.creator == userinstance: 
+            return True
+        elif user_group_instance != None and user_group_instance.state == "moderator":
             return True
         else:
             return False
     except:
-        return False # the user is not in the group
+       return False
 
 def is_page_creator(request, page_id):
     try:

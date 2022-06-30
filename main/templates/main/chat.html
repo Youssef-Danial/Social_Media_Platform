@@ -91,100 +91,117 @@
 	border-radius: 20px;       /* roundness of the scroll thumb */
 	border: 3px solid orange;  /* creates padding around scroll thumb */
   }
+  #container{
+	width:1280pxs;
+	height:768px;
+	background:#FFFFFF;
+	margin:20px auto;
+	font-size:0;
+	border-radius:5px;
+	overflow:hidden;
+}
  </style>
 <!--.................................................-->
 <hr><br>
 <link rel="stylesheet" type="text/css" href="{% static 'css/chat.css'%}">
 <body style="background-color:#172B4C;">
 	<input type="hidden" id= "meid" value="{{user.id}}"/>
-<div id="container">
-	<aside>
-		<header style="background-color:#172B4C;">
-			<input type="text" id ="searchbar" placeholder="search" onkeyup="search_chat()">
-		</header>
-		<ul id="list" style="background-color:#172B4C;">
-			{% for thread in user.get_user_threads %} <!--the thread otheruser id is the particpant id-->
-			 {% get_thread_other_user thread.id user.id as get_other_user%}
-			<li class="chatlist" id="chatlist{{get_other_user.id}}" value="{{thread.id}}" >
-				<a href="{% url 'main:profile' thread.get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
+ 
+	<div id="container" >
+		<aside>
+			<header style="background-color:#172B4C;">
+				<input type="text" id ="searchbar" placeholder="search" onkeyup="search_chat()">
+			</header>
+			<ul id="list" style="background-color:#172B4C;">
+				{% for thread in user.get_user_threads %} <!--the thread otheruser id is the particpant id-->
+				 {% get_thread_other_user thread.id user.id as get_other_user%}
+				<li class="chatlist" id="chatlist{{get_other_user.id}}" value="{{thread.id}}" >
+					<a href="{% url 'main:profile' thread.get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
+					<div>
+						<h2>{{get_other_user.user.user_name}}</h2>
+						<input type="hidden" class="partics" id="partic{{get_other_user.id}}" value="{{get_other_user.id}}"/>
+						<input type="hidden" class="particsthread" id="partic{{thread.id}}" value="{{thread.id}}"/>
+						<h3>
+							<span class="status orange"></span>
+							<!--offline-->
+						</h3>
+					</div>
+				</li>
+				{% endfor %}
+			</ul>
+			<script src="{% static 'css/chat.js' %}"></script>
+	
+		</aside>
+		{% comment %} <span id="main"> {% endcomment %}
+			{% for thread in user.get_user_threads %}
+			{% get_thread_other_user thread.id user.id as get_other_user%}
+			{% if forloop.first %}
+			<main class = "mainchat d-none" id="mainchat{{thread.id}}" value="{{thread.id}}">
+			{% else %}
+			<main class = "mainchat d-none" id="mainchat{{thread.id}}" value="{{thread.id}}">
+			{% endif %}
+			<header>
+				<a href="{% url 'main:profile' get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
 				<div>
-					<h2>{{get_other_user.user.user_name}}</h2>
-					<input type="hidden" class="partics" id="partic{{get_other_user.id}}" value="{{get_other_user.id}}"/>
-					<input type="hidden" class="particsthread" id="partic{{thread.id}}" value="{{thread.id}}"/>
-					<h3>
-						<span class="status orange"></span>
-						<!--offline-->
-					</h3>
-				</div>
-			</li>
-			{% endfor %}
-		</ul>
-		<script src="{% static 'css/chat.js' %}"></script>
-
-	</aside>
-	{% comment %} <span id="main"> {% endcomment %}
-		{% for thread in user.get_user_threads %}
-		{% get_thread_other_user thread.id user.id as get_other_user%}
-		{% if forloop.first %}
-		<main class = "mainchat d-none" id="mainchat{{thread.id}}" value="{{thread.id}}">
-		{% else %}
-		<main class = "mainchat d-none" id="mainchat{{thread.id}}" value="{{thread.id}}">
-		{% endif %}
-		<header>
-			<a href="{% url 'main:profile' get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
-			<div>
-				
-				<h2 class="" id="mainchatname">{{get_other_user.user.user_name}}</h2>
-				<input type="hidden" value=""/>
-			</div>
-		</header>
-
-
-
-<!--conversation-->
-		
-		<ul class="msg_card_body{{thread.id}}" id="chat">
-		 {% for message in thread.get_messages %}
-		 {% is_message_owner message user.id as is_ownerr %}
-		 {% if is_ownerr %}
-			<li class="me">
-				<div class="entete">
-					<span class="status green"></span>
 					
-					<h3> {{message.get_time}}</h3>
+					<h2 class="" id="mainchatname">{{get_other_user.user.user_name}}</h2>
+					<input type="hidden" value=""/>
 				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					{{message.content}}
-				</div>
-			</li>
-		{% else %}
-			<li class="you">
-				<div class="entete">
-					<h3>{{message.get_time}}</h3>
-					<span class="status blue"></span>
-				</div>
-				<div class="triangle"></div>
-				<div class="message">
-					{{message.content}}
-				</div>
-			</li>
-		{% endif %}
+			</header>
+	
+	
+	
+	<!--conversation-->
+			
+			<ul class="msg_card_body{{thread.id}}" id="chat">
+			 {% for message in thread.get_messages %}
+			 {% is_message_owner message user.id as is_ownerr %}
+			 {% if is_ownerr %}
+				<li class="me">
+					<div class="entete">
+						<span class="status green"></span>
+						
+						<h3> {{message.get_time}}</h3>
+					</div>
+					<div class="triangle"></div>
+					<div class="message">
+						{{message.content}}
+					</div>
+				</li>
+			{% else %}
+				<li class="you">
+					<div class="entete">
+						<h3>{{message.get_time}}</h3>
+						<span class="status blue"></span>
+					</div>
+					<div class="triangle"></div>
+					<div class="message">
+						{{message.content}}
+					</div>
+				</li>
+			{% endif %}
+			{% endfor %}
+			</ul>
+			<footer>
+				<div><textarea class="input-message" id="input-message{{thread.id}}" placeholder="Type your message"></textarea>
+				<!--<a href="#">Send</a>-->
+				<button class="sendmessage" id="sendmessage{{thread.id}}" value="{{thread.id}}"><i class="material-icons" id="sendicon">send</i></button>
+			</div>
+				
+
+			</footer>
+		</main>
 		{% endfor %}
-		</ul>
-		<footer>
-			<div><textarea class="input-message" id="input-message{{thread.id}}" placeholder="Type your message"></textarea>
-			<!--<a href="#">Send</a>-->
-			<button class="sendmessage" id="sendmessage{{thread.id}}" value="{{thread.id}}"><i class="material-icons" id="sendicon">send</i></button>
-		</div>
-			<button ><i class="material-icons" id="atic">attachment</i></button>
-
-
-		</footer>
-	</main>
-	{% endfor %}
-	{% comment %} </span> {% endcomment %}
-</div>
+		{% comment %} </span> {% endcomment %}
+	</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>

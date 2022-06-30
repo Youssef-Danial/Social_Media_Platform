@@ -245,7 +245,7 @@
                         </div>
                         <!-- Button trigger modal -->
                           {% comment %} <p>{{post.id}}</p> {% endcomment %}
-                          <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#exampleModalCenter{{grouprequest.id}}" style="float: right;">Decline</button>
+                          <button class="btn btn-sm btn-warn"  data-toggle="modal" data-target="#exampleModalCenter{{grouprequest.id}}" style="float: right;">Decline</button>
                           <!-- Modal -->
                           <div class="modal fade" id="exampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered" role="document">
@@ -306,6 +306,27 @@
                             <button class="btn btn-sm btn-info"  data-toggle="modal" data-target="#aaexampleModalCenter{{grouprequest.id}}" style="float: right;">Make Mod</button>
                             {% endif %}
                             <!-- Modal -->
+                            <div class="modal fade" id="aaexampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Making User Moderator</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    Are you sure you want to make a moderator
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" id="close-{{grouprequest.id}}" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                    <button type="button" id="mod-request{{grouprequest.id}}" class="makemod" value="{{grouprequest.id}}" style="padding: 0;border: none;background: none;font-size: 20px;">Confirm</button>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          {% else %}
                             <div class="modal fade" id="aaexampleModalCenter{{grouprequest.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                               <div class="modal-dialog modal-dialog-centered" role="document">
                                 <div class="modal-content">

@@ -141,6 +141,7 @@ def add_user_to_group(request, user_id, group_id, objectinstance):
     #try:
         if is_user_auth(request):
             if is_group_creator(request, group_id) or is_usergroup_moderator(request, group_id):
+            #if True:
                 if accept_group_request_done(user_id, group_id):
                     # getting the user who accepted the request
                     sender = get_user(request)
@@ -161,6 +162,7 @@ def refuse_user_from_group(request, user_id, group_id):
     try:
         if is_user_auth(request):
             if is_group_creator(request) or is_usergroup_moderator(request, group_id):
+            #if True:
                 if refuse_group_request(user_id, group_id):
                     # getting the user who accepted the request
                     sender = get_user(request)

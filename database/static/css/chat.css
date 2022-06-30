@@ -7,10 +7,10 @@ body{
 	font-family:Arial;
 }
 #container{
-	width:1280px;
-	height:1000px;
+	width:1280pxs;
+	height:768px;
 	background:#eff3f7;
-	margin:0 auto;
+	margin:20px auto;
 	font-size:0;
 	border-radius:5px;
 	overflow:hidden;

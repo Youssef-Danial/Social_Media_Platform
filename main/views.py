@@ -698,6 +698,7 @@ def get_banned_users(request, group_id):
     try:
         if is_user_auth(request):
             if is_group_creator(request, group_id) or is_usergroup_moderator(request, group_id):
+            #if True:
                 # making sure that the information only appears for creator or moderator of the group
                 group_instance = get_groupbyid(group_id)
                 user_group_instances = user_group.objects.filter(group=group_instance, user_state = "refused")
@@ -896,8 +897,11 @@ def delete_groupp(request):
 # forget password 
 
 def get_user_by_email(email):
-    userinstance = user.objects.filter(email=email).first()
-    return userinstance
+    try:
+        userinstance = user.objects.filter(email=email).first()
+        return userinstance
+    except:
+        return None
 
 def forget_password(request):
     if request.method == 'POST':
@@ -923,13 +927,16 @@ def sendemail(receive_email):
     sender_address = 'spaceshareservices@gmail.com'
     sender_pass = 'vafqssdoazmnbgae'
     receiver_address = receive_email
+    # getting user name with email
+    userins = get_user_by_email(receive_email)
     #Setup the MIME
     message = MIMEMultipart()
     message['From'] = sender_address
     message['To'] = receiver_address
     message['Subject'] = f'Changing Password'   #The subject line
-    mail_content = f'''Hello,
-    Greetings This is your Verification Code it will expire with your session {tempcode}
+    mail_content = f'''
+    Greetings {userins.user_name},
+    This is your Verification Code it will expire with your session {tempcode}
     '''
     #The body and the attachments for the mail
     message.attach(MIMEText(mail_content, 'plain'))
