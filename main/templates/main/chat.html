@@ -91,15 +91,7 @@
 	border-radius: 20px;       /* roundness of the scroll thumb */
 	border: 3px solid orange;  /* creates padding around scroll thumb */
   }
-  #container{
-	width:1280pxs;
-	height:768px;
-	background:#FFFFFF;
-	margin:20px auto;
-	font-size:0;
-	border-radius:5px;
-	overflow:hidden;
-}
+
  </style>
 <!--.................................................-->
 <hr><br>
@@ -116,7 +108,7 @@
 				{% for thread in user.get_user_threads %} <!--the thread otheruser id is the particpant id-->
 				 {% get_thread_other_user thread.id user.id as get_other_user%}
 				<li class="chatlist" id="chatlist{{get_other_user.id}}" value="{{thread.id}}" >
-					<a href="{% url 'main:profile' thread.get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
+					<a href="{% url 'main:profile' thread.get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%; width: 20%; height: 20%;"> </a>
 					<div>
 						<h2>{{get_other_user.user.user_name}}</h2>
 						<input type="hidden" class="partics" id="partic{{get_other_user.id}}" value="{{get_other_user.id}}"/>
@@ -141,7 +133,7 @@
 			<main class = "mainchat d-none" id="mainchat{{thread.id}}" value="{{thread.id}}">
 			{% endif %}
 			<header>
-				<a href="{% url 'main:profile' get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;width: 20%; height: 20%;"> </a>
+				<a href="{% url 'main:profile' get_other_user.user.id %}"><img src="{% static get_other_user.user.profile.pfp.file_url|safe %}" style="border-radius: 10%;min-width: 60px; max-width: 60px; min-height:60px; max-height: 60px;"> </a>
 				<div>
 					
 					<h2 class="" id="mainchatname">{{get_other_user.user.user_name}}</h2>
@@ -183,25 +175,16 @@
 			{% endfor %}
 			</ul>
 			<footer>
-				<div><textarea class="input-message" id="input-message{{thread.id}}" placeholder="Type your message"></textarea>
+			<!-- <div> -->
+				<textarea class="input-message" id="input-message{{thread.id}}" placeholder="Type your message"></textarea>
 				<!--<a href="#">Send</a>-->
 				<button class="sendmessage" id="sendmessage{{thread.id}}" value="{{thread.id}}"><i class="material-icons" id="sendicon">send</i></button>
-			</div>
-				
-
+			<!-- </div> -->
 			</footer>
 		</main>
 		{% endfor %}
 		{% comment %} </span> {% endcomment %}
 	</div>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script>

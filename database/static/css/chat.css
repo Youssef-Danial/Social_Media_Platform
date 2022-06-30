@@ -5,19 +5,20 @@ body{
 /*background-color:#abd9e9;*/
 	background-color:#ffffff;
 	font-family:Arial;
+	height:90%;
 }
 #container{
-	width:1280pxs;
-	height:768px;
+	width:1280px;
+	height:fit-content;
 	background:#eff3f7;
-	margin:20px auto;
+	margin:0 auto;
 	font-size:0;
-	border-radius:5px;
+	border-radius:1px;
 	overflow:hidden;
 }
 aside{
-	width:390px;
-	height:1000px;
+	width:290px;
+	height:800px;
 	background-color:#3b3e49;
 	display:inline-block;
 	font-size:15px;
@@ -25,7 +26,7 @@ aside{
 }
 main{
 	width:890px;
-	height:1000px;
+	height:fit-content;
 	display:inline-block;
 	font-size:15px;
 	vertical-align:top;
@@ -142,7 +143,7 @@ main header h3{
 	margin:0;
 	list-style-type:none;
 	overflow-y:scroll;
-	height:735px;
+	height:500px;
 	border-top:2px solid #fff;
 	border-bottom:2px solid #fff;
 }
@@ -201,13 +202,14 @@ main footer textarea{
 	resize:none;
 	border:none;
 	display:block;
-	width:90%;
+	width:80%;
 	height:80px;
-	border-radius:15px;
-	padding:20px;
+	border-radius:10px;
+	padding:10px;
 	font-size:13px;
-	margin-bottom:13px;
+	margin-bottom:10px;
 }
+
 main footer textarea::placeholder{
 	color:#ddd;
 }
@@ -224,6 +226,13 @@ main footer a{
 	margin-left:333px;
 	margin-top:5px;
 	display:inline-block;
+}
+.sendmessage{
+	display: flex;
+    width: 2px;
+	height: 40px;
+    border: #00008000;
+    background-color: #ffffff00;
 }
 #sendicon{
 	margin-left: 765px;
