@@ -1,5 +1,5 @@
 from channels.consumer import AsyncConsumer
-from database.models import notification, thread, message, particpant, notification
+from database.models import notification, thread, message, particpant
 from autheno.cipher_auth import get_threadbyid, get_particpantbyid, get_user, get_userbyid, is_user_auth, get_current_datetime, get_userbyid
 from main.notifications import create_notification
 import json
@@ -19,21 +19,6 @@ def make_message(user_id, thread_id, data):
         return message_instance
     except:
         return None
-@sync_to_async
-def create_notification(sender_id, receipt_id, objecttype, source=None, source_name=None):
-    # try:
-        # creating notification
-        time_sent = get_current_datetime()
-        if sender_id != receipt_id:
-            sender = get_userbyid(sender_id)
-            receipt = get_userbyid(receipt_id)
-            object_type = object.objects.filter(name = objecttype).first()
-            # creating a notification instance
-            notification_instance = notification(sender = sender, receipt = receipt, object_type = object_type, time_sent=time_sent, source=source, source_name=source_name, is_read=False)
-            notification_instance.save()
-            print("notification created ========================")
-            return True
-        return False
 
 
 class chatconsumer(AsyncConsumer):

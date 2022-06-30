@@ -927,15 +927,13 @@ def sendemail(receive_email):
     sender_address = 'spaceshareservices@gmail.com'
     sender_pass = 'vafqssdoazmnbgae'
     receiver_address = receive_email
-    # getting user name with email
-    userins = get_user_by_email(receive_email)
     #Setup the MIME
     message = MIMEMultipart()
     message['From'] = sender_address
     message['To'] = receiver_address
     message['Subject'] = f'Changing Password'   #The subject line
     mail_content = f'''
-    Greetings {userins.user_name},
+    Greetings,
     This is your Verification Code it will expire with your session {tempcode}
     '''
     #The body and the attachments for the mail
