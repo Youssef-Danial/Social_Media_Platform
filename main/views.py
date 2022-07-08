@@ -907,7 +907,7 @@ def forget_password(request):
     if request.method == 'POST':
         tempemail = request.POST["useremail"]
         request.session["tempemail"] = tempemail
-        print(tempemail)
+        print(request.session["tempemail"])
         userinstance = get_user_by_email(tempemail)
         if userinstance != None:
             return JsonResponse({"success":"true"},status=200)
@@ -945,6 +945,7 @@ def sendemail(receive_email):
     text = message.as_string()
     session.sendmail(sender_address, receiver_address, text)
     session.quit()
+    print("Email Sent")
     return tempcode
 
 
@@ -960,6 +961,7 @@ def forget_passwordtwo(request):
     receive_email = request.session["tempemail"]
     temp_code = sendemail(receive_email)
     request.session["temp_code"] = temp_code
+    print(request.session["temp_code"])
     return render(request, "main/forgetpassword.html")
 
 def change_passwordtwo(request):

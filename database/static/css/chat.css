@@ -237,7 +237,12 @@ main footer a{
 #sendicon{
 	margin-left: 765px;
     margin-top: -71px;
-    font-size: 35px
+    font-size: 35px;
+	color:gray;
+	border-radius: 10px;
+}
+#sendicon:hover{
+	color:#11CDEF;
 }
 #atic{
 	margin-left: 30px;
