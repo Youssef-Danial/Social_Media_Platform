@@ -924,8 +924,8 @@ def sendemail(receive_email):
     #tempcode = random_with_N_digits(8)
     tempcode = random_with_N_digits(randint(8, 16))
     #The mail addresses and password
-    sender_address = 'spaceshareservices@gmail.com'
-    sender_pass = 'vafqssdoazmnbgae'
+    sender_address = 'youremail'
+    sender_pass = "yourpass"
     receiver_address = receive_email
     #Setup the MIME
     message = MIMEMultipart()
