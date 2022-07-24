@@ -4,6 +4,8 @@
 //
 <br> 
 To Run The Application all what you have to do is Ensuring that you downloaded all the necessary Libraries using the requreiment file
+by just
+<pre> pip install -r requirements.txt </pre>
 <br>
 then you can just run the application like any other django application
 <pre> Python3 manage.py runserver </pre>
