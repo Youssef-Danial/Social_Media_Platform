@@ -11,3 +11,4 @@ then you can just run the application like any other django application
 <pre> Python3 manage.py runserver </pre>
 <br>
 ![Database](database.visualized_YoussefDanial.png)
+<img src="/database.visualized_YoussefDanial.png" alt="Alt text" title="Optional title">
