@@ -7,7 +7,7 @@ To Run The Application all what you have to do is Ensuring that you downloaded a
 by just
 <pre> pip install -r requirements.txt </pre>
 <br>
-then you can just run the application like any other django application
+then you can just run the application like any other django application, it is preferred to run it in a virtual environment.
 <pre> Python3 manage.py runserver </pre>
 <br>
 <h5> Database </h5>
