@@ -39,7 +39,7 @@ class registery(FormMixin,View):
                 new_user.save()
                 # creating a profile for the user 
                 p = profile(user = new_user, link = "main/profile/"+str(new_user.id))
-                f = file.objects.get(pk=10) # 10 the new user profile picture
+                f = file.objects.get(pk=2) # 10 the new user profile picture
                 p.pfp = f
                 p.save()
                 # authenticting user after registering
