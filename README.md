@@ -12,3 +12,8 @@ then you can just run the application like any other django application, it is p
 <br>
 <h5> Database </h5>
 <img src="/database.visualized_YoussefDanial.png" alt="Alt text" title="Database Design">
+<br>
+<h5> Some Pictures from the website </h5>
+<img src="/Screenshot 2022-09-10 171340.png" alt="Alt text" title="Database Design">
+<br>
+<img src="/Screenshot 2022-09-10 171113.png" alt="Alt text" title="Database Design">
