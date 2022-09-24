@@ -54,6 +54,7 @@ class register(forms.ModelForm):
         else:
             raise forms.ValidationError("This username already Taken")
         return data
+
     def clean_email(self):
         data = self.cleaned_data["email"]
         if re.match(r"(?:^|\s)[\w!#$%&'*+/=?^`{|}~-](\.?[\w!#$%&'*+/=?^`{|}~-]+)*@\w+[.-]?\w*\.[a-zA-Z]{2,3}\b", data):
@@ -78,7 +79,7 @@ class register(forms.ModelForm):
             pass
         else:
             raise forms.ValidationError(
-                "You are younger than 14 When you get older come"
+                "You are younger than 14 When you get older try again"
             )
         return data
 

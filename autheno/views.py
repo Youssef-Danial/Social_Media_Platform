@@ -15,10 +15,14 @@ from django.contrib import messages
 from .cipher_auth import auth_user, is_user_auth, get_user, get_current_datetime
 from autheno.filehandler import receive_files
 import main.templatetags.post_tags
+import copy
 # Create your views here.
 class registery(FormMixin,View):
+    # def get(self, request):
+    #     return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
     def register(request):
         # if the user submit the form
+        print("entered here wrong path")
         if request.method == 'POST':
         # create a form instance and populate it with data from the request:
             form = register(request.POST)
@@ -46,9 +50,14 @@ class registery(FormMixin,View):
                 auth_user(request, new_user.email, password)
                 # marking the user to be authenticated
                 return HttpResponseRedirect(reverse_lazy("autheno:home"))
+            else:
+                #request.session["time"] = form
+                login_form = logine(request)
+                return render(request, "authenticate/login-register.html", {"login_form":login_form, "register_form":form})
         else:
             form = register()
-        return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
+        return form
+        #return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
         #return render(request, "authenticate/register.html", {"form":form})
     
     def register_action(self, request):
@@ -114,8 +123,10 @@ def home(request):
     else:
         #print("not authenticated")
         return HttpResponseRedirect(reverse_lazy("autheno:login-register"))
-oldpostregister = None
+
+
 def registere(request):
+        #request.session["time"] = None
         # if the user submit the form
         if request.method == 'POST':
         # create a form instance and populate it with data from the request:
@@ -142,9 +153,8 @@ def registere(request):
                 auth_user(request, new_user.email, password)
                 # marking the user to be authenticated
                 return HttpResponseRedirect(reverse_lazy("autheno:home"))
-            global oldpostregister
-            oldpostregister = form
-            return False
+            else:
+                request.session["time"] = form
         else:
             form = register(request.POST or None)
         return form
@@ -176,8 +186,9 @@ def logine(request):
 
 
 def login_register(request):
-    register_form = registere(request)
+    print("registering")
     login_form = logine(request)
+    register_form = registery.register(request)
     return render(request, "authenticate/login-register.html", {"login_form":login_form, "register_form":register_form})
 
 def logout(request): # loging out a user
